@@ -15,42 +15,40 @@ import com.badlogic.gdx.math.Rectangle;
  * @author user
  */
 public class Cajita {
+
     Texture text;
     Sprite caja;
     Rectangle hitbox;
     float timer;
-    
-    public Cajita(float x , float y)
-    {
-    text = new Texture("cajita.png");
-    caja = new Sprite(text);
-    caja.setSize(2, 2);
-    caja.setPosition(x, y);
-    hitbox = new Rectangle(x,y,caja.getWidth(),caja.getHeight());
+    boolean mover = true;
+
+    public Cajita(float x, float y) {
+        text = new Texture("cajita.png");
+        caja = new Sprite(text);
+        caja.setSize(2, 2);
+        caja.setPosition(x, y);
+        hitbox = new Rectangle(x, y, caja.getWidth(), caja.getHeight());
     }
-    
-    
-    public void update()
-    {
-    hitbox.setPosition(caja.getX(), caja.getY()); 
+
+    public void update() {
+        
+        if (mover){hitbox.setPosition(caja.getX(), caja.getY());}
     }
+
     public void render(SpriteBatch batch) {
         caja.draw(batch);
     }
-    
-    public Rectangle getHitbox()
-    {
-    return hitbox;
+
+    public Rectangle getHitbox() {
+        return hitbox;
     }
-    
-    public void mover(float x , float y)
-    {
-       
-        caja.setPosition(caja.getX() + x, caja.getY() + y);
-        
-        
-    
+
+    public void setPos(float x, float y) {
+        caja.setPosition(x, y);
+        hitbox.setPosition(x, y);
     }
-    
-    
+    public void dispose() {
+        if (text != null) text.dispose();
+    }
+
 }

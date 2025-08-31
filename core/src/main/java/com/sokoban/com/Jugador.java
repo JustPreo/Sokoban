@@ -30,8 +30,10 @@ public class Jugador {
         personaje = new Sprite(per);
         personaje.setSize(2, 2);//ANCHO ALTO , unidades mundo
         personaje.setPosition(x, y);//Ponerle la posicion en x y y que da 
+        
         maxW = width - personaje.getWidth();
-        maxH = height;
+        maxH = height - personaje.getHeight();
+        //No me acuerdo para que usaba esto la verdad
 
         //Igualar la hitbox con la del sprite
         hitbox = new Rectangle(x, y, personaje.getWidth(), personaje.getHeight());
@@ -45,16 +47,11 @@ public class Jugador {
         //Se actualiza la x y la y
     }
     
-    public boolean mover(float dx, float dy) {
-        timerCaminar += Gdx.graphics.getDeltaTime();
-        if (timerCaminar > .15f) { // revisar si paso mas de 1s 
-                timerCaminar = 0; // Resetear timer 
-                personaje.setPosition(personaje.getX() + dx, personaje.getY() + dy);
-                return true;
-            }
-        return false;
-    
-    }
+    public void setPos(float x, float y) {
+    personaje.setPosition(x, y);
+    hitbox.setPosition(x, y);
+}
+
 
     public void render(SpriteBatch batch) {
         personaje.draw(batch);
@@ -62,6 +59,9 @@ public class Jugador {
 
     public Rectangle getHitbox() {
         return hitbox;
+    }
+    public void dispose() {
+        if (per!= null) per.dispose();
     }
 
 }

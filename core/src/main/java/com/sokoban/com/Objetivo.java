@@ -13,35 +13,29 @@ import com.badlogic.gdx.math.Rectangle;
  *
  * @author user
  */
-public class Pared {
-    Texture textura;
+public class Objetivo {
+    Texture txt;
     Sprite sprite;
     Rectangle hitbox;
-    public Pared(float x , float y)
+    
+    public Objetivo(float x , float y)
     {
-    textura = new Texture("cajita.png");
-    sprite = new Sprite(textura);
+    txt = new Texture("SHY.jpg");
+    sprite = new Sprite(txt);
     sprite.setSize(2, 2);
     sprite.setPosition(x, y);
-    hitbox = new Rectangle(x,y,sprite.getWidth(),sprite.getHeight());
-    }
-    
-    public Rectangle getHitbox()
-    {
-    return hitbox;
+    hitbox = new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
     }
     
     public void render(SpriteBatch batch) {
         sprite.draw(batch);
     }
-    
-    public void update()
-    {
-    hitbox.setPosition(sprite.getX(),sprite.getY());
+
+    public Rectangle getHitbox() {
+        return hitbox;
     }
     public void dispose() {
-        if (textura != null) textura.dispose();
+        if (txt != null) txt.dispose();
     }
-    
     
 }

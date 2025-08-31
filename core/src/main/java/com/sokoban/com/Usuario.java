@@ -39,7 +39,7 @@ public class Usuario implements Serializable {
     private List<String> listaRivales;      
     
     
-    public Usuario(String nombreUsuario, String contrasena, String nombreCompleto) {
+    /*public Usuario(String nombreUsuario, String contrasena, String nombreCompleto) {
         this.nombreUsuario = nombreUsuario;
         this.contrasenaHash = hashContrasena(contrasena);
         this.nombreCompleto = nombreCompleto;
@@ -252,5 +252,5 @@ public class Usuario implements Serializable {
     
     public Map<Integer, EstadisticasNivel> getEstadisticasPorNivel() { 
         return new HashMap<>(estadisticasPorNivel); 
-    }
+    }*/
 }
