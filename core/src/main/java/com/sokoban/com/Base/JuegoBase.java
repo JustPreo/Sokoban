@@ -8,6 +8,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
@@ -23,6 +30,8 @@ public class JuegoBase implements Screen {
     private FitViewport viewport;
     private ShapeRenderer shape;
     protected BitmapFont font;
+    protected Stage stage;
+    protected Skin skin;
 
     // Objetos
     protected Jugador jogador;
@@ -104,6 +113,12 @@ public class JuegoBase implements Screen {
         spawnear();
         objetivosRealizados = 0;
 
+        // Stage y Skin que son obligatorios para poder usar cosas como botones (Problema de UI)
+        //Imaginate no poder usar swing ( pipipi , extrano swing:( )
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        Gdx.input.setInputProcessor(stage);
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
     }
 
     private void moverJugador(int dx, int dy) {
@@ -113,6 +128,10 @@ public class JuegoBase implements Screen {
         // pared?
         if (mapa[nuevoY][nuevoX] == 1) {
             return;
+        }
+        if (gano)
+        {
+        return;
         }
 
         Cajita cajita = null;
@@ -213,6 +232,11 @@ public class JuegoBase implements Screen {
                 jogador.getHitbox().width, jogador.getHitbox().height);
         shape.end();
         revisarWin();
+        if (gano)
+        {
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+        }
     }
 
     @Override
@@ -284,6 +308,7 @@ public class JuegoBase implements Screen {
             System.out.println("Gano");
             gano = true;
             guardarSegundos(segundosT);
+            finNivel();
         }
 
     }
@@ -367,11 +392,70 @@ public class JuegoBase implements Screen {
         }
         return null;
     }
-    
-    
-    public void guardarSegundos(int segundos)
-    {
-    //Logica para guardar segundos en archivos
+
+    public void guardarSegundos(int segundos) {
+        //Logica para guardar segundos en archivos
+    }
+
+    //Logica para pantalla de volver atras y tiempo?
+    private void finNivel() {
+
+        // Fondo semi-transparente para bloquear input detrás
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        // Panel central
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel);
+
+        // Título
+        Label titulo = new Label("Nivel Completado!11!!", skin);
+        panel.add(titulo).padBottom(20).row();
+
+        // Botones de dificultad
+        TextButton btnVolver = new TextButton("Volver a menu", skin);
+        TextButton btnReiniciar = new TextButton("Reiniciar", skin);
+        TextButton btnExtra = new TextButton("Extra", skin);
+        
+
+        // Acciones de los botones
+        btnVolver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Volver");
+                //overlay.remove(); // cerrar popup
+
+            }
+        });
+
+        btnReiniciar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Reiniciar");
+                //overlay.remove();
+            }
+        });
+
+        btnExtra.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Extra");
+                //overlay.remove();
+
+            }
+        });
+
+        // Agregar botones al panel
+        panel.add(btnVolver).size(150, 50).padBottom(10).row();
+        panel.add(btnReiniciar).size(150, 50).padBottom(10).row();
+        panel.add(btnExtra).size(150, 50).row();
+
+        // Agregar overlay al stage
+        stage.addActor(overlay);
     }
 
 }
