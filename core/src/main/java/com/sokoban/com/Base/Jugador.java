@@ -2,14 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.sokoban.com;
+package com.sokoban.com.Base;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 /**
@@ -25,10 +22,10 @@ public class Jugador {
     float maxW, maxH;
     float timerCaminar;
 
-    public Jugador(float x, float y, float width, float height) {
+    public Jugador(float x, float y, float width, float height,float TILE) {
         per = new Texture("personaje.png");
         personaje = new Sprite(per);
-        personaje.setSize(2, 2);//ANCHO ALTO , unidades mundo
+        personaje.setSize(TILE, TILE);//ANCHO ALTO , unidades mundo
         personaje.setPosition(x, y);//Ponerle la posicion en x y y que da 
         
         maxW = width - personaje.getWidth();
@@ -43,7 +40,6 @@ public class Jugador {
     public void update() {
         //Actualizar la hitbox con cada update
         hitbox.setPosition(personaje.getX(), personaje.getY());
-        //System.out.println("X:" + personaje.getX() + "\nY:" + personaje.getY());
         //Se actualiza la x y la y
     }
     

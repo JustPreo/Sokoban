@@ -1,19 +1,20 @@
-package com.sokoban.com;
+package com.sokoban.com.Base;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import static com.sokoban.com.Main.cajasEnum.*;
-import static com.sokoban.com.Main.objetivosEnum.*;
+import static com.sokoban.com.Base.JuegoBase.cajasEnum.*;
+import static com.sokoban.com.Base.JuegoBase.objetivosEnum.*;
 import java.util.ArrayList;
 
-public class Main implements ApplicationListener {
+public class JuegoBase implements Screen {
 
     // Funcionalidades
     private SpriteBatch spriteBatch;
@@ -44,19 +45,20 @@ public class Main implements ApplicationListener {
         {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},//caja2(2,5)
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},//objetivo2(8,6)
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
+    //Mas que nada es una representacion visual de donde estan las cajas/objetivos asi es mejor entenderlo
 
     // posiciones en celdas
     private int jugadorX = 2, jugadorY = 4;
 
     @Override
-    public void create() {
+    public void show() {
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
         shape = new ShapeRenderer();
 
         //objetos
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
-                viewport.getWorldWidth(), viewport.getWorldHeight());
+                viewport.getWorldWidth(), viewport.getWorldHeight(),TILE);
         spawnear();
         objetivosRealizados = 0;
 
@@ -75,7 +77,6 @@ public class Main implements ApplicationListener {
         for (Cajita caja : cajas) {
             if ((int) (caja.hitbox.x / TILE) == nuevoX && (int) (caja.hitbox.y / TILE) == nuevoY) {
                 cajita = caja;
-                System.out.println("Detecto caja");
                 break;
             }
         }
@@ -89,7 +90,7 @@ public class Main implements ApplicationListener {
 
             int nuevoCajaX = (int) (cajita.hitbox.x / TILE) + dx;
             int nuevoCajaY = (int) (cajita.hitbox.y / TILE) + dy;
-            Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE);
+            Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE,TILE);
             for (Cajita c : cajas) {
                 if (c != cajita && cajitaTemp.hitbox.overlaps(c.hitbox)) {
                     return; // otra caja bloquea el movimiento
@@ -98,7 +99,6 @@ public class Main implements ApplicationListener {
 
             if (mapa[nuevoCajaY][nuevoCajaX] != 1 && cajita.mover) {
                 //Osea si no hay una pared/obstaculo y se puede mover la caja todo joya
-                System.out.println("Cajita se puede mover");
                 jugadorX = nuevoX;
                 jugadorY = nuevoY;
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
@@ -112,8 +112,6 @@ public class Main implements ApplicationListener {
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
 
     }
-
-    @Override
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             moverJugador(0, 1);
@@ -135,18 +133,17 @@ public class Main implements ApplicationListener {
 
         // Dibujar sprites
         spriteBatch.begin();
+        
+        for (Objetivo obj : objetivos) {//Aqui se pone primero el obj
+            obj.render(spriteBatch);
+        }
         jogador.render(spriteBatch);
-
-        for (Cajita caj : cajas) {
+        for (Cajita caj : cajas) {//Despues las cajas (por prioridad)
             caj.render(spriteBatch);
             caj.update();
         }
 
-        for (Objetivo obj : objetivos) {
-            obj.render(spriteBatch);
-        }
-
-        for (Pared pared : paredes) {
+        for (Pared pared : paredes) {//De ultimo las paredes
             pared.render(spriteBatch);
             pared.update();
         }
@@ -156,22 +153,10 @@ public class Main implements ApplicationListener {
         shape.setProjectionMatrix(viewport.getCamera().combined);
         shape.begin(ShapeRenderer.ShapeType.Line);
 
-        // paredes
-        shape.setColor(Color.GREEN);
-        for (int y = 0; y < FILAS; y++) {
-            for (int x = 0; x < COLUMNAS; x++) {
-                if (mapa[y][x] == 1) {
-                    shape.rect(x * TILE, y * TILE, TILE, TILE);
-                }
-            }
-        }
-
         // jugador
         shape.setColor(Color.BLACK);
         shape.rect(jogador.getHitbox().x, jogador.getHitbox().y,
                 jogador.getHitbox().width, jogador.getHitbox().height);
-
-        // caja
         shape.end();
         revisarWin();
     }
@@ -213,22 +198,20 @@ public class Main implements ApplicationListener {
         // spawnear N cajas según cantidadC
         for (int i = 0; i < cantidadC && i < cajasEnum.values().length; i++) {
             cajasEnum ce = cajasEnum.values()[i];
-            cajas.add(new Cajita(ce.getX() * TILE, ce.getY() * TILE));
+            cajas.add(new Cajita(ce.getX() * TILE, ce.getY() * TILE,TILE));
         }
 
         // spawnear N objetivos según cantidadC
         for (int i = 0; i < cantidadC && i < objetivosEnum.values().length; i++) {
             objetivosEnum oe = objetivosEnum.values()[i];
-            objetivos.add(new Objetivo(oe.getX() * TILE, oe.getY() * TILE));
-            System.out.println(oe.getX());
-            System.out.println(oe.getY( ));
+            objetivos.add(new Objetivo(oe.getX() * TILE, oe.getY() * TILE,TILE));
         }
 
         // paredes como antes
         for (int y = 0; y < FILAS; y++) {
             for (int x = 0; x < COLUMNAS; x++) {
                 if (mapa[y][x] == 1) {
-                    paredes.add(new Pared(x * TILE, y * TILE));
+                    paredes.add(new Pared(x * TILE, y * TILE,TILE));
                 }
             }
         }
@@ -240,7 +223,6 @@ public class Main implements ApplicationListener {
                 if (caja.hitbox.overlaps(obj.hitbox) && caja.mover != false) {//Para evitar multiples setFalse
                     caja.mover = false;
                     objetivosRealizados++;
-                    System.out.println("Entro");
 
                 }
             }
@@ -252,8 +234,17 @@ public class Main implements ApplicationListener {
 
     }
 
+    @Override
+    public void render(float f) {
+        render();
+    }
+
+    @Override
+    public void hide() {
+    }
+
     public enum cajasEnum {
-        caja0(2,2),caja1(6,3),caja2(2,5);
+        caja0(2, 2), caja1(6, 3), caja2(2, 5);
         private final int x;
         private final int y;
 
@@ -273,7 +264,7 @@ public class Main implements ApplicationListener {
     }
 
     public enum objetivosEnum {
-        objetivo0(1,1),objetivo1(7,3),objetivo2(8,6);
+        objetivo0(1, 1), objetivo1(7, 3), objetivo2(8, 6);
         private final int x;
         private final int y;
 

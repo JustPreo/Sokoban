@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.sokoban.com;
+package com.sokoban.com.Base;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,11 +17,11 @@ public class Pared {
     Texture textura;
     Sprite sprite;
     Rectangle hitbox;
-    public Pared(float x , float y)
+    public Pared(float x , float y,float TILE)
     {
-    textura = new Texture("cajita.png");
+    textura = new Texture("pared.png");
     sprite = new Sprite(textura);
-    sprite.setSize(2, 2);
+    sprite.setSize(TILE, TILE);
     sprite.setPosition(x, y);
     hitbox = new Rectangle(x,y,sprite.getWidth(),sprite.getHeight());
     }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.sokoban.com;
+package com.sokoban.com.Base;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,11 +18,11 @@ public class Objetivo {
     Sprite sprite;
     Rectangle hitbox;
     
-    public Objetivo(float x , float y)
+    public Objetivo(float x , float y,float TILE)
     {
-    txt = new Texture("SHY.jpg");
+    txt = new Texture("objetivo.png");
     sprite = new Sprite(txt);
-    sprite.setSize(2, 2);
+    sprite.setSize(TILE, TILE);
     sprite.setPosition(x, y);
     hitbox = new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
     }
