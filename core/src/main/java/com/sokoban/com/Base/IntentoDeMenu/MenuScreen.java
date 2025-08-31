@@ -46,7 +46,7 @@ public class MenuScreen implements Screen {
     private Stage stage;
     private Skin skin;
     private Texture bg;
-    public static int dificultad = 1;
+    public static int dificultad = 1;//Inicia en facil
     private boolean puedeInteractuar = true;
     private ArrayList<TextButton> botones = new ArrayList<>();
     //
@@ -178,7 +178,7 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(stage.getWidth() * 0.4f).height(stage.getHeight() * 0.3f);
+        overlay.add(panel).width(stage.getWidth() * 0.6f).height(stage.getHeight() * 0.5f);
 
         // Título
         Label titulo = new Label("Selecciona Dificultad", skin);

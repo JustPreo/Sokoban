@@ -20,8 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 
-import static com.sokoban.com.Base.JuegoBase.cajasEnum.*;
-import static com.sokoban.com.Base.JuegoBase.objetivosEnum.*;
+import com.sokoban.com.Juegito;
 import java.util.ArrayList;
 
 public class JuegoBase implements Screen {
@@ -49,6 +48,7 @@ public class JuegoBase implements Screen {
     protected int cantidadC = 0; //Esto se define despues con conseguir cantCajas por nivel
     protected int segundosT = 0;
     protected int TILE = 800 / COLUMNAS; //
+    protected int vecesEmpujado = 0;
 
     // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
     private int[][] mapa = { // Tomar en cueta que esta inverso el mapa
@@ -61,15 +61,14 @@ public class JuegoBase implements Screen {
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},//objetivo2(8,6)
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
     //Mas que nada es una representacion visual de donde estan las cajas/objetivos asi es mejor entenderlo
+    
     // Posiciones iniciales de cajas
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
-
     // Posiciones de objetivos
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
 
     // posiciones en celdas
     protected int jugadorX = 2, jugadorY = 4;
-
     protected float timer = 0f;
 
     public void conseguirCantCajas() {
@@ -165,6 +164,7 @@ public class JuegoBase implements Screen {
                 jugadorX = nuevoX;
                 jugadorY = nuevoY;
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
+                vecesEmpujado++;
             }
         } else {
             jugadorX = nuevoX;
@@ -220,7 +220,8 @@ public class JuegoBase implements Screen {
         int minutos = (int) (timer / 60);
         int segundos = (int) (timer % 60);
         float margen = TILE * 0.2f; // relativo a TILE, ajustable
-        font.draw(spriteBatch, String.format("%02d:%02d", minutos, segundos), margen, FILAS * TILE - margen);
+        font.draw(spriteBatch, String.format("%02d:%02d   Veces empujado %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
+        //%d → número normal (vecesEmpujado)
 
         spriteBatch.end();
 
@@ -329,71 +330,7 @@ public class JuegoBase implements Screen {
 
     }
 
-    public enum cajasEnum {
-        caja0(2, 2), caja1(6, 3), caja2(2, 5);
-        private final int x;
-        private final int y;
-
-        cajasEnum(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-    }
-
-    public enum objetivosEnum {
-        objetivo0(1, 1), objetivo1(7, 3), objetivo2(8, 6);
-        private final int x;
-        private final int y;
-
-        objetivosEnum(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-    }
-
-    public cajasEnum getCaja(int opcion) {
-        switch (opcion) {
-            case 1:
-                return caja0;
-            case 2:
-                return caja1;
-            case 3:
-                return caja2;
-
-        }
-        return null;
-    }
-
-    public objetivosEnum getObjetivo(int opcion) {
-        switch (opcion) {
-            case 1:
-                return objetivo0;
-            case 2:
-                return objetivo1;
-            case 3:
-                return objetivo2;
-
-        }
-        return null;
-    }
+    
 
     public void guardarSegundos(int segundos) {
         //Logica para guardar segundos en archivos
@@ -428,7 +365,9 @@ public class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Volver");
-                //overlay.remove(); // cerrar popup
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                // remover overlay para limpiar
+                overlay.remove();
 
             }
         });
@@ -437,7 +376,19 @@ public class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Reiniciar");
-                //overlay.remove();
+                // Quitar overlay
+                overlay.remove();
+                // Reiniciar variables del nivel
+                cajas.clear();
+                paredes.clear();
+                objetivos.clear();
+                timer = 0f;
+                vecesEmpujado = 0;
+                objetivosRealizados = 0;
+                gano = false;
+                configurarNivel();
+                spawnear();
+                jogador.setPos(jugadorX * TILE, jugadorY * TILE);
             }
         });
 
@@ -445,7 +396,6 @@ public class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Extra");
-                //overlay.remove();
 
             }
         });
