@@ -23,7 +23,7 @@ import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Juegito;
 import java.util.ArrayList;
 
-public class JuegoBase implements Screen {
+public abstract class JuegoBase implements Screen {
 
     // Funcionalidades
     private SpriteBatch spriteBatch;
@@ -71,8 +71,9 @@ public class JuegoBase implements Screen {
     protected int jugadorX = 2, jugadorY = 4;
     protected float timer = 0f;
 
-    public void conseguirCantCajas() {
-        switch (MenuScreen.dificultad) {
+     public abstract void conseguirCantCajas(); 
+     //La idea de como deberia de ser   
+     /*switch (MenuScreen.dificultad) {
             case 1:
                 cantidadC = 1;
                 break;
@@ -82,12 +83,10 @@ public class JuegoBase implements Screen {
             case 3:
                 cantidadC = 3;
                 break;
-        }
-    }
+        }*/
+    
 
-    protected void configurarNivel() {
-        //No tiene nada aqui , hasta despues
-    }
+    protected abstract void configurarNivel(); 
 
     @Override
     public void show() {

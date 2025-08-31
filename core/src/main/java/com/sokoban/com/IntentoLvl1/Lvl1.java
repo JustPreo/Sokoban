@@ -31,13 +31,15 @@ public class Lvl1 extends JuegoBase {
 
     protected void configurarNivel() {
         // Definir mapa específico
-        // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas | 4
+        jugadorX = 2; //x jogador
+        jugadorY = 4;// y jogador
+        // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas | 4 = player
         cambiarMapa(new int[][]{ //Crea un mapa nuevo
             {1, 1, 1, 1, 1, 1, 1, 1, 1},//0
             {1, 2, 0, 0, 0, 0, 0, 0, 1},//1
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//2
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//3
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//4
+            {1, 0, 0, 0, 0, 0, 1, 0, 1},//2
+            {1, 0, 0, 0, 0, 0, 1, 0, 1},//3
+            {1, 1, 4, 1, 1, 1, 1, 0, 1},//4
             {1, 0, 0, 0, 0, 0, 3, 0, 1},//5
             {1, 0, 0, 0, 0, 0, 0, 0, 1},//6
             {1, 1, 1, 1, 1, 1, 1, 1, 1} //7
@@ -53,8 +55,7 @@ public class Lvl1 extends JuegoBase {
         
         
         // Posición inicial del jugador
-        jugadorX = 2; //x jogador
-        jugadorY = 4;// y jogador
+        
         // Columnas y filas
         COLUMNAS = 9; //Lo cambie a 9
         FILAS = 8; //Tomar en cuenta que esto es completamente manual
