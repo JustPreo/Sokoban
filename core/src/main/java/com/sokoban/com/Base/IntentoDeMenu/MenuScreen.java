@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.sokoban.com.Base.JuegoBase;
+import com.sokoban.com.IntentoLvl1.Lvl1;
 import com.sokoban.com.Juegito;
 import java.util.ArrayList;
 
@@ -38,11 +40,12 @@ estilo.down = fondo;  estado presionado , podemos usar otra textura talvez?
 estilo.font = new BitmapFont(); fuente para el texto
 estilo.fontColor = Color.WHITE; el color de la font
 
-*/
+ */
 public class MenuScreen implements Screen {
 
     private Stage stage;
     private Skin skin;
+    private Texture bg;
     public static int dificultad = 1;
     private boolean puedeInteractuar = true;
     private ArrayList<TextButton> botones = new ArrayList<>();
@@ -56,6 +59,8 @@ public class MenuScreen implements Screen {
 
         //Esto de skin es como los fonts y botones (Por defecto , despues se intentan cambiar)
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        bg = new Texture("fondoM.png");
 
         // Crear elementos UI
         Label titulo = new Label("Sokoban", skin);//Skin es como obligatorio para esto
@@ -71,7 +76,9 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Click en JUGAR");
-                if (puedeInteractuar){((Juegito) Gdx.app.getApplicationListener()).setScreen(new JuegoBase());}
+                if (puedeInteractuar) {
+                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl1());
+                }
 
                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
@@ -81,7 +88,9 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Dificultad");
-                if (puedeInteractuar){mostrarSelectorDificultad();}
+                if (puedeInteractuar) {
+                    mostrarSelectorDificultad();
+                }
 
             }
 
@@ -90,7 +99,9 @@ public class MenuScreen implements Screen {
         btnSalir.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (puedeInteractuar){Gdx.app.exit();}
+                if (puedeInteractuar) {
+                    Gdx.app.exit();
+                }
 
             }
         });
@@ -115,7 +126,10 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        // Dibujar fondo
+        stage.getBatch().begin();
+        stage.getBatch().draw(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.getBatch().end();
         stage.act(delta);
         stage.draw();
     }
@@ -220,7 +234,6 @@ public class MenuScreen implements Screen {
             but.setDisabled(!puedeInteractuar);
             System.out.println(but.getDebug());
         }
-    }*/ 
+    }*/
     //No funciono pero puede funcionar a futuro?
-
 }

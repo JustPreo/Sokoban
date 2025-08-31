@@ -21,38 +21,42 @@ public class Lvl1 extends JuegoBase {
                 cantidadC = 1;
                 break;
             case 2:
-                cantidadC = 2;
+                cantidadC = 1;
                 break;
             case 3:
-                cantidadC = 3;
+                cantidadC = 1;
                 break;
         }
     }
 
     protected void configurarNivel() {
         // Definir mapa específico
+        // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
         cambiarMapa(new int[][]{ //Crea un mapa nuevo
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+            {1, 1, 1, 1, 1, 1, 1, 1, 1},//0
+            {1, 2, 0, 0, 0, 0, 0, 0, 1},//1
+            {1, 0, 0, 0, 0, 0, 0, 0, 1},//2
+            {1, 0, 0, 0, 0, 0, 0, 0, 1},//3
+            {1, 0, 0, 0, 0, 0, 0, 0, 1},//4
+            {1, 0, 0, 0, 0, 0, 3, 0, 1},//5
+            {1, 0, 0, 0, 0, 0, 0, 0, 1},//6
+            {1, 1, 1, 1, 1, 1, 1, 1, 1} //7
+           //0  1  2  3  4  5  6  7  8
         });
         //Posicion de cajas
-        cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
+        cajasPos = new int[][]{{2, 2}};//Cajas son las 3
 
         //Posiciones de objetivos
-        objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
+        objetivosPos = new int[][]{{6, 5}};//Objetivos son los 2
+        
+        //Tienen que existir la misma cantidad de cajas que objetivos
         
         
         // Posición inicial del jugador
         jugadorX = 2; //x jogador
         jugadorY = 4;// y jogador
         // Columnas y filas
-        COLUMNAS = 10; //
+        COLUMNAS = 9; //Lo cambie a 9
         FILAS = 8; //Tomar en cuenta que esto es completamente manual
         //Entonces cuando vayas a tocar algo de esto tambien modificas el cambiarMapa
     }

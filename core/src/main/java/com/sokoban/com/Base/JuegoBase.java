@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -21,6 +22,7 @@ public class JuegoBase implements Screen {
     private SpriteBatch spriteBatch;
     private FitViewport viewport;
     private ShapeRenderer shape;
+    protected BitmapFont font;
 
     // Objetos
     protected Jugador jogador;
@@ -29,12 +31,14 @@ public class JuegoBase implements Screen {
     protected ArrayList<Objetivo> objetivos = new ArrayList<>();
     protected boolean moverCaja = true;
     protected int objetivosRealizados;
+    protected boolean gano = false;
 
     // Grid (mapa estilo Sokoban)
     protected int TILE = 2; // cada celda mide 2 unidades del mundo
     protected int FILAS = 8; //Elegir las filas manuales
     protected int COLUMNAS = 10; //Elegir las columnas manuales
     protected int cantidadC = 0; //Esto se define despues con conseguir cantCajas por nivel
+    protected int segundosT = 0;
 
     // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
     private int[][] mapa = { // Tomar en cueta que esta inverso el mapa
@@ -56,6 +60,8 @@ public class JuegoBase implements Screen {
     // posiciones en celdas
     protected int jugadorX = 2, jugadorY = 4;
 
+    protected float timer = 0f;
+
     public void conseguirCantCajas() {
         switch (MenuScreen.dificultad) {
             case 1:
@@ -70,16 +76,31 @@ public class JuegoBase implements Screen {
         }
     }
 
+    protected void configurarNivel() {
+        //No tiene nada aqui , hasta despues
+    }
+
     @Override
     public void show() {
+        configurarNivel();
+        conseguirCantCajas();
+
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
-        shape = new ShapeRenderer();
+        shape = new ShapeRenderer();//Para las hitbox
 
-        //objetos
+        // Crear fuente
+        font = new BitmapFont(); // por defecto carga font interno
+        font.setColor(Color.WHITE);
+
+        // Escala proporcional al tamaño del nivel
+        float escalaBase = 0.05f; //
+        float escala = escalaBase * TILE;
+        font.getData().setScale(escala); //objetos
+
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
                 viewport.getWorldWidth(), viewport.getWorldHeight(), TILE);
-        conseguirCantCajas();
+
         spawnear();
         objetivosRealizados = 0;
 
@@ -135,6 +156,9 @@ public class JuegoBase implements Screen {
     }
 
     public void render() {
+        if (!gano) {
+            timer += Gdx.graphics.getDeltaTime();
+        } // aumenta segundos
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             moverJugador(0, 1);
         }
@@ -169,6 +193,14 @@ public class JuegoBase implements Screen {
             pared.render(spriteBatch);
             pared.update();
         }
+
+        // Mostrar timer
+        segundosT = (int) timer;
+        int minutos = (int) (timer / 60);
+        int segundos = (int) (timer % 60);
+        float margen = TILE * 0.2f; // relativo a TILE, ajustable
+        font.draw(spriteBatch, String.format("%02d:%02d", minutos, segundos), margen, FILAS * TILE - margen);
+
         spriteBatch.end();
 
         // Debug de hitboxes 
@@ -248,8 +280,10 @@ public class JuegoBase implements Screen {
             }
 
         }
-        if (objetivosRealizados == objetivos.size()) {
+        if (objetivosRealizados == objetivos.size() && !gano) {
             System.out.println("Gano");
+            gano = true;
+            guardarSegundos(segundosT);
         }
 
     }
@@ -332,6 +366,12 @@ public class JuegoBase implements Screen {
 
         }
         return null;
+    }
+    
+    
+    public void guardarSegundos(int segundos)
+    {
+    //Logica para guardar segundos en archivos
     }
 
 }
