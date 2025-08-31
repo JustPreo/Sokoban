@@ -31,7 +31,7 @@ public class Lvl1 extends JuegoBase {
 
     protected void configurarNivel() {
         // Definir mapa específico
-        // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
+        // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas | 4
         cambiarMapa(new int[][]{ //Crea un mapa nuevo
             {1, 1, 1, 1, 1, 1, 1, 1, 1},//0
             {1, 2, 0, 0, 0, 0, 0, 0, 1},//1

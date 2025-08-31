@@ -178,22 +178,22 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel);
+        overlay.add(panel).width(stage.getWidth() * 0.4f).height(stage.getHeight() * 0.3f);
 
         // Título
         Label titulo = new Label("Selecciona Dificultad", skin);
         panel.add(titulo).padBottom(20).row();
 
         // Botones de dificultad
-        TextButton btnFacil = new TextButton("Fácil", skin);
+        TextButton btnFacil = new TextButton("Facil", skin);
         TextButton btnNormal = new TextButton("Normal", skin);
-        TextButton btnDificil = new TextButton("Difícil", skin);
+        TextButton btnDificil = new TextButton("Dificil", skin);
 
         // Acciones de los botones
         btnFacil.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Dificultad: Fácil");
+                System.out.println("Dificultad: Facil");
                 overlay.remove(); // cerrar popup
                 setDificultad(1);
                 puedeInteractuar = true;
@@ -213,7 +213,7 @@ public class MenuScreen implements Screen {
         btnDificil.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Dificultad: Difícil");
+                System.out.println("Dificultad: Dificil");
                 overlay.remove();
                 setDificultad(3);
                 puedeInteractuar = true;

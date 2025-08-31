@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 
 import static com.sokoban.com.Base.JuegoBase.cajasEnum.*;
@@ -43,11 +44,11 @@ public class JuegoBase implements Screen {
     protected boolean gano = false;
 
     // Grid (mapa estilo Sokoban)
-    protected int TILE = 2; // cada celda mide 2 unidades del mundo
     protected int FILAS = 8; //Elegir las filas manuales
     protected int COLUMNAS = 10; //Elegir las columnas manuales
     protected int cantidadC = 0; //Esto se define despues con conseguir cantCajas por nivel
     protected int segundosT = 0;
+    protected int TILE = 800 / COLUMNAS; //
 
     // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
     private int[][] mapa = { // Tomar en cueta que esta inverso el mapa
@@ -96,6 +97,7 @@ public class JuegoBase implements Screen {
 
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
+
         shape = new ShapeRenderer();//Para las hitbox
 
         // Crear fuente
@@ -115,7 +117,8 @@ public class JuegoBase implements Screen {
 
         // Stage y Skin que son obligatorios para poder usar cosas como botones (Problema de UI)
         //Imaginate no poder usar swing ( pipipi , extrano swing:( )
-        stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        stage = new Stage(new ScreenViewport());
+        //stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -129,9 +132,8 @@ public class JuegoBase implements Screen {
         if (mapa[nuevoY][nuevoX] == 1) {
             return;
         }
-        if (gano)
-        {
-        return;
+        if (gano) {
+            return;
         }
 
         Cajita cajita = null;
@@ -232,10 +234,10 @@ public class JuegoBase implements Screen {
                 jogador.getHitbox().width, jogador.getHitbox().height);
         shape.end();
         revisarWin();
-        if (gano)
-        {
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
+        if (gano) {
+            stage.act(Gdx.graphics.getDeltaTime());
+            stage.getViewport().apply();
+            stage.draw();
         }
     }
 
@@ -420,7 +422,6 @@ public class JuegoBase implements Screen {
         TextButton btnVolver = new TextButton("Volver a menu", skin);
         TextButton btnReiniciar = new TextButton("Reiniciar", skin);
         TextButton btnExtra = new TextButton("Extra", skin);
-        
 
         // Acciones de los botones
         btnVolver.addListener(new ClickListener() {
