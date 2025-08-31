@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 
 import static com.sokoban.com.Base.JuegoBase.cajasEnum.*;
 import static com.sokoban.com.Base.JuegoBase.objetivosEnum.*;
@@ -33,7 +34,7 @@ public class JuegoBase implements Screen {
     private final int TILE = 2; // cada celda mide 2 unidades del mundo
     private final int FILAS = 8;
     private final int COLUMNAS = 10;
-    private final int cantidadC = 4;
+    private int cantidadC = 0;
 
     // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
     private final int[][] mapa = { // Tomar en cueta que esta inverso el mapa
@@ -49,7 +50,22 @@ public class JuegoBase implements Screen {
 
     // posiciones en celdas
     private int jugadorX = 2, jugadorY = 4;
-
+    public void conseguirCantCajas()
+    {
+    switch(MenuScreen.dificultad)
+    {
+        case 1:
+            cantidadC = 1;
+            break;
+        case 2:
+            cantidadC = 2;
+            break;
+        case 3:
+            cantidadC = 3;
+            break;
+    }
+    }
+    
     @Override
     public void show() {
         spriteBatch = new SpriteBatch();
@@ -59,6 +75,7 @@ public class JuegoBase implements Screen {
         //objetos
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
                 viewport.getWorldWidth(), viewport.getWorldHeight(),TILE);
+        conseguirCantCajas();
         spawnear();
         objetivosRealizados = 0;
 

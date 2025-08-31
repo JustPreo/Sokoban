@@ -6,15 +6,19 @@ package com.sokoban.com.Base.IntentoDeMenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.sokoban.com.Base.JuegoBase;
 import com.sokoban.com.Juegito;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,6 +28,10 @@ public class MenuScreen implements Screen {
 
     private Stage stage;
     private Skin skin;
+    public static int dificultad = 1;
+    private boolean puedeInteractuar = true;
+    private ArrayList<TextButton> botones = new ArrayList<>();
+    //
 
     public MenuScreen() {
         stage = new Stage(new ScreenViewport());
@@ -37,23 +45,39 @@ public class MenuScreen implements Screen {
         // Crear elementos UI
         Label titulo = new Label("Sokoban", skin);//Skin es como obligatorio para esto
         TextButton btnJugar = new TextButton("Jugar", skin);
+        botones.add(btnJugar);
         TextButton btnSalir = new TextButton("Salir", skin);
+        botones.add(btnSalir);
+        TextButton btnDificultad = new TextButton("Dificultad", skin);
+        botones.add(btnDificultad);
 
         // Listeners (acciones al presionar botones)
-        btnJugar.addListener(e -> {
-            if (btnJugar.isPressed()) {
+        btnJugar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Click en JUGAR");
-                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new JuegoBase());
-                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new JuegoBase());
+
+                //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
-            return true;
+        });
+        btnDificultad.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+                System.out.println("Dificultad");
+                mostrarSelectorDificultad();
+
+            }
+
         });
 
-        btnSalir.addListener(e -> {
-            if (btnSalir.isPressed()) {
+        btnSalir.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.exit();
+
             }
-            return true;
         });
 
         // Layout con Table
@@ -64,9 +88,10 @@ public class MenuScreen implements Screen {
         // Agregamos elementos con separaciones
         table.add(titulo).padBottom(40).row();   // texto arriba
         table.add(btnJugar).size(200, 60).padBottom(20).row();
+        table.add(btnDificultad).size(200, 60).padBottom(20).row();
         table.add(btnSalir).size(200, 60).row();
-        //Como el grid layout
 
+        //Como el grid layout
         // Agregar a Stage
         stage.addActor(table);//Sinceramente no entiendo bien esto para abajo
     }
@@ -105,5 +130,91 @@ public class MenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    public void setDificultad(int dif) {
+        dificultad = dif;
+        //0 = facil , 1 = mediano, 2 = dificil
+    }
+
+    private void mostrarSelectorDificultad() {
+        puedeInteractuar = false;
+        disableBotones();
+        // Fondo semi-transparente para bloquear input detrás
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        // Panel central
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel);
+
+        // Título
+        Label titulo = new Label("Selecciona Dificultad", skin);
+        panel.add(titulo).padBottom(20).row();
+
+        // Botones de dificultad
+        TextButton btnFacil = new TextButton("Fácil", skin);
+        TextButton btnNormal = new TextButton("Normal", skin);
+        TextButton btnDificil = new TextButton("Difícil", skin);
+
+        // Acciones de los botones
+        btnFacil.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Dificultad: Fácil");
+                overlay.remove(); // cerrar popup
+                setDificultad(1);
+                puedeInteractuar = true;
+                disableBotones();
+            }
+        });
+
+        btnNormal.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Dificultad: Normal");
+                overlay.remove();
+                setDificultad(2);
+                puedeInteractuar = true;
+                disableBotones();
+            }
+        });
+
+        btnDificil.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Dificultad: Difícil");
+                overlay.remove();
+                setDificultad(3);
+                puedeInteractuar = true;
+                disableBotones();
+            }
+        });
+
+        // Agregar botones al panel
+        panel.add(btnFacil).size(150, 50).padBottom(10).row();
+        panel.add(btnNormal).size(150, 50).padBottom(10).row();
+        panel.add(btnDificil).size(150, 50).row();
+
+        // Agregar overlay al stage
+        stage.addActor(overlay);
+    }
+
+    private void disableBotones() {
+        if (puedeInteractuar) {
+            for (TextButton but : botones) {
+                but.setDisabled(false);
+            }
+        }
+
+        if (!puedeInteractuar) {
+            for (TextButton but : botones) {
+                but.setDisabled(true);
+            }
+        }
     }
 }
