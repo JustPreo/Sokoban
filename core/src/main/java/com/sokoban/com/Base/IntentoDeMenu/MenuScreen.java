@@ -9,6 +9,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -56,7 +57,7 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Click en JUGAR");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new JuegoBase());
+                if (puedeInteractuar){((Juegito) Gdx.app.getApplicationListener()).setScreen(new JuegoBase());}
 
                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
@@ -66,7 +67,7 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Dificultad");
-                mostrarSelectorDificultad();
+                if (puedeInteractuar){mostrarSelectorDificultad();}
 
             }
 
@@ -75,7 +76,7 @@ public class MenuScreen implements Screen {
         btnSalir.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
+                if (puedeInteractuar){Gdx.app.exit();}
 
             }
         });
@@ -139,7 +140,6 @@ public class MenuScreen implements Screen {
 
     private void mostrarSelectorDificultad() {
         puedeInteractuar = false;
-        disableBotones();
         // Fondo semi-transparente para bloquear input detrás
         Table overlay = new Table();
         overlay.setFillParent(true);
@@ -169,7 +169,6 @@ public class MenuScreen implements Screen {
                 overlay.remove(); // cerrar popup
                 setDificultad(1);
                 puedeInteractuar = true;
-                disableBotones();
             }
         });
 
@@ -180,7 +179,6 @@ public class MenuScreen implements Screen {
                 overlay.remove();
                 setDificultad(2);
                 puedeInteractuar = true;
-                disableBotones();
             }
         });
 
@@ -191,7 +189,6 @@ public class MenuScreen implements Screen {
                 overlay.remove();
                 setDificultad(3);
                 puedeInteractuar = true;
-                disableBotones();
             }
         });
 
@@ -204,17 +201,12 @@ public class MenuScreen implements Screen {
         stage.addActor(overlay);
     }
 
-    private void disableBotones() {
-        if (puedeInteractuar) {
-            for (TextButton but : botones) {
-                but.setDisabled(false);
-            }
+    /*private void disableBotones() {
+        for (TextButton but : botones) {
+            but.setDisabled(!puedeInteractuar);
+            System.out.println(but.getDebug());
         }
+    }*/ 
+    //No funciono pero puede funcionar a futuro?
 
-        if (!puedeInteractuar) {
-            for (TextButton but : botones) {
-                but.setDisabled(true);
-            }
-        }
-    }
 }
