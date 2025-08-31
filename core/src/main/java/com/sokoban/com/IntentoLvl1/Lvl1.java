@@ -35,6 +35,7 @@ public class Lvl1 extends JuegoBase {
         jugadorY = 4;// y jogador
         // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas | 4 = player
         cambiarMapa(new int[][]{ //Crea un mapa nuevo
+            
             {1, 1, 1, 1, 1, 1, 1, 1, 1},//0
             {1, 2, 0, 0, 0, 0, 0, 0, 1},//1
             {1, 0, 0, 0, 0, 0, 1, 0, 1},//2
@@ -42,7 +43,8 @@ public class Lvl1 extends JuegoBase {
             {1, 1, 4, 1, 1, 1, 1, 0, 1},//4
             {1, 0, 0, 0, 0, 0, 3, 0, 1},//5
             {1, 0, 0, 0, 0, 0, 0, 0, 1},//6
-            {1, 1, 1, 1, 1, 1, 1, 1, 1} //7
+            {1, 1, 1, 1, 1, 1, 1, 1, 1}, //7
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, //8
            //0  1  2  3  4  5  6  7  8
         });
         //Posicion de cajas
@@ -58,7 +60,7 @@ public class Lvl1 extends JuegoBase {
         
         // Columnas y filas
         COLUMNAS = 9; //Lo cambie a 9
-        FILAS = 8; //Tomar en cuenta que esto es completamente manual
+        FILAS = 9; //Tomar en cuenta que esto es completamente manual
         //Entonces cuando vayas a tocar algo de esto tambien modificas el cambiarMapa
     }
 
