@@ -23,21 +23,21 @@ public class JuegoBase implements Screen {
     private ShapeRenderer shape;
 
     // Objetos
-    private Jugador jogador;
-    private ArrayList<Cajita> cajas = new ArrayList<>();
-    private ArrayList<Pared> paredes = new ArrayList<>();
-    private ArrayList<Objetivo> objetivos = new ArrayList<>();
-    boolean moverCaja = true;
-    private int objetivosRealizados;
+    protected Jugador jogador;
+    protected ArrayList<Cajita> cajas = new ArrayList<>();
+    protected ArrayList<Pared> paredes = new ArrayList<>();
+    protected ArrayList<Objetivo> objetivos = new ArrayList<>();
+    protected boolean moverCaja = true;
+    protected int objetivosRealizados;
 
     // Grid (mapa estilo Sokoban)
-    private final int TILE = 2; // cada celda mide 2 unidades del mundo
-    private final int FILAS = 8;
-    private final int COLUMNAS = 10;
-    private int cantidadC = 0;
+    protected int TILE = 2; // cada celda mide 2 unidades del mundo
+    protected int FILAS = 8; //Elegir las filas manuales
+    protected int COLUMNAS = 10; //Elegir las columnas manuales
+    protected int cantidadC = 0; //Esto se define despues con conseguir cantCajas por nivel
 
     // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
-    private final int[][] mapa = { // Tomar en cueta que esta inverso el mapa
+    private int[][] mapa = { // Tomar en cueta que esta inverso el mapa
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         {1, 2, 0, 0, 0, 0, 0, 0, 0, 1}, //objetivo0(1,1)
         {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},//caja0(2,2)
@@ -47,25 +47,29 @@ public class JuegoBase implements Screen {
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},//objetivo2(8,6)
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
     //Mas que nada es una representacion visual de donde estan las cajas/objetivos asi es mejor entenderlo
+    // Posiciones iniciales de cajas
+    protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
+
+    // Posiciones de objetivos
+    protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
 
     // posiciones en celdas
-    private int jugadorX = 2, jugadorY = 4;
-    public void conseguirCantCajas()
-    {
-    switch(MenuScreen.dificultad)
-    {
-        case 1:
-            cantidadC = 1;
-            break;
-        case 2:
-            cantidadC = 2;
-            break;
-        case 3:
-            cantidadC = 3;
-            break;
+    protected int jugadorX = 2, jugadorY = 4;
+
+    public void conseguirCantCajas() {
+        switch (MenuScreen.dificultad) {
+            case 1:
+                cantidadC = 1;
+                break;
+            case 2:
+                cantidadC = 2;
+                break;
+            case 3:
+                cantidadC = 3;
+                break;
+        }
     }
-    }
-    
+
     @Override
     public void show() {
         spriteBatch = new SpriteBatch();
@@ -74,7 +78,7 @@ public class JuegoBase implements Screen {
 
         //objetos
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
-                viewport.getWorldWidth(), viewport.getWorldHeight(),TILE);
+                viewport.getWorldWidth(), viewport.getWorldHeight(), TILE);
         conseguirCantCajas();
         spawnear();
         objetivosRealizados = 0;
@@ -107,7 +111,7 @@ public class JuegoBase implements Screen {
 
             int nuevoCajaX = (int) (cajita.hitbox.x / TILE) + dx;
             int nuevoCajaY = (int) (cajita.hitbox.y / TILE) + dy;
-            Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE,TILE);
+            Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE, TILE);
             for (Cajita c : cajas) {
                 if (c != cajita && cajitaTemp.hitbox.overlaps(c.hitbox)) {
                     return; // otra caja bloquea el movimiento
@@ -129,6 +133,7 @@ public class JuegoBase implements Screen {
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
 
     }
+
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             moverJugador(0, 1);
@@ -150,7 +155,7 @@ public class JuegoBase implements Screen {
 
         // Dibujar sprites
         spriteBatch.begin();
-        
+
         for (Objetivo obj : objetivos) {//Aqui se pone primero el obj
             obj.render(spriteBatch);
         }
@@ -212,23 +217,21 @@ public class JuegoBase implements Screen {
     }
 
     private void spawnear() {
-        // spawnear N cajas según cantidadC
-        for (int i = 0; i < cantidadC && i < cajasEnum.values().length; i++) {
-            cajasEnum ce = cajasEnum.values()[i];
-            cajas.add(new Cajita(ce.getX() * TILE, ce.getY() * TILE,TILE));
+        for (int i = 0; i < cantidadC; i++) {//Hacerlo basado en cantidadC
+            int[] pos = cajasPos[i];
+            cajas.add(new Cajita(pos[0] * TILE, pos[1] * TILE, TILE));
         }
 
-        // spawnear N objetivos según cantidadC
-        for (int i = 0; i < cantidadC && i < objetivosEnum.values().length; i++) {
-            objetivosEnum oe = objetivosEnum.values()[i];
-            objetivos.add(new Objetivo(oe.getX() * TILE, oe.getY() * TILE,TILE));
+        for (int i = 0; i < cantidadC; i++) {
+            int[] pos = objetivosPos[i];
+            objetivos.add(new Objetivo(pos[0] * TILE, pos[1] * TILE, TILE));
         }
 
         // paredes como antes
         for (int y = 0; y < FILAS; y++) {
             for (int x = 0; x < COLUMNAS; x++) {
                 if (mapa[y][x] == 1) {
-                    paredes.add(new Pared(x * TILE, y * TILE,TILE));
+                    paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
             }
         }
@@ -258,6 +261,11 @@ public class JuegoBase implements Screen {
 
     @Override
     public void hide() {
+    }
+
+    public void cambiarMapa(int[][] mapa) {
+        this.mapa = mapa;
+
     }
 
     public enum cajasEnum {

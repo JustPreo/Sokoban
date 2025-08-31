@@ -11,7 +11,7 @@ import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
  *
  * @author user
  */
-public class Juegito extends Game{
+public class Juegito extends Game{ //Este es el main para que abra el juegito
     @Override
     public void create() {
         setScreen(new MenuScreen()); 

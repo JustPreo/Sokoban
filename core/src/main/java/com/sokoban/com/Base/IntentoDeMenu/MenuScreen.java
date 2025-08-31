@@ -25,6 +25,20 @@ import java.util.ArrayList;
  *
  * @author user
  */
+
+/*
+Para estilizarlos botones
+
+Texture textura = new Texture(Gdx.files.internal("fondo_btn.png")); esto es carpeta assets
+Drawable fondo = new TextureRegionDrawable(new TextureRegion(textura)); dibuja la textura
+
+TextButton.TextButtonStyle estilo = new TextButton.TextButtonStyle(); se lo pone a textbutton como estilo
+estilo.up = fondo; estado normal
+estilo.down = fondo;  estado presionado , podemos usar otra textura talvez?
+estilo.font = new BitmapFont(); fuente para el texto
+estilo.fontColor = Color.WHITE; el color de la font
+
+*/
 public class MenuScreen implements Screen {
 
     private Stage stage;
