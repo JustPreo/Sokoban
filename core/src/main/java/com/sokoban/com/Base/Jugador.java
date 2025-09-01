@@ -59,5 +59,15 @@ public class Jugador {
     public void dispose() {
         if (per!= null) per.dispose();
     }
+    
+    public float getX()
+    {
+    return personaje.getX();
+    }
+    
+    public float getY()
+    {
+    return personaje.getY();
+    }
 
 }
