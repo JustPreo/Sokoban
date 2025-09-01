@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sokoban.com.Base.JuegoBase;
 import com.sokoban.com.IntentoLvl1.Lvl1;
 import com.sokoban.com.Juegito;
+import com.sokoban.com.SelectorNiveles.Hub;
 import java.util.ArrayList;
 
 /**
@@ -103,7 +104,6 @@ public class MenuScreen implements Screen {
         // Crear elementos UI
         Label titulo = new Label("Sokoban", skin);//Skin es como obligatorio para esto
         Button btnJugar = new Button(estiloJugar);
-
         Button btnSalir = new Button(estiloSalir);
 
         Button btnDificultad = new Button(estiloDificultades);
@@ -114,7 +114,7 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Click en JUGAR");
                 if (puedeInteractuar) {
-                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl1());
+                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                 }
 
                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
