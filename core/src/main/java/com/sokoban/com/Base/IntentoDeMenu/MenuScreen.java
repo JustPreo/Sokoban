@@ -9,15 +9,19 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.sokoban.com.Base.JuegoBase;
 import com.sokoban.com.IntentoLvl1.Lvl1;
 import com.sokoban.com.Juegito;
@@ -48,10 +52,44 @@ public class MenuScreen implements Screen {
     private Texture bg;
     public static int dificultad = 1;//Inicia en facil
     private boolean puedeInteractuar = true;
-    private ArrayList<TextButton> botones = new ArrayList<>();
     //
 
     public MenuScreen() {
+        //Textura de botones (Ahorita esas imagenes son placeholders)
+        //OFF
+        Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
+        Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
+        //ON
+        Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
+        Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
+        
+        Button.ButtonStyle estiloJugar = new Button.ButtonStyle();
+        estiloJugar.up = fondoJugar;
+        estiloJugar.down = fondoJugar2;
+        //----------------------------------------------------------------------------------------
+        Texture texturaDificultades = new Texture(Gdx.files.internal("dificultades.png"));
+        Drawable fondoDificultades = new TextureRegionDrawable(new TextureRegion(texturaDificultades));
+        //
+        Texture texturaDificultades2 = new Texture(Gdx.files.internal("dificultades2.png"));
+        Drawable fondoDificultades2 = new TextureRegionDrawable(new TextureRegion(texturaDificultades2));
+        
+        Button.ButtonStyle estiloDificultades = new Button.ButtonStyle();
+        estiloDificultades.up = fondoDificultades;
+        estiloDificultades.down = fondoDificultades2;
+        //----------------------------------------------------------------------------------------
+
+        Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
+        Drawable fondoSalir = new TextureRegionDrawable(new TextureRegion(texturaSalir));
+        //
+        Texture texturaSalir2 = new Texture(Gdx.files.internal("salir2.png"));
+        Drawable fondoSalir2 = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
+        
+        Button.ButtonStyle estiloSalir = new Button.ButtonStyle();
+        estiloSalir.up = fondoSalir;
+        estiloSalir.down = fondoSalir2;
+        //----------------------------------------------------------------------------------------
+
+        //Resto de cosas
         stage = new Stage(new ScreenViewport());
 
         // Capturar input para que los botones reciban clics
@@ -64,12 +102,11 @@ public class MenuScreen implements Screen {
 
         // Crear elementos UI
         Label titulo = new Label("Sokoban", skin);//Skin es como obligatorio para esto
-        TextButton btnJugar = new TextButton("Jugar", skin);
-        botones.add(btnJugar);
-        TextButton btnSalir = new TextButton("Salir", skin);
-        botones.add(btnSalir);
-        TextButton btnDificultad = new TextButton("Dificultad", skin);
-        botones.add(btnDificultad);
+        Button btnJugar = new Button(estiloJugar);
+
+        Button btnSalir = new Button(estiloSalir);
+
+        Button btnDificultad = new Button(estiloDificultades);
 
         // Listeners (acciones al presionar botones)
         btnJugar.addListener(new ClickListener() {
@@ -163,12 +200,12 @@ public class MenuScreen implements Screen {
 
     public void setDificultad(int dif) {
         dificultad = dif;
-        //0 = facil , 1 = mediano, 2 = dificil
+        //1 = facil , 2 = mediano, 3 = dificil
     }
 
     private void mostrarSelectorDificultad() {
         puedeInteractuar = false;
-        // Fondo semi-transparente para bloquear input detrás
+
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
