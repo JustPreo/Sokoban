@@ -22,7 +22,7 @@ public class ConfiguracionUsuario implements Serializable {
     // Configuraciones de juego
     private boolean mostrarAyuda;
     private boolean confirmarMovimientos;
-    private int velocidadAnimacion; // 1-5 (lenta a rápida)
+    private int velocidadAnimacion; 
     private boolean modoDesafio;
     
     // Configuraciones de control
@@ -30,7 +30,7 @@ public class ConfiguracionUsuario implements Serializable {
     private boolean invertirEjes;
     
     public ConfiguracionUsuario() {
-        // Valores por defecto
+        
         this.volumenMusica = 0.7f;
         this.volumenEfectos = 0.8f;
         this.sonidoActivado = true;
@@ -49,9 +49,7 @@ public class ConfiguracionUsuario implements Serializable {
         this.invertirEjes = false;
     }
     
-    /**
-     * Aplica configuración de audio
-     */
+    
     public void aplicarConfiguracionAudio() {
         if (!sonidoActivado) {
             // Silenciar todo
@@ -61,9 +59,7 @@ public class ConfiguracionUsuario implements Serializable {
         }
     }
     
-    /**
-     * Obtiene descripción de la configuración actual
-     */
+   
     public String getDescripcionConfig() {
         return String.format("""
              CONFIGURACIÓN ACTUAL
