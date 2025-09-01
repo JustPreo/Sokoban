@@ -143,6 +143,7 @@ public class Hub implements Screen {
         if (jogador.getHitbox().overlaps(pad.getHitbox()))
         {
             System.out.println(pad.getNivel());
+            pad.irANivel();
         }
         }
         
@@ -159,7 +160,6 @@ public class Hub implements Screen {
                 if (mapa[f][c] != 1 && mapa[f][c] != 0)
                 {
                 pads.add(new padNiveles(c * TILE,f * TILE,TILE,(mapa[f][c]-1)));
-                    System.out.println(mapa[f][c]-1);
                 }
                 
             }

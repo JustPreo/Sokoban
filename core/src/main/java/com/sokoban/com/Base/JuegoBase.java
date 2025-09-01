@@ -32,6 +32,7 @@ public abstract class JuegoBase implements Screen {
     protected BitmapFont font;
     protected Stage stage;
     protected Skin skin;
+    private Table overlayPausa;
 
     // Objetos
     protected Jugador jogador;
@@ -41,6 +42,7 @@ public abstract class JuegoBase implements Screen {
     protected boolean moverCaja = true;
     protected int objetivosRealizados;
     protected boolean gano = false;
+    protected boolean pausa = false;
 
     // Grid (mapa estilo Sokoban)
     protected int FILAS = 8; //Elegir las filas manuales
@@ -61,7 +63,7 @@ public abstract class JuegoBase implements Screen {
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},//objetivo2(8,6)
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
     //Mas que nada es una representacion visual de donde estan las cajas/objetivos asi es mejor entenderlo
-    
+
     // Posiciones iniciales de cajas
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
     // Posiciones de objetivos
@@ -71,9 +73,10 @@ public abstract class JuegoBase implements Screen {
     protected int jugadorX = 2, jugadorY = 4;
     protected float timer = 0f;
 
-     public abstract void conseguirCantCajas(); 
-     //La idea de como deberia de ser   
-     /*switch (MenuScreen.dificultad) {
+    public abstract void conseguirCantCajas();
+    //La idea de como deberia de ser   
+
+    /*switch (MenuScreen.dificultad) {
             case 1:
                 cantidadC = 1;
                 break;
@@ -84,9 +87,8 @@ public abstract class JuegoBase implements Screen {
                 cantidadC = 3;
                 break;
         }*/
-    
 
-    protected abstract void configurarNivel(); 
+    protected abstract void configurarNivel();
 
     @Override
     public void show() {
@@ -130,7 +132,7 @@ public abstract class JuegoBase implements Screen {
         if (mapa[nuevoY][nuevoX] == 1) {
             return;
         }
-        if (gano) {
+        if (gano || pausa) {
             return;
         }
 
@@ -176,9 +178,19 @@ public abstract class JuegoBase implements Screen {
     }
 
     public void render() {
-        if (!gano) {
+        if (!gano && !pausa) {
             timer += Gdx.graphics.getDeltaTime();
         } // aumenta segundos
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
+            if (!pausa) {
+                pause();
+            }
+            else if (pausa)
+            {
+            resume();
+            }
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             moverJugador(0, 1);
         }
@@ -234,7 +246,7 @@ public abstract class JuegoBase implements Screen {
                 jogador.getHitbox().width, jogador.getHitbox().height);
         shape.end();
         revisarWin();
-        if (gano) {
+        if (gano || pausa) {
             stage.act(Gdx.graphics.getDeltaTime());
             stage.getViewport().apply();
             stage.draw();
@@ -268,11 +280,19 @@ public abstract class JuegoBase implements Screen {
 
     @Override
     public void pause() {
+        pausa = true;
+        menuPausa();
     }
 
     @Override
     public void resume() {
+        pausa = false;
+    if (overlayPausa != null) {
+        overlayPausa.remove();
+        overlayPausa = null;
     }
+}
+    
 
     private void spawnear() {
         for (int i = 0; i < cantidadC; i++) {//Hacerlo basado en cantidadC
@@ -329,10 +349,62 @@ public abstract class JuegoBase implements Screen {
 
     }
 
-    
-
     public void guardarSegundos(int segundos) {
         //Logica para guardar segundos en archivos
+    }
+
+    private void menuPausa() {
+        
+        overlayPausa = new Table();
+        overlayPausa.setFillParent(true);
+        overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlayPausa.center();
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlayPausa.add(panel);
+        Label titulo = new Label("Nivel Completado!11!!", skin);
+        panel.add(titulo).padBottom(20).row();
+        TextButton btnVolver = new TextButton("Volver a menu", skin);
+        TextButton btnReiniciar = new TextButton("Reiniciar", skin);
+
+        btnVolver.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Volver");
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                // remover overlay para limpiar
+                overlayPausa.remove();
+
+            }
+        });
+
+        btnReiniciar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                System.out.println("Reiniciar");
+                // Quitar overlay
+                overlayPausa.remove();
+                // Reiniciar variables del nivel
+                cajas.clear();
+                paredes.clear();
+                objetivos.clear();
+                timer = 0f;
+                vecesEmpujado = 0;
+                objetivosRealizados = 0;
+                gano = false;
+                pausa = false;
+                configurarNivel();
+                spawnear();
+                jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+            }
+        });
+
+        panel.add(btnVolver).size(150, 50).padBottom(10).row();
+        panel.add(btnReiniciar).size(150, 50).padBottom(10).row();
+
+        stage.addActor(overlayPausa); 
+
     }
 
     //Logica para pantalla de volver atras y tiempo?
@@ -385,6 +457,7 @@ public abstract class JuegoBase implements Screen {
                 vecesEmpujado = 0;
                 objetivosRealizados = 0;
                 gano = false;
+                pausa = false;
                 configurarNivel();
                 spawnear();
                 jogador.setPos(jugadorX * TILE, jugadorY * TILE);
