@@ -116,6 +116,7 @@ public class MenuScreen implements Screen {
                 if (puedeInteractuar) {
                     ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                 }
+                dispose();
 
                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
@@ -137,7 +138,9 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
+                    dispose();
                     Gdx.app.exit();
+                    
                 }
 
             }

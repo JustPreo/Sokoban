@@ -11,10 +11,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.sokoban.com.Base.JuegoBase;
 import com.sokoban.com.Base.Jugador;
 import com.sokoban.com.Base.Pared;
-import com.sokoban.com.IntentoLvl1.Lvl1;
 import java.util.ArrayList;
 
 /**
@@ -63,17 +61,16 @@ public class Hub implements Screen {
 
     @Override
     public void render(float f) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+        if (jogador.consumeUp()) {
             moverJugador(0, 1);
         }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+        else if (jogador.consumeDown()) {
             moverJugador(0, -1);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+        else if (jogador.consumeLeft()) {
             moverJugador(-1, 0);
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        else if (jogador.consumeRight()) {
             moverJugador(1, 0);
         }
         

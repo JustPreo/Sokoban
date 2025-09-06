@@ -1,6 +1,5 @@
 package com.sokoban.com.Base;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -87,7 +86,6 @@ public abstract class JuegoBase implements Screen {
                 cantidadC = 3;
                 break;
         }*/
-
     protected abstract void configurarNivel();
 
     @Override
@@ -185,23 +183,18 @@ public abstract class JuegoBase implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
             if (!pausa) {
                 pause();
-            }
-            else if (pausa)
-            {
-            resume();
+            } else if (pausa) {
+                resume();
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+        // Estos métodos ya hacen lo que necesitas
+        if (jogador.consumeUp()) {
             moverJugador(0, 1);
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+        } else if (jogador.consumeDown()) {
             moverJugador(0, -1);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+        } else if (jogador.consumeLeft()) {
             moverJugador(-1, 0);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)) {
+        } else if (jogador.consumeRight()) {
             moverJugador(1, 0);
         }
 
@@ -287,12 +280,11 @@ public abstract class JuegoBase implements Screen {
     @Override
     public void resume() {
         pausa = false;
-    if (overlayPausa != null) {
-        overlayPausa.remove();
-        overlayPausa = null;
+        if (overlayPausa != null) {
+            overlayPausa.remove();
+            overlayPausa = null;
+        }
     }
-}
-    
 
     private void spawnear() {
         for (int i = 0; i < cantidadC; i++) {//Hacerlo basado en cantidadC
@@ -354,7 +346,7 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void menuPausa() {
-        
+
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -403,7 +395,7 @@ public abstract class JuegoBase implements Screen {
         panel.add(btnVolver).size(150, 50).padBottom(10).row();
         panel.add(btnReiniciar).size(150, 50).padBottom(10).row();
 
-        stage.addActor(overlayPausa); 
+        stage.addActor(overlayPausa);
 
     }
 
