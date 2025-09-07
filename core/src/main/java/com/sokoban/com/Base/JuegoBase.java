@@ -37,6 +37,7 @@ public abstract class JuegoBase implements Screen {
     protected Jugador jogador;
     protected ArrayList<Cajita> cajas = new ArrayList<>();
     protected ArrayList<Pared> paredes = new ArrayList<>();
+    protected ArrayList<Piso> pisos = new ArrayList<>();
     protected ArrayList<Objetivo> objetivos = new ArrayList<>();
     protected boolean moverCaja = true;
     protected int objetivosRealizados;
@@ -144,11 +145,6 @@ public abstract class JuegoBase implements Screen {
         // caja?
         if (cajita != null) {
 
-            if (!cajita.mover) {
-                // La caja no se puede mover, se comporta como pared
-                return;
-            }
-
             int nuevoCajaX = (int) (cajita.hitbox.x / TILE) + dx;
             int nuevoCajaY = (int) (cajita.hitbox.y / TILE) + dy;
             Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE, TILE);
@@ -158,7 +154,7 @@ public abstract class JuegoBase implements Screen {
                 }
             }
 
-            if (mapa[nuevoCajaY][nuevoCajaX] != 1 && cajita.mover) {
+            if (mapa[nuevoCajaY][nuevoCajaX] != 1 ) {
                 //Osea si no hay una pared/obstaculo y se puede mover la caja todo joya
                 jugadorX = nuevoX;
                 jugadorY = nuevoY;
@@ -204,6 +200,11 @@ public abstract class JuegoBase implements Screen {
 
         // Dibujar sprites
         spriteBatch.begin();
+
+        for (Piso piso : pisos) {//De primero 
+            piso.render(spriteBatch);
+            piso.update();
+        }
 
         for (Objetivo obj : objetivos) {//Aqui se pone primero el obj
             obj.render(spriteBatch);
@@ -303,6 +304,9 @@ public abstract class JuegoBase implements Screen {
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
+                if (mapa[y][x] == 0 && (y != (FILAS-1) && x != (COLUMNAS -1))) {//Para evitar que se pongan en el lugar del timer
+                    pisos.add(new Piso(x * TILE, y * TILE, TILE));//Esto es paredes pero con textura de piso y ya
+                }
             }
         }
     }
@@ -310,8 +314,7 @@ public abstract class JuegoBase implements Screen {
     public void revisarWin() {
         for (Cajita caja : cajas) {
             for (Objetivo obj : objetivos) {
-                if (caja.hitbox.overlaps(obj.hitbox) && caja.mover != false) {//Para evitar multiples setFalse
-                    caja.mover = false;
+                if (caja.hitbox.overlaps(obj.hitbox)) {//Para evitar multiples setFalse
                     objetivosRealizados++;
 
                 }
@@ -324,6 +327,8 @@ public abstract class JuegoBase implements Screen {
             guardarSegundos(segundosT);
             finNivel();
         }
+        
+        objetivosRealizados = 0;
 
     }
 

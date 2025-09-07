@@ -21,7 +21,6 @@ public class Cajita {
     Sprite caja;
     Rectangle hitbox;
     float timer;
-    boolean mover = true;
 
     public Cajita(float x, float y,float TILE) {
         text = new Texture("caja.png");
@@ -33,12 +32,6 @@ public class Cajita {
     }
 
     public void update() {
-        
-        if (mover){hitbox.setPosition(caja.getX(), caja.getY());}
-        if (!mover)
-        {
-        caja.setTexture(text2);
-        }
     }
 
     public void render(SpriteBatch batch) {

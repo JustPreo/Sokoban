@@ -68,15 +68,15 @@ public class MenuScreen implements Screen {
         estiloJugar.up = fondoJugar;
         estiloJugar.down = fondoJugar2;
         //----------------------------------------------------------------------------------------
-        Texture texturaDificultades = new Texture(Gdx.files.internal("dificultades.png"));
-        Drawable fondoDificultades = new TextureRegionDrawable(new TextureRegion(texturaDificultades));
+        Texture texturaExtra = new Texture(Gdx.files.internal("extra.png"));
+        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
         //
-        Texture texturaDificultades2 = new Texture(Gdx.files.internal("dificultades2.png"));
-        Drawable fondoDificultades2 = new TextureRegionDrawable(new TextureRegion(texturaDificultades2));
+        Texture texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
+        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
         
         Button.ButtonStyle estiloDificultades = new Button.ButtonStyle();
-        estiloDificultades.up = fondoDificultades;
-        estiloDificultades.down = fondoDificultades2;
+        estiloDificultades.up = fondoExtra;
+        estiloDificultades.down = fondoExtra2;
         //----------------------------------------------------------------------------------------
 
         Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
@@ -106,7 +106,7 @@ public class MenuScreen implements Screen {
         Button btnJugar = new Button(estiloJugar);
         Button btnSalir = new Button(estiloSalir);
 
-        Button btnDificultad = new Button(estiloDificultades);
+        Button btnExtra = new Button(estiloDificultades);
 
         // Listeners (acciones al presionar botones)
         btnJugar.addListener(new ClickListener() {
@@ -121,13 +121,13 @@ public class MenuScreen implements Screen {
                 //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
         });
-        btnDificultad.addListener(new ClickListener() {
+        btnExtra.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
                 System.out.println("Dificultad");
                 if (puedeInteractuar) {
-                    mostrarSelectorDificultad();
+                    System.out.println("Extra");
                 }
 
             }
@@ -154,7 +154,7 @@ public class MenuScreen implements Screen {
         // Agregamos elementos con separaciones
         table.add(titulo).padBottom(40).row();   // texto arriba
         table.add(btnJugar).size(200, 60).padBottom(20).row();
-        table.add(btnDificultad).size(200, 60).padBottom(20).row();
+        table.add(btnExtra).size(200, 60).padBottom(20).row();
         table.add(btnSalir).size(200, 60).row();
 
         //Como el grid layout
@@ -206,7 +206,7 @@ public class MenuScreen implements Screen {
         //1 = facil , 2 = mediano, 3 = dificil
     }
 
-    private void mostrarSelectorDificultad() {
+    /*private void mostrarSelectorDificultad() {
         puedeInteractuar = false;
 
         Table overlay = new Table();
@@ -267,7 +267,9 @@ public class MenuScreen implements Screen {
 
         // Agregar overlay al stage
         stage.addActor(overlay);
-    }
+    }*/ 
+    //Resulta que no hay que elegir dificultad :(
+    //Por si acaso dejo eso ahi por si lo uso despue en algun otro lado
 
     /*private void disableBotones() {
         for (TextButton but : botones) {
