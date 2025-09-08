@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.sokoban.com.Base;
 
 import com.badlogic.gdx.Gdx;
@@ -9,83 +5,90 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 
-/**
- *
- * @author user
- */
 public class Jugador {
 
     Texture per;
     Sprite personaje;
     Rectangle hitbox;
-    final float velocidad = 4f;
     float maxW, maxH;
-    float timerCaminar;
-   private volatile boolean up, down, left, right;  //variables compartidas entre múltiples hilos.
+    private volatile boolean up, down, left, right;
     
+    // animation
+    private float posInicialX, posInicialY;
+    private float posObjetivoX, posObjetivoY;
+    private boolean animando;
+    private float tiempoAnimacion;
+    private float duracionAnimacion = 0.15f; // 150ms
 
-    public Jugador(float x, float y, float width, float height,float TILE) {
+    public Jugador(float x, float y, float width, float height, float TILE) {
         per = new Texture("personaje.png");
         personaje = new Sprite(per);
-        personaje.setSize(TILE, TILE);//ANCHO ALTO , unidades mundo
-        personaje.setPosition(x, y);//Ponerle la posicion en x y y que da 
+        personaje.setSize(TILE, TILE);
+        
+        // Inicializar posiciones
+        posInicialX = posObjetivoX = x;
+        posInicialY = posObjetivoY = y;
+        personaje.setPosition(x, y);
         
         maxW = width - personaje.getWidth();
         maxH = height - personaje.getHeight();
-        //No me acuerdo para que usaba esto la verdad
-
-        //Igualar la hitbox con la del sprite
         hitbox = new Rectangle(x, y, personaje.getWidth(), personaje.getHeight());
         
         Thread inputThread = new Thread(() -> {
             while (true) {
-                // El "consume" en el otro hilo 
                 up = Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP);
                 down = Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN);
                 left = Gdx.input.isKeyJustPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT);
                 right = Gdx.input.isKeyJustPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-
-                /*try {
-                    Thread.sleep(10); // Talvez funciona asi?
-                } catch (InterruptedException ignored) {}*/
             }
         });
         inputThread.setDaemon(true);
         inputThread.start();
     }
-    
-    public void revisarInput()
-    {
-    if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            //(0, 1);
-        }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)|| Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-            //(0, -1);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.A)|| Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-            //(-1, 0);
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.D)|| Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-            //(1, 0);
-        }
-    
-    }
-
-    //Creo un metodo update para recibir inputs
     public void update() {
-        //Actualizar la hitbox con cada update
+        // si animando entonces
+        if (animando) {
+            tiempoAnimacion += Gdx.graphics.getDeltaTime();
+            float progreso = Math.min(tiempoAnimacion / duracionAnimacion, 1.0f);
+            
+            // Interpolación suave
+            float factor = Interpolation.smooth.apply(progreso);
+            
+            // Calcular pos actual
+            float x = posInicialX + (posObjetivoX - posInicialX) * factor;
+            float y = posInicialY + (posObjetivoY - posInicialY) * factor;
+            
+            personaje.setPosition(x, y);
+            
+            // Terminar anim
+            if (progreso >= 1.0f) {
+                animando = false;
+                personaje.setPosition(posObjetivoX, posObjetivoY);
+            }
+        }
+        
+        // Actualizar hitbox
         hitbox.setPosition(personaje.getX(), personaje.getY());
-        //Se actualiza la x y la y
     }
     
     public void setPos(float x, float y) {
-    personaje.setPosition(x, y);
-    hitbox.setPosition(x, y);
-}
-
+        if (!animando) {
+            posInicialX = personaje.getX();
+            posInicialY = personaje.getY();
+            posObjetivoX = x;
+            posObjetivoY = y;
+            animando = true;
+            tiempoAnimacion = 0f;
+        }
+    }
+    
+    public boolean estaAnimando() {
+        return animando;
+    }
 
     public void render(SpriteBatch batch) {
         personaje.draw(batch);
@@ -94,52 +97,53 @@ public class Jugador {
     public Rectangle getHitbox() {
         return hitbox;
     }
+    
     public void dispose() {
-        if (per!= null) per.dispose();
+        if (per != null) per.dispose();
     }
     
-    public float getX()
-    {
-    return personaje.getX();
+    public float getX() {
+        return personaje.getX();
     }
     
-    public float getY()
-    {
-    return personaje.getY();
+    public float getY() {
+        return personaje.getY();
     }
-    
-    // Métodos para "consumir" los inputs
+
+    //(solo si no esta animando)
     public boolean consumeUp() {
-        if (up) { 
+        if (up && !animando) { 
             up = false; 
             return true; 
         }
+        if (up) up = false; // Consumir input aunque esté animando
         return false;
     }
 
     public boolean consumeDown() {
-        if (down) { 
+        if (down && !animando) { 
             down = false; 
             return true; 
         }
+        if (down) down = false;
         return false;
     }
 
     public boolean consumeLeft() {
-        if (left) { 
+        if (left && !animando) { 
             left = false; 
             return true; 
         }
+        if (left) left = false;
         return false;
     }
 
     public boolean consumeRight() {
-        if (right) { 
+        if (right && !animando) { 
             right = false; 
             return true; 
         }
+        if (right) right = false;
         return false;
     }
-
-
 }

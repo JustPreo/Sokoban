@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,7 +20,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
-
 import com.sokoban.com.Juegito;
 import java.util.ArrayList;
 
@@ -44,49 +45,36 @@ public abstract class JuegoBase implements Screen {
     protected boolean gano = false;
     protected boolean pausa = false;
 
-    // Grid (mapa estilo Sokoban)
-    protected int FILAS = 8; //Elegir las filas manuales
-    protected int COLUMNAS = 10; //Elegir las columnas manuales
-    protected int cantidadC = 0; //Esto se define despues con conseguir cantCajas por nivel
+    // Grid 
+    protected int FILAS = 8;
+    protected int COLUMNAS = 10;
+    protected int cantidadC = 0;
     protected int segundosT = 0;
-    protected int TILE = 800 / COLUMNAS; //
+    protected int TILE = 800 / COLUMNAS;
     protected int vecesEmpujado = 0;
 
-    // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas
-    private int[][] mapa = { // Tomar en cueta que esta inverso el mapa
+    // Mapa de ejemplo
+    private int[][] mapa = {
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 2, 0, 0, 0, 0, 0, 0, 0, 1}, //objetivo0(1,1)
-        {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},//caja0(2,2)
-        {1, 0, 0, 0, 0, 0, 3, 2, 0, 1},//caja1(6,3) , objetivo1(7,3)
+        {1, 2, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 3, 2, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},//caja2(2,5)
-        {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},//objetivo2(8,6)
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
-    //Mas que nada es una representacion visual de donde estan las cajas/objetivos asi es mejor entenderlo
+        {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+    };
+    //No se si hacer tipo que 1 = pared normal | 2 = esquina izquierda 3 = esquina derecha y asi
+    //Mas que nada para mantener el tile
+    //O se podria hacer algo tipo 
 
-    // Posiciones iniciales de cajas
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
-    // Posiciones de objetivos
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
 
-    // posiciones en celdas
     protected int jugadorX = 2, jugadorY = 4;
     protected float timer = 0f;
 
-    public abstract void conseguirCantCajas();
-    //La idea de como deberia de ser   
-
-    /*switch (MenuScreen.dificultad) {
-            case 1:
-                cantidadC = 1;
-                break;
-            case 2:
-                cantidadC = 2;
-                break;
-            case 3:
-                cantidadC = 3;
-                break;
-        }*/
+    public abstract void conseguirCantCajas();//Esto toca borrarlo
     protected abstract void configurarNivel();
 
     @Override
@@ -96,17 +84,10 @@ public abstract class JuegoBase implements Screen {
 
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
+        shape = new ShapeRenderer();
 
-        shape = new ShapeRenderer();//Para las hitbox
-
-        // Crear fuente
-        font = new BitmapFont(); // por defecto carga font interno
-        font.setColor(Color.WHITE);
-
-        // Escala proporcional al tamaño del nivel
-        float escalaBase = 0.05f; //
-        float escala = escalaBase * TILE;
-        font.getData().setScale(escala); //objetos
+        // CREAR FUENTE PRESS START 2P DE ALTA CALIDAD
+        createPixelFont();
 
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
                 viewport.getWorldWidth(), viewport.getWorldHeight(), TILE);
@@ -114,68 +95,111 @@ public abstract class JuegoBase implements Screen {
         spawnear();
         objetivosRealizados = 0;
 
-        // Stage y Skin que son obligatorios para poder usar cosas como botones (Problema de UI)
-        //Imaginate no poder usar swing ( pipipi , extrano swing:( )
         stage = new Stage(new ScreenViewport());
-        //stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+    }
 
+    private void createPixelFont() {
+        try {
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+                Gdx.files.internal("fonts/PressStart2P-vaV7.ttf")
+            );
+            
+            FreeTypeFontGenerator.FreeTypeFontParameter par = 
+                new FreeTypeFontGenerator.FreeTypeFontParameter();
+            
+            // Configuración para fuente pixel perfect
+            par.size = Math.max(12, TILE / 4); // Size base , despues se puede mod
+            par.color = Color.WHITE;
+            
+            //usar Nearest para mantener pixeles nitidos
+            par.magFilter = Texture.TextureFilter.Nearest;
+            par.minFilter = Texture.TextureFilter.Nearest;
+            //Es como un tipo de filtro que trae eso
+            
+            // Borde
+            par.borderWidth = 1;
+            par.borderColor = Color.BLACK;
+            
+            font = generator.generateFont(par);
+            generator.dispose();
+            
+        } catch (Exception e) {
+            System.err.println("Error cargando fuente :" + e.getMessage());
+            
+            
+            //fuente por defecto por si se borra de assets
+            font = new BitmapFont();
+            font.getRegion().getTexture().setFilter(
+                Texture.TextureFilter.Nearest, 
+                Texture.TextureFilter.Nearest
+            );
+            font.setColor(Color.WHITE);
+            font.getData().setScale(TILE * 0.025f);
+        }
     }
 
     private void moverJugador(int dx, int dy) {
         int nuevoX = jugadorX + dx;
         int nuevoY = jugadorY + dy;
 
-        // pared?
+        // Verificar paredes
         if (mapa[nuevoY][nuevoX] == 1) {
             return;
         }
+        
         if (gano || pausa) {
             return;
         }
 
+        // Buscar cajita en la nueva pos
         Cajita cajita = null;
         for (Cajita caja : cajas) {
-            if ((int) (caja.hitbox.x / TILE) == nuevoX && (int) (caja.hitbox.y / TILE) == nuevoY) {
+            if ((int) (caja.getHitbox().x / TILE) == nuevoX && (int) (caja.getHitbox().y / TILE) == nuevoY) {
                 cajita = caja;
                 break;
             }
         }
-        // caja?
-        if (cajita != null) {
 
-            int nuevoCajaX = (int) (cajita.hitbox.x / TILE) + dx;
-            int nuevoCajaY = (int) (cajita.hitbox.y / TILE) + dy;
+        // Si hay una cajita, verificar si se puede mover
+        if (cajita != null) {
+            int nuevoCajaX = (int) (cajita.getHitbox().x / TILE) + dx;
+            int nuevoCajaY = (int) (cajita.getHitbox().y / TILE) + dy;
+            
             Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE, TILE);
+            boolean colision = false;
+            
             for (Cajita c : cajas) {
-                if (c != cajita && cajitaTemp.hitbox.overlaps(c.hitbox)) {
-                    return; // otra caja bloquea el movimiento
+                if (c != cajita && cajitaTemp.getHitbox().overlaps(c.getHitbox())) {
+                    colision = true;
+                    break;
                 }
             }
+            cajitaTemp.dispose();
 
-            if (mapa[nuevoCajaY][nuevoCajaX] != 1 ) {
-                //Osea si no hay una pared/obstaculo y se puede mover la caja todo joya
+            if (mapa[nuevoCajaY][nuevoCajaX] != 1 && !colision) {
+                // Mover jugador y caja
                 jugadorX = nuevoX;
                 jugadorY = nuevoY;
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
+                jogador.setPos(jugadorX * TILE, jugadorY * TILE);
                 vecesEmpujado++;
             }
         } else {
+            // Xiomara(Osea libre)
             jugadorX = nuevoX;
             jugadorY = nuevoY;
+            jogador.setPos(jugadorX * TILE, jugadorY * TILE);
         }
-
-        // actualizar pos
-        jogador.setPos(jugadorX * TILE, jugadorY * TILE);
-
     }
 
     public void render() {
         if (!gano && !pausa) {
             timer += Gdx.graphics.getDeltaTime();
-        } // aumenta segundos
+        }
 
+        // Control de pausa
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
             if (!pausa) {
                 pause();
@@ -183,62 +207,76 @@ public abstract class JuegoBase implements Screen {
                 resume();
             }
         }
-        // Estos métodos ya hacen lo que necesitas
-        if (jogador.consumeUp()) {
-            moverJugador(0, 1);
-        } else if (jogador.consumeDown()) {
-            moverJugador(0, -1);
-        } else if (jogador.consumeLeft()) {
-            moverJugador(-1, 0);
-        } else if (jogador.consumeRight()) {
-            moverJugador(1, 0);
+
+        // Procesar input solo si no hay animaciones
+        boolean puedeMoverse = !jogador.estaAnimando();
+        for (Cajita caja : cajas) {
+            if (caja.estaAnimando()) {
+                puedeMoverse = false;
+                break;
+            }
         }
 
+        if (puedeMoverse) {
+            if (jogador.consumeUp()) {
+                moverJugador(0, 1);
+            } else if (jogador.consumeDown()) {
+                moverJugador(0, -1);
+            } else if (jogador.consumeLeft()) {
+                moverJugador(-1, 0);
+            } else if (jogador.consumeRight()) {
+                moverJugador(1, 0);
+            }
+        } else {
+            // Consumir inputs para evitar acumulación
+            jogador.consumeUp();
+            jogador.consumeDown();
+            jogador.consumeLeft();
+            jogador.consumeRight();
+        }
+
+        // Actualizar objetos
+        jogador.update();
+        for (Cajita caja : cajas) {
+            caja.update();
+        }
+
+        // Render
         ScreenUtils.clear(Color.DARK_GRAY);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
-        // Dibujar sprites
         spriteBatch.begin();
 
-        for (Piso piso : pisos) {//De primero 
+        for (Piso piso : pisos) {
             piso.render(spriteBatch);
             piso.update();
         }
 
-        for (Objetivo obj : objetivos) {//Aqui se pone primero el obj
+        for (Objetivo obj : objetivos) {
             obj.render(spriteBatch);
         }
+        
         jogador.render(spriteBatch);
-        for (Cajita caj : cajas) {//Despues las cajas (por prioridad)
+        
+        for (Cajita caj : cajas) {
             caj.render(spriteBatch);
-            caj.update();
         }
 
-        for (Pared pared : paredes) {//De ultimo las paredes
+        for (Pared pared : paredes) {
             pared.render(spriteBatch);
             pared.update();
         }
 
-        // Mostrar timer
+        // Mostrar timer con la nueva fuente
         segundosT = (int) timer;
         int minutos = (int) (timer / 60);
         int segundos = (int) (timer % 60);
-        float margen = TILE * 0.2f; // relativo a TILE, ajustable
-        font.draw(spriteBatch, String.format("%02d:%02d   Veces empujado %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
-        //%d → número normal (vecesEmpujado)
+        float margen = TILE * 0.2f;
+        font.draw(spriteBatch, String.format("%02d:%02d   Empujones: %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
 
         spriteBatch.end();
 
-        // Debug de hitboxes 
-        shape.setProjectionMatrix(viewport.getCamera().combined);
-        shape.begin(ShapeRenderer.ShapeType.Line);
-
-        // jugador
-        shape.setColor(Color.BLACK);
-        shape.rect(jogador.getHitbox().x, jogador.getHitbox().y,
-                jogador.getHitbox().width, jogador.getHitbox().height);
-        shape.end();
         revisarWin();
         if (gano || pausa) {
             stage.act(Gdx.graphics.getDeltaTime());
@@ -246,7 +284,7 @@ public abstract class JuegoBase implements Screen {
             stage.draw();
         }
     }
-
+    
     @Override
     public void resize(int width, int height) {
         if (width > 0 && height > 0) {
@@ -258,7 +296,6 @@ public abstract class JuegoBase implements Screen {
     public void dispose() {
         spriteBatch.dispose();
         jogador.dispose();
-
         for (Pared pared : paredes) {
             pared.dispose();
         }
@@ -268,8 +305,13 @@ public abstract class JuegoBase implements Screen {
         for (Objetivo obj : objetivos) {
             obj.dispose();
         }
-
+        for (Piso piso : pisos) {
+            piso.dispose();
+        }
         shape.dispose();
+        font.dispose();
+        stage.dispose();
+        skin.dispose();
     }
 
     @Override
@@ -288,7 +330,7 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void spawnear() {
-        for (int i = 0; i < cantidadC; i++) {//Hacerlo basado en cantidadC
+        for (int i = 0; i < cantidadC; i++) {
             int[] pos = cajasPos[i];
             cajas.add(new Cajita(pos[0] * TILE, pos[1] * TILE, TILE));
         }
@@ -298,38 +340,34 @@ public abstract class JuegoBase implements Screen {
             objetivos.add(new Objetivo(pos[0] * TILE, pos[1] * TILE, TILE));
         }
 
-        // paredes como antes
         for (int y = 0; y < FILAS; y++) {
             for (int x = 0; x < COLUMNAS; x++) {
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
-                if (mapa[y][x] == 0 && (y != (FILAS-1) && x != (COLUMNAS -1))) {//Para evitar que se pongan en el lugar del timer
-                    pisos.add(new Piso(x * TILE, y * TILE, TILE));//Esto es paredes pero con textura de piso y ya
+                if (mapa[y][x] == 0 && (y != (FILAS-1) && x != (COLUMNAS -1))) {
+                    pisos.add(new Piso(x * TILE, y * TILE, TILE));
                 }
             }
         }
     }
 
     public void revisarWin() {
+        objetivosRealizados = 0;
         for (Cajita caja : cajas) {
             for (Objetivo obj : objetivos) {
-                if (caja.hitbox.overlaps(obj.hitbox)) {//Para evitar multiples setFalse
+                if (caja.getHitbox().overlaps(obj.getHitbox())) {
                     objetivosRealizados++;
-
                 }
             }
-
         }
+
         if (objetivosRealizados == objetivos.size() && !gano) {
-            System.out.println("Gano");
+            System.out.println("¡Nivel completado!");
             gano = true;
             guardarSegundos(segundosT);
             finNivel();
         }
-        
-        objetivosRealizados = 0;
-
     }
 
     @Override
@@ -343,139 +381,107 @@ public abstract class JuegoBase implements Screen {
 
     public void cambiarMapa(int[][] mapa) {
         this.mapa = mapa;
-
     }
 
     public void guardarSegundos(int segundos) {
-        //Logica para guardar segundos en archivos
+        // logica para guardar segundos con codigo de nad
     }
-
+    
     private void menuPausa() {
-
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
         overlayPausa.center();
+        
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
         overlayPausa.add(panel);
-        Label titulo = new Label("Nivel Completado!11!!", skin);
+        
+        Label titulo = new Label("Juego Pausado", skin);
         panel.add(titulo).padBottom(20).row();
+        
         TextButton btnVolver = new TextButton("Volver a menu", skin);
         TextButton btnReiniciar = new TextButton("Reiniciar", skin);
 
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Volver");
                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
-                // remover overlay para limpiar
                 overlayPausa.remove();
-
             }
         });
 
         btnReiniciar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Reiniciar");
-                // Quitar overlay
                 overlayPausa.remove();
-                // Reiniciar variables del nivel
-                cajas.clear();
-                paredes.clear();
-                objetivos.clear();
-                timer = 0f;
-                vecesEmpujado = 0;
-                objetivosRealizados = 0;
-                gano = false;
-                pausa = false;
-                configurarNivel();
-                spawnear();
-                jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+                reiniciarNivel();
             }
         });
 
         panel.add(btnVolver).size(150, 50).padBottom(10).row();
-        panel.add(btnReiniciar).size(150, 50).padBottom(10).row();
+        panel.add(btnReiniciar).size(150, 50).row();
 
         stage.addActor(overlayPausa);
-
     }
 
-    //Logica para pantalla de volver atras y tiempo?
     private void finNivel() {
-
-        // Fondo semi-transparente para bloquear input detrás
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
         overlay.center();
 
-        // Panel central
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
         overlay.add(panel);
 
-        // Título
-        Label titulo = new Label("Nivel Completado!11!!", skin);
+        Label titulo = new Label("Nivel Completado!", skin);
         panel.add(titulo).padBottom(20).row();
 
-        // Botones de dificultad
         TextButton btnVolver = new TextButton("Volver a menu", skin);
         TextButton btnReiniciar = new TextButton("Reiniciar", skin);
-        TextButton btnExtra = new TextButton("Extra", skin);
 
-        // Acciones de los botones
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Volver");
                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
-                // remover overlay para limpiar
                 overlay.remove();
-
             }
         });
 
         btnReiniciar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Reiniciar");
-                // Quitar overlay
                 overlay.remove();
-                // Reiniciar variables del nivel
-                cajas.clear();
-                paredes.clear();
-                objetivos.clear();
-                timer = 0f;
-                vecesEmpujado = 0;
-                objetivosRealizados = 0;
-                gano = false;
-                pausa = false;
-                configurarNivel();
-                spawnear();
-                jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+                reiniciarNivel();
             }
         });
 
-        btnExtra.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Extra");
-
-            }
-        });
-
-        // Agregar botones al panel
         panel.add(btnVolver).size(150, 50).padBottom(10).row();
-        panel.add(btnReiniciar).size(150, 50).padBottom(10).row();
-        panel.add(btnExtra).size(150, 50).row();
+        panel.add(btnReiniciar).size(150, 50).row();
 
-        // Agregar overlay al stage
         stage.addActor(overlay);
     }
-
+    
+    private void reiniciarNivel() {
+        cajas.clear();
+        paredes.clear();
+        objetivos.clear();
+        pisos.clear();
+        
+        timer = 0f;
+        vecesEmpujado = 0;
+        objetivosRealizados = 0;
+        gano = false;
+        pausa = false;
+        
+        configurarNivel();
+        spawnear();
+        
+        jugadorX = 2;
+        jugadorY = 4;
+        jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+    }
 }
