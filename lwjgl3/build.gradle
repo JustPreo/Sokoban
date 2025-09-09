@@ -53,6 +53,9 @@ run {
 
   if (os.contains('mac')) jvmArgs += "-XstartOnFirstThread"
 }
+run {
+    ignoreExitValue = true
+}
 
 jar {
 // sets the name of the .jar file this produces to the name of the game or app, with the version after.

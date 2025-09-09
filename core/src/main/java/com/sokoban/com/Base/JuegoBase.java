@@ -7,15 +7,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -49,9 +53,12 @@ public abstract class JuegoBase implements Screen {
     protected int FILAS = 8;
     protected int COLUMNAS = 10;
     protected int cantidadC = 0;
+    protected int pasos = 0;
     protected int segundosT = 0;
     protected int TILE = 800 / COLUMNAS;
     protected int vecesEmpujado = 0;
+    protected int cantidadPous = 0;
+    protected int cantidadPousPermitidas = 1;
 
     // Mapa de ejemplo
     private int[][] mapa = {
@@ -62,20 +69,22 @@ public abstract class JuegoBase implements Screen {
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-    };
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
     //No se si hacer tipo que 1 = pared normal | 2 = esquina izquierda 3 = esquina derecha y asi
     //Mas que nada para mantener el tile
     //O se podria hacer algo tipo 
 
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
-
+    protected int jugadorXInicial, jugadorYInicial;
     protected int jugadorX = 2, jugadorY = 4;
     protected float timer = 0f;
 
     public abstract void conseguirCantCajas();//Esto toca borrarlo
+
     protected abstract void configurarNivel();
+
+    protected abstract void xyInicial(int x, int y);
 
     @Override
     public void show() {
@@ -103,37 +112,36 @@ public abstract class JuegoBase implements Screen {
     private void createPixelFont() {
         try {
             FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
-                Gdx.files.internal("fonts/PressStart2P-vaV7.ttf")
+                    Gdx.files.internal("fonts/PressStart2P-vaV7.ttf")
             );
-            
-            FreeTypeFontGenerator.FreeTypeFontParameter par = 
-                new FreeTypeFontGenerator.FreeTypeFontParameter();
-            
+
+            FreeTypeFontGenerator.FreeTypeFontParameter par
+                    = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
             // Configuración para fuente pixel perfect
             par.size = Math.max(12, TILE / 4); // Size base , despues se puede mod
             par.color = Color.WHITE;
-            
+
             //usar Nearest para mantener pixeles nitidos
             par.magFilter = Texture.TextureFilter.Nearest;
             par.minFilter = Texture.TextureFilter.Nearest;
             //Es como un tipo de filtro que trae eso
-            
+
             // Borde
             par.borderWidth = 1;
             par.borderColor = Color.BLACK;
-            
+
             font = generator.generateFont(par);
             generator.dispose();
-            
+
         } catch (Exception e) {
             System.err.println("Error cargando fuente :" + e.getMessage());
-            
-            
+
             //fuente por defecto por si se borra de assets
             font = new BitmapFont();
             font.getRegion().getTexture().setFilter(
-                Texture.TextureFilter.Nearest, 
-                Texture.TextureFilter.Nearest
+                    Texture.TextureFilter.Nearest,
+                    Texture.TextureFilter.Nearest
             );
             font.setColor(Color.WHITE);
             font.getData().setScale(TILE * 0.025f);
@@ -148,7 +156,7 @@ public abstract class JuegoBase implements Screen {
         if (mapa[nuevoY][nuevoX] == 1) {
             return;
         }
-        
+
         if (gano || pausa) {
             return;
         }
@@ -166,10 +174,10 @@ public abstract class JuegoBase implements Screen {
         if (cajita != null) {
             int nuevoCajaX = (int) (cajita.getHitbox().x / TILE) + dx;
             int nuevoCajaY = (int) (cajita.getHitbox().y / TILE) + dy;
-            
+
             Cajita cajitaTemp = new Cajita(nuevoCajaX * TILE, nuevoCajaY * TILE, TILE);
             boolean colision = false;
-            
+
             for (Cajita c : cajas) {
                 if (c != cajita && cajitaTemp.getHitbox().overlaps(c.getHitbox())) {
                     colision = true;
@@ -185,6 +193,11 @@ public abstract class JuegoBase implements Screen {
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
                 jogador.setPos(jugadorX * TILE, jugadorY * TILE);
                 vecesEmpujado++;
+                for (Piso pis : pisos) {
+                    if (pis.isPou() && cajita.hitbox.overlaps(pis.hitbox)) {
+                        pis.setPouAplastado();
+                    }
+                }
             }
         } else {
             // Xiomara(Osea libre)
@@ -256,9 +269,9 @@ public abstract class JuegoBase implements Screen {
         for (Objetivo obj : objetivos) {
             obj.render(spriteBatch);
         }
-        
+
         jogador.render(spriteBatch);
-        
+
         for (Cajita caj : cajas) {
             caj.render(spriteBatch);
         }
@@ -284,7 +297,7 @@ public abstract class JuegoBase implements Screen {
             stage.draw();
         }
     }
-    
+
     @Override
     public void resize(int width, int height) {
         if (width > 0 && height > 0) {
@@ -345,11 +358,30 @@ public abstract class JuegoBase implements Screen {
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
-                if (mapa[y][x] == 0 && (y != (FILAS-1) && x != (COLUMNAS -1))) {
-                    pisos.add(new Piso(x * TILE, y * TILE, TILE));
+                if (mapa[y][x] == 0 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
+
+                    pisos.add(crearPiso(x, y));
                 }
             }
         }
+    }
+
+    public Piso crearPiso(int x, int y) {
+        Piso pis = new Piso(x * TILE, y * TILE, TILE);
+        if (pis.isPou()) {
+            if (cantidadPous < cantidadPousPermitidas) {
+                cantidadPous++;
+                return pis;
+            } else {
+                while (pis.isPou()) {
+                    pis = new Piso(x * TILE, y * TILE, TILE);
+                    System.out.println("Piso pou");
+                }
+            }
+
+        }
+        return pis;
+
     }
 
     public void revisarWin() {
@@ -386,23 +418,45 @@ public abstract class JuegoBase implements Screen {
     public void guardarSegundos(int segundos) {
         // logica para guardar segundos con codigo de nad
     }
-    
+
     private void menuPausa() {
+        //----------------------------------------------------------------------------------------
+        Texture texturaVolver = new Texture(Gdx.files.internal("menu.png"));
+        Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
+        //ON
+        Texture texturaVolver2 = new Texture(Gdx.files.internal("menu2.png"));
+        Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
+
+        Button.ButtonStyle estiloVolver = new Button.ButtonStyle();
+        estiloVolver.up = fondoVolver;
+        estiloVolver.down = fondoVolver2;
+        //----------------------------------------------------------------------------------------
+        Texture texturaReiniciar = new Texture(Gdx.files.internal("reiniciar.png"));
+        Drawable fondoReiniciar = new TextureRegionDrawable(new TextureRegion(texturaReiniciar));
+        //ON
+        Texture texturaReiniciar2 = new Texture(Gdx.files.internal("reiniciar2.png"));
+        Drawable fondoReiniciar2 = new TextureRegionDrawable(new TextureRegion(texturaReiniciar2));
+
+        Button.ButtonStyle estiloReiniciar = new Button.ButtonStyle();
+        estiloReiniciar.up = fondoReiniciar;
+        estiloReiniciar.down = fondoReiniciar;
+        //----------------------------------------------------------------------------------------
+
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
         overlayPausa.center();
-        
+
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
         overlayPausa.add(panel);
-        
+
         Label titulo = new Label("Juego Pausado", skin);
         panel.add(titulo).padBottom(20).row();
-        
-        TextButton btnVolver = new TextButton("Volver a menu", skin);
-        TextButton btnReiniciar = new TextButton("Reiniciar", skin);
+
+        Button btnVolver = new Button(estiloVolver);
+        Button btnReiniciar = new Button(estiloReiniciar);
 
         btnVolver.addListener(new ClickListener() {
             @Override
@@ -442,6 +496,9 @@ public abstract class JuegoBase implements Screen {
 
         TextButton btnVolver = new TextButton("Volver a menu", skin);
         TextButton btnReiniciar = new TextButton("Reiniciar", skin);
+        //Agregar un boton despues de siguiente nivel
+        //Mostrar estadisticas generales
+        //Y hacerlo mas bonito no se
 
         btnVolver.addListener(new ClickListener() {
             @Override
@@ -464,24 +521,26 @@ public abstract class JuegoBase implements Screen {
 
         stage.addActor(overlay);
     }
-    
+
     private void reiniciarNivel() {
         cajas.clear();
         paredes.clear();
         objetivos.clear();
         pisos.clear();
-        
+
         timer = 0f;
         vecesEmpujado = 0;
+        pasos = 0;
         objetivosRealizados = 0;
         gano = false;
         pausa = false;
-        
+        cantidadPous = 0;
+
         configurarNivel();
         spawnear();
-        
-        jugadorX = 2;
-        jugadorY = 4;
+
+        jugadorX = jugadorXInicial;
+        jugadorY = jugadorYInicial;
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
     }
 }

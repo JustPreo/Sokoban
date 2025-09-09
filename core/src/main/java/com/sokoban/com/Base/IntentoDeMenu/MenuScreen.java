@@ -138,8 +138,9 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
-                    dispose();
-                    Gdx.app.exit();
+                    //dispose();
+                    //Gdx.app.exit();
+                    System.exit(0);
                     
                 }
 

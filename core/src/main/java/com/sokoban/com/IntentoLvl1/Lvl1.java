@@ -5,7 +5,6 @@
 package com.sokoban.com.IntentoLvl1;
 
 import com.sokoban.com.Base.*;
-import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 
 /**
  *
@@ -16,17 +15,8 @@ public class Lvl1 extends JuegoBase {
 
     @Override
     public void conseguirCantCajas() {
-        switch (MenuScreen.dificultad) {
-            case 1:
-                cantidadC = 1;
-                break;
-            case 2:
-                cantidadC = 1;
-                break;
-            case 3:
-                cantidadC = 1;
-                break;
-        }
+        cantidadC = 1; 
+        //En este metodo hay que definir cantidad de cajas
     }
 
     protected void configurarNivel() {
@@ -62,6 +52,14 @@ public class Lvl1 extends JuegoBase {
         COLUMNAS = 9; //Lo cambie a 9
         FILAS = 9; //Tomar en cuenta que esto es completamente manual
         //Entonces cuando vayas a tocar algo de esto tambien modificas el cambiarMapa
+        xyInicial(2,4);
+    }
+
+    @Override
+    protected void xyInicial(int x, int y) {//Para que cada mapa tenga su x , y inicial propio
+        jugadorXInicial = x;
+        jugadorYInicial = y;
+        
     }
 
 }
