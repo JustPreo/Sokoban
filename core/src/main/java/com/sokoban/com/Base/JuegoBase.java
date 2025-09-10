@@ -40,10 +40,10 @@ public abstract class JuegoBase implements Screen {
     protected Stage stage;
     protected Skin skin;
     private Table overlayPausa;
-    
+
     // Agregue estas variables de instancia después de las existentes:
-protected SistemaUsuarios sistemaUsuarios;
-protected RegistroPartida partidaActual;
+    protected SistemaUsuarios sistemaUsuarios;
+    protected RegistroPartida partidaActual;
 
     // Objetos
     protected Jugador jogador;
@@ -93,8 +93,15 @@ protected RegistroPartida partidaActual;
 
     protected abstract void xyInicial(int x, int y);
 
+    protected abstract int obtenerNumeroNivel();
+
     @Override
     public void show() {
+        sistemaUsuarios = SistemaUsuarios.getInstance();
+        if (sistemaUsuarios.haySesionActiva()) {
+            partidaActual = new RegistroPartida(obtenerNumeroNivel());
+        }
+
         configurarNivel();
         conseguirCantCajas();
 
@@ -200,6 +207,12 @@ protected RegistroPartida partidaActual;
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
                 jogador.setPos(jugadorX * TILE, jugadorY * TILE);
                 vecesEmpujado++;
+
+                // Incrementar movimientos en la partida
+                if (partidaActual != null) {
+                    partidaActual.incrementarMovimientos();
+                }
+
                 for (Piso pis : pisos) {
                     if (pis.isPou() && cajita.hitbox.overlaps(pis.hitbox)) {
                         pis.setPouAplastado();
@@ -207,10 +220,16 @@ protected RegistroPartida partidaActual;
                 }
             }
         } else {
-            // Xiomara(Osea libre)
+            // Libre (sin caja)
             jugadorX = nuevoX;
             jugadorY = nuevoY;
             jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+            pasos++;
+
+            // Incrementar movimientos en la partida
+            if (partidaActual != null) {
+                partidaActual.incrementarMovimientos();
+            }
         }
     }
 
@@ -337,7 +356,11 @@ protected RegistroPartida partidaActual;
     @Override
     public void pause() {
         pausa = true;
-        menuPausa();
+    if (partidaActual != null && !gano) {
+        partidaActual.finalizarPartida(false, "pausado");
+        sistemaUsuarios.registrarPartida(partidaActual);
+    }
+    menuPausa();
     }
 
     @Override
@@ -365,7 +388,7 @@ protected RegistroPartida partidaActual;
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
-                if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x]==2 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
+                if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x] == 2 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
 
                     pisos.add(crearPiso(x, y));
                 }
@@ -403,7 +426,14 @@ protected RegistroPartida partidaActual;
         if (objetivosRealizados == objetivos.size() && !gano) {
             System.out.println("¡Nivel completado!");
             gano = true;
-            guardarSegundos(segundosT);
+
+            // Finalizar partida y registrar en el sistema
+            if (partidaActual != null && sistemaUsuarios.haySesionActiva()) {
+                partidaActual.setMovimientos(vecesEmpujado);
+                partidaActual.finalizarPartida(true, "completado");
+                sistemaUsuarios.registrarPartida(partidaActual);
+            }
+
             finNivel();
         }
     }
@@ -487,46 +517,67 @@ protected RegistroPartida partidaActual;
     }
 
     private void finNivel() {
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
+    Table overlay = new Table();
+    overlay.setFillParent(true);
+    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlay.center();
 
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel);
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlay.add(panel);
 
-        Label titulo = new Label("Nivel Completado!", skin);
-        panel.add(titulo).padBottom(20).row();
-
-        TextButton btnVolver = new TextButton("Volver a menu", skin);
-        TextButton btnReiniciar = new TextButton("Reiniciar", skin);
-        //Agregar un boton despues de siguiente nivel
-        //Mostrar estadisticas generales
-        //Y hacerlo mas bonito no se
-
-        btnVolver.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
-                overlay.remove();
-            }
-        });
-
-        btnReiniciar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                reiniciarNivel();
-            }
-        });
-
-        panel.add(btnVolver).size(150, 50).padBottom(10).row();
-        panel.add(btnReiniciar).size(150, 50).row();
-
-        stage.addActor(overlay);
+    Label titulo = new Label("¡NIVEL COMPLETADO!", skin);
+    titulo.setColor(Color.GREEN);
+    panel.add(titulo).padBottom(20).row();
+    
+    // Mostrar estadísticas de la partida
+    if (partidaActual != null) {
+        Label tiempoLabel = new Label("Tiempo: " + String.format("%02d:%02d", (int)(timer/60), (int)(timer%60)), skin);
+        Label movimientosLabel = new Label("Movimientos: " + partidaActual.getMovimientos(), skin);
+        Label puntuacionLabel = new Label("Puntuación: " + partidaActual.getPuntuacion(), skin);
+        
+        panel.add(tiempoLabel).padBottom(5).row();
+        panel.add(movimientosLabel).padBottom(5).row();
+        panel.add(puntuacionLabel).padBottom(15).row();
     }
+
+    TextButton btnSiguiente = new TextButton("Siguiente Nivel", skin);
+    TextButton btnReiniciar = new TextButton("Reiniciar", skin);
+    TextButton btnMenu = new TextButton("Menú Principal", skin);
+
+    btnSiguiente.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            irSiguienteNivel();
+        }
+    });
+
+    btnReiniciar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            reiniciarNivel();
+        }
+    });
+
+    btnMenu.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+        }
+    });
+
+    Table botonesTable = new Table();
+    botonesTable.add(btnSiguiente).size(120, 50).padRight(10);
+    botonesTable.add(btnReiniciar).size(120, 50).padRight(10);
+    botonesTable.add(btnMenu).size(120, 50);
+    
+    panel.add(botonesTable).row();
+    stage.addActor(overlay);
+}
+
 
     private void reiniciarNivel() {
         cajas.clear();
@@ -548,5 +599,26 @@ protected RegistroPartida partidaActual;
         jugadorX = jugadorXInicial;
         jugadorY = jugadorYInicial;
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+        if (sistemaUsuarios.haySesionActiva()) {
+            if (partidaActual != null) {
+                partidaActual.finalizarPartida(false, "reiniciado");
+                sistemaUsuarios.registrarPartida(partidaActual);
+            }
+            partidaActual = new RegistroPartida(obtenerNumeroNivel());
+        }
     }
+protected void irSiguienteNivel() {
+    int nivelActual = obtenerNumeroNivel();
+    if (sistemaUsuarios.haySesionActiva() && 
+        sistemaUsuarios.nivelDesbloqueado(nivelActual + 1) && 
+        nivelActual < 7) {
+        
+        // Ir al siguiente nivel 
+        // Por ahora regresar
+        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+    } else {
+        // No hay más niveles o no están desbloqueados
+        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+    }
+}
 }

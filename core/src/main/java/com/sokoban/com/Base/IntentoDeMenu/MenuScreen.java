@@ -10,167 +10,420 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.sokoban.com.Base.JuegoBase;
-import com.sokoban.com.IntentoLvl1.Lvl1;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SelectorNiveles.Hub;
-import java.util.ArrayList;
+import com.sokoban.com.SistemaUsuarios;
+import com.sokoban.com.Usuario;
 
-/**
- *
- * @author user
- */
-
-/*
-Para estilizarlos botones
-
-Texture textura = new Texture(Gdx.files.internal("fondo_btn.png")); esto es carpeta assets
-Drawable fondo = new TextureRegionDrawable(new TextureRegion(textura)); dibuja la textura
-
-TextButton.TextButtonStyle estilo = new TextButton.TextButtonStyle(); se lo pone a textbutton como estilo
-estilo.up = fondo; estado normal
-estilo.down = fondo;  estado presionado , podemos usar otra textura talvez?
-estilo.font = new BitmapFont(); fuente para el texto
-estilo.fontColor = Color.WHITE; el color de la font
-
- */
 public class MenuScreen implements Screen {
 
     private Stage stage;
     private Skin skin;
     private Texture bg;
-    public static int dificultad = 1;//Inicia en facil
     private boolean puedeInteractuar = true;
-    //
+    private SistemaUsuarios sistemaUsuarios;
+    private Label labelUsuario;
 
     public MenuScreen() {
-        //Textura de botones (Ahorita esas imagenes son placeholders)
-        //OFF
+        sistemaUsuarios = SistemaUsuarios.getInstance();
+    }
+
+    @Override
+    public void show() {
+        // Configurar texturas de botones
         Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
         Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
-        //ON
         Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
         Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
         
         Button.ButtonStyle estiloJugar = new Button.ButtonStyle();
         estiloJugar.up = fondoJugar;
         estiloJugar.down = fondoJugar2;
-        //----------------------------------------------------------------------------------------
+
         Texture texturaExtra = new Texture(Gdx.files.internal("extra.png"));
         Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        //
         Texture texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
         Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
         
-        Button.ButtonStyle estiloDificultades = new Button.ButtonStyle();
-        estiloDificultades.up = fondoExtra;
-        estiloDificultades.down = fondoExtra2;
-        //----------------------------------------------------------------------------------------
+        Button.ButtonStyle estiloExtra = new Button.ButtonStyle();
+        estiloExtra.up = fondoExtra;
+        estiloExtra.down = fondoExtra2;
 
         Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
         Drawable fondoSalir = new TextureRegionDrawable(new TextureRegion(texturaSalir));
-        //
         Texture texturaSalir2 = new Texture(Gdx.files.internal("salir2.png"));
         Drawable fondoSalir2 = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
         
         Button.ButtonStyle estiloSalir = new Button.ButtonStyle();
         estiloSalir.up = fondoSalir;
         estiloSalir.down = fondoSalir2;
-        //----------------------------------------------------------------------------------------
 
-        //Resto de cosas
         stage = new Stage(new ScreenViewport());
-
-        // Capturar input para que los botones reciban clics
         Gdx.input.setInputProcessor(stage);
-
-        //Esto de skin es como los fonts y botones (Por defecto , despues se intentan cambiar)
         skin = new Skin(Gdx.files.internal("uiskin.json"));
-
         bg = new Texture("fondoM.png");
 
         // Crear elementos UI
-        Label titulo = new Label("Sokoban", skin);//Skin es como obligatorio para esto
+        Label titulo = new Label("Sokoban", skin);
+        titulo.setColor(Color.CYAN);
+
+        // Información del usuario
+        Usuario usuarioActual = sistemaUsuarios.getUsuarioActual();
+        if (usuarioActual != null) {
+            labelUsuario = new Label("Bienvenido: " + usuarioActual.getNombreCompleto(), skin);
+            labelUsuario.setColor(Color.LIGHT_GRAY);
+        } else {
+            labelUsuario = new Label("Sin sesión activa", skin);
+            labelUsuario.setColor(Color.GRAY);
+        }
+
         Button btnJugar = new Button(estiloJugar);
+        Button btnPerfil = new Button(estiloExtra);
+        Button btnLogin = new Button(estiloExtra);
         Button btnSalir = new Button(estiloSalir);
 
-        Button btnExtra = new Button(estiloDificultades);
-
-        // Listeners (acciones al presionar botones)
+        // Listeners para botones
         btnJugar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Click en JUGAR");
                 if (puedeInteractuar) {
-                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+                    if (sistemaUsuarios.haySesionActiva()) {
+                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+                    } else {
+                        mostrarMensajeLogin();
+                    }
                 }
-                dispose();
-
-                //Los niveles ahora tendran que ser "Screen" para que funcione bien el code
             }
         });
-        btnExtra.addListener(new ClickListener() {
+
+        btnPerfil.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
-                System.out.println("Dificultad");
                 if (puedeInteractuar) {
-                    System.out.println("Extra");
+                    if (sistemaUsuarios.haySesionActiva()) {
+                        mostrarPerfil();
+                    } else {
+                        mostrarMensajeLogin();
+                    }
                 }
-
             }
+        });
 
+        btnLogin.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (puedeInteractuar) {
+                    if (sistemaUsuarios.haySesionActiva()) {
+                        // Cerrar sesión
+                        sistemaUsuarios.cerrarSesion();
+                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                    } else {
+                        // Ir a login
+                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
+                    }
+                }
+            }
         });
 
         btnSalir.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
-                    //dispose();
-                    //Gdx.app.exit();
+                    if (sistemaUsuarios.haySesionActiva()) {
+                        sistemaUsuarios.cerrarSesion();
+                    }
                     System.exit(0);
-                    
                 }
-
             }
         });
 
-        // Layout con Table
+        // Layout
         Table table = new Table();
-        table.setFillParent(true); // ocupa toda la pantalla
-        table.center();            // centrado
+        table.setFillParent(true);
+        table.center();
 
-        // Agregamos elementos con separaciones
-        table.add(titulo).padBottom(40).row();   // texto arriba
-        table.add(btnJugar).size(200, 60).padBottom(20).row();
-        table.add(btnExtra).size(200, 60).padBottom(20).row();
+        table.add(titulo).padBottom(20).row();
+        table.add(labelUsuario).padBottom(30).row();
+        table.add(btnJugar).size(200, 60).padBottom(15).row();
+        table.add(btnPerfil).size(200, 60).padBottom(15).row();
+        
+        // Cambiar texto del botón según el estado de sesión
+        Label labelBotonLogin = new Label(
+            sistemaUsuarios.haySesionActiva() ? "Cerrar Sesión" : "Iniciar Sesión", 
+            skin
+        );
+        btnLogin.add(labelBotonLogin);
+        
+        table.add(btnLogin).size(200, 60).padBottom(15).row();
         table.add(btnSalir).size(200, 60).row();
 
-        //Como el grid layout
-        // Agregar a Stage
-        stage.addActor(table);//Sinceramente no entiendo bien esto para abajo
+        stage.addActor(table);
+    }
+
+    private void mostrarMensajeLogin() {
+        puedeInteractuar = false;
+
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel);
+
+        Label titulo = new Label("Acceso Requerido", skin);
+        titulo.setColor(Color.YELLOW);
+        panel.add(titulo).padBottom(15).row();
+
+        Label mensaje = new Label("Necesitas iniciar sesión\npara acceder a esta función", skin);
+        mensaje.setColor(Color.WHITE);
+        panel.add(mensaje).padBottom(20).row();
+
+        Table botonesTable = new Table();
+
+        Button btnLogin = new Button(skin);
+        btnLogin.add(new Label("Iniciar Sesión", skin));
+        btnLogin.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
+            }
+        });
+
+        Button btnCancelar = new Button(skin);
+        btnCancelar.add(new Label("Cancelar", skin));
+        btnCancelar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                puedeInteractuar = true;
+            }
+        });
+
+        botonesTable.add(btnLogin).size(120, 40).padRight(10);
+        botonesTable.add(btnCancelar).size(120, 40);
+        panel.add(botonesTable).row();
+
+        stage.addActor(overlay);
+    }
+
+    private void mostrarPerfil() {
+        puedeInteractuar = false;
+        Usuario usuario = sistemaUsuarios.getUsuarioActual();
+
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel).width(400).height(300);
+
+        Label titulo = new Label("PERFIL DE USUARIO", skin);
+        titulo.setColor(Color.CYAN);
+        panel.add(titulo).padBottom(15).row();
+
+        // Información del usuario
+        Label nombreLabel = new Label("Usuario: " + usuario.getNombreUsuario(), skin);
+        Label nombreCompletoLabel = new Label("Nombre: " + usuario.getNombreCompleto(), skin);
+        Label nivelLabel = new Label("Nivel actual: " + usuario.getNivelActual(), skin);
+        Label nivelMaxLabel = new Label("Nivel máximo: " + usuario.getNivelMaximoAlcanzado(), skin);
+        Label partidasLabel = new Label("Partidas jugadas: " + usuario.getPartidasTotales(), skin);
+        Label puntosLabel = new Label("Puntos totales: " + usuario.getPuntuacionTotal(), skin);
+
+        panel.add(nombreLabel).left().padBottom(5).row();
+        panel.add(nombreCompletoLabel).left().padBottom(5).row();
+        panel.add(nivelLabel).left().padBottom(5).row();
+        panel.add(nivelMaxLabel).left().padBottom(5).row();
+        panel.add(partidasLabel).left().padBottom(5).row();
+        panel.add(puntosLabel).left().padBottom(15).row();
+
+        // Botones
+        Table botonesTable = new Table();
+
+        Button btnEstadisticas = new Button(skin);
+        btnEstadisticas.add(new Label("Estadísticas", skin));
+        btnEstadisticas.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                mostrarEstadisticas();
+            }
+        });
+
+        Button btnConfiguracion = new Button(skin);
+        btnConfiguracion.add(new Label("Configuración", skin));
+        btnConfiguracion.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                mostrarConfiguracion();
+            }
+        });
+
+        Button btnCerrar = new Button(skin);
+        btnCerrar.add(new Label("Cerrar", skin));
+        btnCerrar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                puedeInteractuar = true;
+            }
+        });
+
+        botonesTable.add(btnEstadisticas).size(100, 40).padRight(5);
+        botonesTable.add(btnConfiguracion).size(100, 40).padRight(5);
+        botonesTable.add(btnCerrar).size(100, 40);
+        panel.add(botonesTable).row();
+
+        stage.addActor(overlay);
+    }
+
+    private void mostrarEstadisticas() {
+        puedeInteractuar = false;
+        Usuario usuario = sistemaUsuarios.getUsuarioActual();
+
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel).width(500).height(400);
+
+        Label titulo = new Label("ESTADÍSTICAS DETALLADAS", skin);
+        titulo.setColor(Color.CYAN);
+        panel.add(titulo).padBottom(15).row();
+
+        // Estadísticas por nivel
+        Label subtitulo = new Label("Progreso por Niveles:", skin);
+        subtitulo.setColor(Color.YELLOW);
+        panel.add(subtitulo).left().padBottom(10).row();
+
+        for (int i = 1; i <= 7; i++) {
+            String estado = i <= usuario.getNivelMaximoAlcanzado() ? "Desbloqueado" : "Bloqueado";
+            String color = i <= usuario.getNivelMaximoAlcanzado() ? "Verde" : "Rojo";
+            
+            Label nivelInfo = new Label("Nivel " + i + ": " + estado, skin);
+            if (i <= usuario.getNivelMaximoAlcanzado()) {
+                nivelInfo.setColor(Color.GREEN);
+            } else {
+                nivelInfo.setColor(Color.RED);
+            }
+            panel.add(nivelInfo).left().padBottom(3).row();
+        }
+
+        // Estadísticas generales
+        Label subtitulo2 = new Label("\nEstadísticas Generales:", skin);
+        subtitulo2.setColor(Color.YELLOW);
+        panel.add(subtitulo2).left().padBottom(10).row();
+
+        long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
+        Label tiempoLabel = new Label("Tiempo total jugado: " + tiempoMinutos + " minutos", skin);
+        Label porcentajeLabel = new Label("Tasa de éxito: " + 
+            (usuario.getPartidasTotales() > 0 ? 
+                String.format("%.1f%%", (double)usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100) : 
+                "0%"), skin);
+
+        panel.add(tiempoLabel).left().padBottom(5).row();
+        panel.add(porcentajeLabel).left().padBottom(15).row();
+
+        Button btnCerrar = new Button(skin);
+        btnCerrar.add(new Label("Cerrar", skin));
+        btnCerrar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                puedeInteractuar = true;
+            }
+        });
+
+        panel.add(btnCerrar).size(100, 40).row();
+        stage.addActor(overlay);
+    }
+
+    private void mostrarConfiguracion() {
+        puedeInteractuar = false;
+        Usuario usuario = sistemaUsuarios.getUsuarioActual();
+
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel).width(400).height(300);
+
+        Label titulo = new Label("CONFIGURACIÓN", skin);
+        titulo.setColor(Color.CYAN);
+        panel.add(titulo).padBottom(15).row();
+
+        Label mensaje = new Label("Configuraciones del juego\n(Próximamente más opciones)", skin);
+        panel.add(mensaje).padBottom(20).row();
+
+        // Botón para crear backup
+        Button btnBackup = new Button(skin);
+        btnBackup.add(new Label("Crear Copia de Seguridad", skin));
+        btnBackup.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean exito = sistemaUsuarios.crearBackup();
+                Label resultado = new Label(
+                    exito ? "¡Backup creado exitosamente!" : "Error creando backup", 
+                    skin
+                );
+                resultado.setColor(exito ? Color.GREEN : Color.RED);
+                
+                // Mostrar mensaje temporal
+                panel.add(resultado).padBottom(10).row();
+            }
+        });
+
+        Button btnCerrar = new Button(skin);
+        btnCerrar.add(new Label("Cerrar", skin));
+        btnCerrar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                puedeInteractuar = true;
+            }
+        });
+
+        panel.add(btnBackup).size(200, 40).padBottom(10).row();
+        panel.add(btnCerrar).size(100, 40).row();
+
+        stage.addActor(overlay);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         // Dibujar fondo
         stage.getBatch().begin();
         stage.getBatch().draw(bg, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage.getBatch().end();
+
         stage.act(delta);
         stage.draw();
     }
@@ -181,102 +434,18 @@ public class MenuScreen implements Screen {
     }
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-    }
-
-    @Override
-    public void show() {
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
-        stage.dispose();
-        skin.dispose();
+        if (stage != null) stage.dispose();
+        if (skin != null) skin.dispose();
+        if (bg != null) bg.dispose();
     }
-
-    public void setDificultad(int dif) {
-        dificultad = dif;
-        //1 = facil , 2 = mediano, 3 = dificil
-    }
-
-    /*private void mostrarSelectorDificultad() {
-        puedeInteractuar = false;
-
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
-
-        // Panel central
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel).width(stage.getWidth() * 0.6f).height(stage.getHeight() * 0.5f);
-
-        // Título
-        Label titulo = new Label("Selecciona Dificultad", skin);
-        panel.add(titulo).padBottom(20).row();
-
-        // Botones de dificultad
-        TextButton btnFacil = new TextButton("Facil", skin);
-        TextButton btnNormal = new TextButton("Normal", skin);
-        TextButton btnDificil = new TextButton("Dificil", skin);
-
-        // Acciones de los botones
-        btnFacil.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Dificultad: Facil");
-                overlay.remove(); // cerrar popup
-                setDificultad(1);
-                puedeInteractuar = true;
-            }
-        });
-
-        btnNormal.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Dificultad: Normal");
-                overlay.remove();
-                setDificultad(2);
-                puedeInteractuar = true;
-            }
-        });
-
-        btnDificil.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Dificultad: Dificil");
-                overlay.remove();
-                setDificultad(3);
-                puedeInteractuar = true;
-            }
-        });
-
-        // Agregar botones al panel
-        panel.add(btnFacil).size(150, 50).padBottom(10).row();
-        panel.add(btnNormal).size(150, 50).padBottom(10).row();
-        panel.add(btnDificil).size(150, 50).row();
-
-        // Agregar overlay al stage
-        stage.addActor(overlay);
-    }*/ 
-    //Resulta que no hay que elegir dificultad :(
-    //Por si acaso dejo eso ahi por si lo uso despue en algun otro lado
-
-    /*private void disableBotones() {
-        for (TextButton but : botones) {
-            but.setDisabled(!puedeInteractuar);
-            System.out.println(but.getDebug());
-        }
-    }*/
-    //No funciono pero puede funcionar a futuro?
 }

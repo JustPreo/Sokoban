@@ -63,4 +63,9 @@ public class Tutorial extends JuegoBase {
 
     }
 
+    @Override
+    protected int obtenerNumeroNivel() {
+        return 0;
+    }
+
 }

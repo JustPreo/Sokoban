@@ -61,5 +61,10 @@ public class Lvl1 extends JuegoBase {
         jugadorYInicial = y;
         
     }
+    
+    protected int obtenerNumeroNivel() {
+        return 1;
+    }
+
 
 }
