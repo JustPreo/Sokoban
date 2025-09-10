@@ -57,6 +57,7 @@ public class GestorArchivos {
     
     public boolean guardarUsuario(Usuario usuario) {
         try {
+             crearCarpetaUsuario(usuario.getNombreUsuario());
             Path archivoUsuario = Paths.get(DIRECTORIO_BASE, usuario.getNombreUsuario(), ARCHIVO_USUARIO);
             
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoUsuario.toFile()))) {
@@ -286,4 +287,32 @@ public class GestorArchivos {
             return 0;
         }
     }
+    public boolean crearBackup(String nombreUsuario) {
+    Path carpetaUsuario = Paths.get(DIRECTORIO_BASE, nombreUsuario);
+    if (!Files.exists(carpetaUsuario)) return false;
+
+    Path carpetaBackup = Paths.get(DIRECTORIO_BASE, "backups", nombreUsuario + "_" + System.currentTimeMillis());
+
+    try {
+        Files.createDirectories(carpetaBackup.getParent());
+        Files.walk(carpetaUsuario).forEach(origen -> {
+            try {
+                Path destino = carpetaBackup.resolve(carpetaUsuario.relativize(origen));
+                if (Files.isDirectory(origen)) {
+                    Files.createDirectories(destino);
+                } else {
+                    Files.copy(origen, destino, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        System.out.println("Backup creado para usuario: " + nombreUsuario);
+        return true;
+    } catch (IOException e) {
+        System.err.println("Error creando backup: " + e.getMessage());
+        return false;
+    }
+}
+
 }
