@@ -10,10 +10,12 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Base.Jugador;
 import com.sokoban.com.Base.Pared;
+import com.sokoban.com.Base.Piso;
+import com.sokoban.com.Juegito;
 import java.util.ArrayList;
 
 public class Hub implements Screen {
@@ -32,6 +34,7 @@ public class Hub implements Screen {
     protected int TILE = 800 / COLUMNAS;
     protected ArrayList<padNiveles> pads = new ArrayList<>();
     ArrayList<Pared> paredes = new ArrayList<>();
+    ArrayList<Piso> pisos = new ArrayList<>();//Proximamente 
 
     protected int jugadorX = 2, jugadorY = 4;
     private int nivelSeleccionado = -1; // Para mostrar info del nivel actual
@@ -137,6 +140,11 @@ public class Hub implements Screen {
 
     @Override
     public void render(float f) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+           
+        }
+        
         // Procesar input solo si el jugador no está animando
         if (!jogador.estaAnimando()) {
             if (jogador.consumeUp()) {
@@ -246,31 +254,35 @@ public class Hub implements Screen {
     }
 
     private void renderInfoNivel() {
-        float worldWidth = viewport.getWorldWidth();
+    float centerX = (COLUMNAS * TILE) / 2f;
+    float centerY = (FILAS * TILE) / 2f;
 
-        
-        String infoNivel = "Level " + nivelSeleccionado;
-        String dificultad = "Diff: " + getDificultad(nivelSeleccionado);
-        String estado = "Estado: " + getEstadoNivel(nivelSeleccionado);
-        String accion = "ENTER/ESPACIO: Jugar"; //Para que se amejor para el player
+    String infoNivel = "Level " + nivelSeleccionado;
+    String dificultad = "Diff: " + getDificultad(nivelSeleccionado);
+    String estado = "Estado: " + getEstadoNivel(nivelSeleccionado);
+    String accion = "ENTER/ESPACIO: Jugar";
 
-        float panelX = worldWidth - TILE * 4.5f; // Esquina derecha
-        float panelY = viewport.getWorldHeight() - TILE * 1.2f;
-        float separacion = TILE * 0.25f;
+    float separacion = TILE * 0.3f;
 
-        // Cambiar color para destacar nivel
-        fontInfo.setColor(Color.YELLOW);
-        fontInfo.draw(spriteBatch, infoNivel, panelX, panelY);
-        
-        fontInfo.setColor(Color.WHITE);
-        fontInfo.draw(spriteBatch, dificultad, panelX, panelY - separacion);
-        fontInfo.draw(spriteBatch, estado, panelX, panelY - separacion * 2);
-        
-        fontInfo.setColor(Color.LIGHT_GRAY);
-        fontInfo.draw(spriteBatch, accion, panelX, panelY - separacion * 3);
-        
-        fontInfo.setColor(Color.WHITE); // Restaurar color por defecto
-    }
+    // Dibujar centrado
+    layout.setText(fontInfo, infoNivel);
+    fontInfo.setColor(Color.YELLOW);
+    fontInfo.draw(spriteBatch, infoNivel, centerX - layout.width / 2f, centerY + separacion * 1.5f);
+
+    layout.setText(fontInfo, dificultad);
+    fontInfo.setColor(Color.WHITE);
+    fontInfo.draw(spriteBatch, dificultad, centerX - layout.width / 2f, centerY + separacion * 0.5f);
+
+    layout.setText(fontInfo, estado);
+    fontInfo.draw(spriteBatch, estado, centerX - layout.width / 2f, centerY - separacion * 0.5f);
+
+    layout.setText(fontInfo, accion);
+    fontInfo.setColor(Color.LIGHT_GRAY);
+    fontInfo.draw(spriteBatch, accion, centerX - layout.width / 2f, centerY - separacion * 1.5f);
+
+    fontInfo.setColor(Color.WHITE); // Restaurar color por defecto
+}
+
 
     private String getDificultad(int nivel) {
         if (nivel <= 2) {

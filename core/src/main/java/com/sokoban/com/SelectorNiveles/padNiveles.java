@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.sokoban.com.IntentoLvl1.Lvl1;
 import com.sokoban.com.Juegito;
+import com.sokoban.com.Tutorialez.Tutorial;
 
 /**
  *
@@ -49,7 +50,7 @@ public class padNiveles {
         {
             case 1:
                 System.out.println("Nivel 1");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl1());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Tutorial());
                 break;
             case 2:
                 System.out.println("Nivel 2");

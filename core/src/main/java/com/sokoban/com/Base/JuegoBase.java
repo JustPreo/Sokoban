@@ -25,6 +25,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Juegito;
+import com.sokoban.com.RegistroPartida;
+import com.sokoban.com.SelectorNiveles.Hub;
+import com.sokoban.com.SistemaUsuarios;
 import java.util.ArrayList;
 
 public abstract class JuegoBase implements Screen {
@@ -37,6 +40,10 @@ public abstract class JuegoBase implements Screen {
     protected Stage stage;
     protected Skin skin;
     private Table overlayPausa;
+    
+    // Agregue estas variables de instancia después de las existentes:
+protected SistemaUsuarios sistemaUsuarios;
+protected RegistroPartida partidaActual;
 
     // Objetos
     protected Jugador jogador;
@@ -358,7 +365,7 @@ public abstract class JuegoBase implements Screen {
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
-                if (mapa[y][x] == 0 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
+                if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x]==2 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
 
                     pisos.add(crearPiso(x, y));
                 }
@@ -375,7 +382,6 @@ public abstract class JuegoBase implements Screen {
             } else {
                 while (pis.isPou()) {
                     pis = new Piso(x * TILE, y * TILE, TILE);
-                    System.out.println("Piso pou");
                 }
             }
 
@@ -461,7 +467,7 @@ public abstract class JuegoBase implements Screen {
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                 overlayPausa.remove();
             }
         });
@@ -503,7 +509,7 @@ public abstract class JuegoBase implements Screen {
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                 overlay.remove();
             }
         });

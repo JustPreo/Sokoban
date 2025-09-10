@@ -59,19 +59,19 @@ public class Piso {
         final int PROB_POU = 5;  // 5%
 
         if (numero <= PROB_PISO1) {
-            
+
             SText = "piso1.png";
             pou = false;
         } else if (numero <= PROB_PISO1 + PROB_PISO2) {
-            
+
             SText = "piso2.png";
             pou = false;
         } else if (numero <= PROB_PISO1 + PROB_PISO2 + PROB_PISO3) {
-            
+
             SText = "piso3.png";
             pou = false;
         } else {
-            
+
             SText = "pisoPou1.png";
             pou = true;
         }

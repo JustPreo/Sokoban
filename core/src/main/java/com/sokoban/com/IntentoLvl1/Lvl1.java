@@ -52,7 +52,7 @@ public class Lvl1 extends JuegoBase {
         COLUMNAS = 9; //Lo cambie a 9
         FILAS = 9; //Tomar en cuenta que esto es completamente manual
         //Entonces cuando vayas a tocar algo de esto tambien modificas el cambiarMapa
-        xyInicial(2,4);
+        xyInicial(jugadorX,jugadorY);
     }
 
     @Override
