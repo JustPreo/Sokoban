@@ -24,7 +24,7 @@ public class PantallaLogin implements Screen {
     private Stage stage;
     private Skin skin;
     private Texture bg;
-    private Texture texturaJugar, texturaJugar2;
+    private Texture texturaJugar, texturaJugar2,texturaVolver,texturaVolver2;
 
     // Campos de input
     private TextField campoUsuario;
@@ -59,10 +59,19 @@ public class PantallaLogin implements Screen {
         texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
         Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
         Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
+        
+        texturaVolver = new Texture(Gdx.files.internal("volver.png"));
+        texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
+        Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
+        Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
 
         Button.ButtonStyle estiloBoton = new Button.ButtonStyle();
         estiloBoton.up = fondoJugar;
         estiloBoton.down = fondoJugar2;
+        
+         Button.ButtonStyle estiloBotonVolver = new Button.ButtonStyle();
+        estiloBotonVolver.up = fondoVolver;
+        estiloBotonVolver.down = fondoVolver2;
 
         // Tabla principal
         Table tablaPrincipal = new Table();
@@ -105,10 +114,10 @@ public class PantallaLogin implements Screen {
         panelLogin.add(campoNombreCompleto).width(250).padBottom(15).row();
 
         // Botones
-        Button btnAccion = new Button(estiloBoton);
-        Button btnCambiarModo = new Button(estiloBoton);
+        Button btnAccion = new Button(estiloBoton);//Login/Register
+        Button btnCambiarModo = new Button(estiloBoton);//Login/Register
         btnCambiarModo.setName("btnCambiarModo");
-        Button btnVolver = new Button(estiloBoton);
+        Button btnVolver = new Button(estiloBotonVolver);//Volver
 
         // Listeners ENTER
         campoContrasena.addListener(new InputListener() {

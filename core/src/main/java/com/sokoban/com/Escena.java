@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -28,17 +30,21 @@ public class Escena implements Screen {
     private Label[] labels;
     private LabelStyle style;
     private Texture textura;
-    private Sprite sprite;
+    private boolean showSprite = true;
+    Image imagen;
 
     public Escena(Juegito game) {
         this.game = game;
         stage = new Stage(new ScreenViewport());
         stage.clear();
         createPixelFont(64);
-        //textura = new Texture("caja.png");
-        //sprite = new Sprite(textura);
-        //sprite.setSize(256, 256);
-        //sprite.setPosition(150, 300);
+        textura = new Texture("marvel.png");
+        imagen = new Image(textura);
+        imagen.setSize(512, 256);
+        imagen.setPosition(160, 200);
+        imagen.getColor().a=0;//alpha 0
+        stage.addActor(imagen);
+        
 
         style = new LabelStyle(font, Color.WHITE);
 
@@ -52,18 +58,18 @@ public class Escena implements Screen {
         for (int i = 0; i < storyLines.length; i++) {
             labels[i] = new Label(storyLines[i], style);
             labels[i].setPosition(50, 300);//x , y
-        }
-        Timer timer = new Timer();
-        
-
-        // Schedule a task to run after 2 seconds
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                inicio();
-                timer.cancel(); // Stops the timer after execution
-            }
-        }, 2000); // Delay in milliseconds
+            
+        }float fadeInTime = 1f;
+        float visibleTime = 2f; // tiempo que permanece visible después de aparecer
+        float fadeOutTime = 1f;
+       imagen.addAction(
+    Actions.sequence(
+        Actions.fadeIn(fadeInTime),                  // fade in
+        Actions.delay(visibleTime),                  
+        Actions.fadeOut(fadeOutTime),               // fade out
+        Actions.run(() -> inicio())                 // después agrega tu primera línea de texto
+    )
+);
     }
     
 
@@ -73,8 +79,9 @@ public class Escena implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(delta);
         stage.draw();
+        
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) && !showSprite) {
             currentIndex++;
             if (currentIndex < storyLines.length) {
                 labels[currentIndex - 1].remove();
@@ -101,6 +108,7 @@ public class Escena implements Screen {
         Label lblEnter = new Label("Enter para continuar...",style);
         lblEnter.setPosition(200, 20);
         stage.addActor(lblEnter);
+        showSprite = false;
         
     }
 
