@@ -43,7 +43,7 @@ public class GestorArchivos {
         try {
             Path carpetaUsuario = Paths.get(DIRECTORIO_BASE, nombreUsuario);
             Path carpetaPartidas = carpetaUsuario.resolve(DIRECTORIO_PARTIDAS);
-            
+            //Cambiar que solo revise si existe o no existe para que sea mas facil
             Files.createDirectories(carpetaUsuario);
             Files.createDirectories(carpetaPartidas);
             

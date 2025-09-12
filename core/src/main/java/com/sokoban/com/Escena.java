@@ -60,7 +60,7 @@ public class Escena implements Screen {
             labels[i].setPosition(50, 300);//x , y
             
         }float fadeInTime = 1f;
-        float visibleTime = 2f; // tiempo que permanece visible después de aparecer
+        float visibleTime = 2f;
         float fadeOutTime = 1f;
        imagen.addAction(
     Actions.sequence(

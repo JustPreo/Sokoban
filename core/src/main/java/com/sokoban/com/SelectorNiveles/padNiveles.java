@@ -26,12 +26,38 @@ public class padNiveles {
     
     public padNiveles(float x , float y,float TILE,int nivel)
     {
-    txt = new Texture("objetivo.png");
+        this.nivel = nivel;
+    switch (nivel) {
+        case 1:
+            txt = new Texture("portales/tp1.png");
+            break;
+        case 2:
+            txt = new Texture("portales/tp2.png");
+            break;
+        case 3:
+            txt = new Texture("portales/tp3.png");
+            break;
+        case 4:
+            txt = new Texture("portales/tp4.png");
+            break;
+        case 5:
+            txt = new Texture("portales/tp5.png");
+            break;
+        case 6:
+            txt = new Texture("portales/tp6.png");
+            break;
+        case 7:
+            txt = new Texture("portales/tp7.png");
+            break;
+        default:
+            txt = new Texture("tp.png"); // por si acaso
+            break;
+    }
     sprite = new Sprite(txt);
     sprite.setSize(TILE, TILE);
     sprite.setPosition(x, y);
     hitbox = new Rectangle(x, y, sprite.getWidth(), sprite.getHeight());
-    this.nivel = nivel;
+    
     }
     
     public void render(SpriteBatch batch) {
@@ -50,7 +76,7 @@ public class padNiveles {
         {
             case 1:
                 System.out.println("Nivel 1");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Tutorial());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl1());
                 break;
             case 2:
                 System.out.println("Nivel 2");

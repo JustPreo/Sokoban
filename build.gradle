@@ -70,4 +70,6 @@ subprojects {
   }
 }
 
+
+
 eclipse.project.name = 'SOKOBAN' + '-parent'

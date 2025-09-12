@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
+import com.sokoban.com.SoundManager;
 import com.sokoban.com.Usuario;
 
 public class MenuScreen implements Screen {
@@ -99,6 +100,7 @@ public class MenuScreen implements Screen {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+                        SoundManager.setearMusica(2);
                     } else {
                         mostrarMensajeLogin();
                     }

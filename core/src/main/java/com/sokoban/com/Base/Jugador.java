@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
+import com.sokoban.com.SoundManager;
 
 public class Jugador {
 
@@ -81,8 +82,9 @@ public class Jugador {
             posInicialY = personaje.getY();
             posObjetivoX = x;
             posObjetivoY = y;
-            animando = true;
-            tiempoAnimacion = 0f;
+            animando = true; 
+           tiempoAnimacion = 0f;
+            SoundManager.playCaminar();
         }
     }
     
