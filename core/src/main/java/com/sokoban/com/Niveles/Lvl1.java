@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.sokoban.com.IntentoLvl1;
+package com.sokoban.com.Niveles;
 
 import com.sokoban.com.Base.*;
+import com.sokoban.com.levelEditor.Mapas.MapaNivel1;
 
 /**
  *
@@ -15,33 +16,21 @@ public class Lvl1 extends JuegoBase {
 
     @Override
     public void conseguirCantCajas() {
-        cantidadC = 1; 
+        cantidadC = MapaNivel1.CANTIDAD_CAJAS;
         //En este metodo hay que definir cantidad de cajas
     }
 
     protected void configurarNivel() {
         // Definir mapa específico
-        jugadorX = 2; //x jogador
-        jugadorY = 4;// y jogador
+        jugadorX = MapaNivel1.JUGADOR_POS[0]; //x jogador
+        jugadorY = MapaNivel1.JUGADOR_POS[1];// y jogador
         // 0 = suelo, 1 = pared |2 = objetivo |3 = cajas | 4 = player
-        cambiarMapa(new int[][]{ //Crea un mapa nuevo
-            
-            {1, 1, 1, 1, 1, 1, 1, 1, 1},//0
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//1
-            {1, 0, 0, 0, 0, 0, 1, 0, 1},//2
-            {1, 0, 0, 0, 0, 0, 1, 0, 1},//3
-            {1, 1, 0, 1, 1, 1, 1, 0, 1},//4
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//5
-            {1, 0, 0, 0, 0, 0, 0, 0, 1},//6
-            {1, 1, 1, 1, 1, 1, 1, 1, 1}, //7
-            {0, 0, 0, 0, 0, 0, 0, 0, 0}, //8
-           //0  1  2  3  4  5  6  7  8
-        });
+        cambiarMapa(MapaNivel1.MAPA);
         //Posicion de cajas
-        cajasPos = new int[][]{{2, 2}};//Cajas son las 3
+        cajasPos = MapaNivel1.CAJAS_POS;
 
         //Posiciones de objetivos
-        objetivosPos = new int[][]{{6, 5}};//Objetivos son los 2
+        objetivosPos = MapaNivel1.OBJETIVOS_POS;
         
         //Tienen que existir la misma cantidad de cajas que objetivos
         
@@ -49,8 +38,8 @@ public class Lvl1 extends JuegoBase {
         // Posición inicial del jugador
         
         // Columnas y filas
-        COLUMNAS = 9; //Lo cambie a 9
-        FILAS = 9; //Tomar en cuenta que esto es completamente manual
+        COLUMNAS = MapaNivel1.columnas; //
+        FILAS = MapaNivel1.filas; //
         //Entonces cuando vayas a tocar algo de esto tambien modificas el cambiarMapa
         xyInicial(jugadorX,jugadorY);
     }

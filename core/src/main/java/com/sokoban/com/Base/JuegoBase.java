@@ -223,6 +223,11 @@ public abstract class JuegoBase implements Screen {
             // Libre (sin caja)
             jugadorX = nuevoX;
             jugadorY = nuevoY;
+            for (Piso pis: pisos)
+            {
+            if (pis.isPou() && jogador.hitbox.overlaps(pis.hitbox))
+                pis.setPouAplastado();
+            }
             jogador.setPos(jugadorX * TILE, jugadorY * TILE);
             pasos++;
 
@@ -388,7 +393,7 @@ public abstract class JuegoBase implements Screen {
                 if (mapa[y][x] == 1) {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
-                if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x] == 2 && (y != (FILAS - 1) && x != (COLUMNAS - 1))) {
+                if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x] == 2 && (y != (FILAS - 1) && x != (COLUMNAS - 1)) || mapa[y][x] == 4) {
 
                     pisos.add(crearPiso(x, y));
                 }
