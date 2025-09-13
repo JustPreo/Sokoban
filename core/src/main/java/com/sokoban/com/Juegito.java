@@ -11,12 +11,16 @@ import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
  *
  * @author user
  */
-public class Juegito extends Game{ //Este es el main para que abra el juegito
+public class Juegito extends Game { //Este es el main para que abra el juegito
+
     @Override
     public void create() {
         setScreen(new Escena(this));
-        SoundManager.setearMusica(1);//Lobby music
+        SoundManager.playMusic("lobby", true, 0.5f);//0.5f es el volumen
+    }
+
+    public void render() {
+        super.render();
+        SoundManager.update();    
     }
 }
-    
-    

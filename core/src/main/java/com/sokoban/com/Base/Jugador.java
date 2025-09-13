@@ -84,7 +84,7 @@ public class Jugador {
             posObjetivoY = y;
             animando = true; 
            tiempoAnimacion = 0f;
-            SoundManager.playCaminar();
+            SoundManager.playCaminar(1.0f);//1.0f es el volumen , ajustar despues con valores de usuario
         }
     }
     

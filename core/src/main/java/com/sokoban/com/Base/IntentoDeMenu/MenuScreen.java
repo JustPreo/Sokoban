@@ -100,7 +100,7 @@ public class MenuScreen implements Screen {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
-                        SoundManager.setearMusica(2);
+                        SoundManager.playMusic("nivel", true, 0.7f);
                     } else {
                         mostrarMensajeLogin();
                     }
@@ -418,6 +418,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 

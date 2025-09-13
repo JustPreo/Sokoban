@@ -1,50 +1,85 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.sokoban.com;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import java.util.HashMap;
 
-/**
- *
- * @author user
- */
 public class SoundManager {
 
-    private static Music NivelesMusica = Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV"));
-    private static Music LobbyMusica = Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV"));
-    private static Music current = null;
-    private static Sound sonidoCaminar = Gdx.audio.newSound(Gdx.files.internal("Musica/walk.WAV"));
+    private static HashMap<String, Music> musicMap = new HashMap<>();
+    private static Sound caminarSound;
 
-    public static void setearMusica(int numero) {
-        //1 = lobby | 2 = Niveles
-        if (current != null && current.isPlaying())
-        {
-        current.stop();
-        }
-        if (numero == 1) {
-            current = LobbyMusica;
-        } else {
-            current = NivelesMusica;
-        }
-        playCurrent();
+    private static Music currentMusic = null;
+    private static float targetVolume = 1f;  // Volumen deseado , se puede cambiar a futuro con metodo de nad
+    private static float fadeSpeed = 0.02f;  // Velocidad de fade
+
+    static {
+        musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV")));
+        musicMap.put("nivel", Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV")));
+
+        caminarSound = Gdx.audio.newSound(Gdx.files.internal("Musica/walk.WAV"));
     }
 
-    private static void playCurrent() {
-        if (current != null) {
-            current.setLooping(true);
-            current.play();
-            current.setVolume(0);
+    public static void playMusic(String name, boolean loop, float volume) {
+        Music music = musicMap.get(name);
+        if (music == null) return;
+
+        if (currentMusic != null && currentMusic != music) {
+            currentMusic.stop();
         }
+
+        currentMusic = music;
+        currentMusic.setLooping(loop);
+        targetVolume = volume;
+        currentMusic.setVolume(0f); 
+        currentMusic.play();
+    }
+
+    // Llamar cada frame desde render()
+    public static void update() {
+        if (currentMusic == null) return;
+
+        float vol = currentMusic.getVolume();
+        if (vol < targetVolume) {
+            vol += fadeSpeed;
+            if (vol > targetVolume) vol = targetVolume;
+            currentMusic.setVolume(vol);
+        } else if (vol > targetVolume) {
+            vol -= fadeSpeed;
+            if (vol < targetVolume) vol = targetVolume;
+            currentMusic.setVolume(vol);
+        }
+    }
+
+    public static void pauseMusic() {
+        targetVolume = 0f; // baja volumen con fade
+    }
+
+    public static void resumeMusic() {
+        targetVolume = 1f; // sube volumen hasta 1
+        if (!currentMusic.isPlaying()) currentMusic.play();
+    }
+
+    public static void playCaminar(float volume) {
+        if (caminarSound != null) {
+            caminarSound.play(volume);
+        }
+    }
+
+    public static void stopMusic() {
+        if (currentMusic != null && currentMusic.isPlaying()) {
+            currentMusic.stop();
+        }
+    }
+
+    public static void dispose() {
+        for (Music m : musicMap.values()) m.dispose();
+        if (caminarSound != null) caminarSound.dispose();
     }
     
-    public static void playCaminar()
+    public static void setVolume(float volumen)
     {
-        //sonidoCaminar.stop();
-        sonidoCaminar.play();
+    targetVolume = volumen;
     }
-
 }

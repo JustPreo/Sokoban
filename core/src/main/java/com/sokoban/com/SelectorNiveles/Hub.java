@@ -17,6 +17,7 @@ import com.sokoban.com.Base.Pared;
 import com.sokoban.com.Base.Piso;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SistemaUsuarios;
+import com.sokoban.com.SoundManager;
 import java.util.ArrayList;
 
 public class Hub implements Screen {
