@@ -15,7 +15,7 @@ public class SoundManager {
     private static float fadeSpeed = 0.02f;  // Velocidad de fade
 
     static {
-        musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV")));
+        musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/Simplicity.WAV")));
         musicMap.put("nivel", Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV")));
 
         caminarSound = Gdx.audio.newSound(Gdx.files.internal("Musica/walk.WAV"));

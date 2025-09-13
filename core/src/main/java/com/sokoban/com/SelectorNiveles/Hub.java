@@ -147,6 +147,7 @@ public class Hub implements Screen {
     @Override
     public void render(float f) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            SoundManager.playMusic("lobby", true, 0.5f);//Cambiar ese 0.5 a algo como el user settings? no se algo asi
             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
 
         }
