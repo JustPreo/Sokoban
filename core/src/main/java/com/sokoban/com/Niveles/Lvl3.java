@@ -5,28 +5,27 @@
 package com.sokoban.com.Niveles;
 
 import com.sokoban.com.Base.JuegoBase;
-import com.sokoban.com.levelEditor.Mapas.MapaNivel2;
+import com.sokoban.com.levelEditor.Mapas.MapaNivel3;
 
 /**
  *
  * @author user
  */
-public class Lvl2 extends JuegoBase {
-
-    @Override
+public class Lvl3 extends JuegoBase {
+@Override
     public void conseguirCantCajas() {
-        cantidadC = MapaNivel2.CANTIDAD_CAJAS;
+        cantidadC = MapaNivel3.CANTIDAD_CAJAS;
     }
 
     @Override
     protected void configurarNivel() {
-        jugadorX = MapaNivel2.JUGADOR_POS[0]; 
-        jugadorY = MapaNivel2.JUGADOR_POS[1];
-        cambiarMapa(MapaNivel2.MAPA);
-        cajasPos = MapaNivel2.CAJAS_POS;
-        objetivosPos = MapaNivel2.OBJETIVOS_POS;
-        COLUMNAS = MapaNivel2.columnas; //
-        FILAS = MapaNivel2.filas; //
+        jugadorX = MapaNivel3.JUGADOR_POS[0]; 
+        jugadorY = MapaNivel3.JUGADOR_POS[1];
+        cambiarMapa(MapaNivel3.MAPA);
+        cajasPos = MapaNivel3.CAJAS_POS;
+        objetivosPos = MapaNivel3.OBJETIVOS_POS;
+        COLUMNAS = MapaNivel3.columnas; //
+        FILAS = MapaNivel3.filas; //
         xyInicial(jugadorX,jugadorY);
     }
 
@@ -38,7 +37,6 @@ public class Lvl2 extends JuegoBase {
 
     @Override
     protected int obtenerNumeroNivel() {
-       return 2;
-    }
-    
+       return 3;
+    }    
 }

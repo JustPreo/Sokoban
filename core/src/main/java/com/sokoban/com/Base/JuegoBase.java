@@ -333,6 +333,7 @@ public abstract class JuegoBase implements Screen {
     public void resize(int width, int height) {
         if (width > 0 && height > 0) {
             viewport.update(width, height, true);
+            stage.getCamera().update(); 
         }
     }
 

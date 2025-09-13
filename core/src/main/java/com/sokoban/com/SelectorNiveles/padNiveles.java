@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.sokoban.com.Niveles.Lvl1;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.Niveles.Lvl2;
+import com.sokoban.com.Niveles.Lvl3;
 import com.sokoban.com.Tutorialez.Tutorial;
 
 /**
@@ -85,6 +86,7 @@ public class padNiveles {
                 break;
             case 3:
                 System.out.println("Nivel 3");
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl3());
                 break;
             case 4:
                 System.out.println("Nivel 4");
