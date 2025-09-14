@@ -9,6 +9,7 @@ public class SoundManager {
 
     private static HashMap<String, Music> musicMap = new HashMap<>();
     private static Sound caminarSound;
+    private static Sound pou;
 
     private static Music currentMusic = null;
     private static float targetVolume = 1f;  // Volumen deseado , se puede cambiar a futuro con metodo de nad
@@ -18,12 +19,15 @@ public class SoundManager {
         musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/Simplicity.WAV")));
         musicMap.put("nivel", Gdx.audio.newMusic(Gdx.files.internal("Musica/shrek.WAV")));
 
+        pou = Gdx.audio.newSound(Gdx.files.internal("Musica/POU.WAV"));
         caminarSound = Gdx.audio.newSound(Gdx.files.internal("Musica/walk.WAV"));
     }
 
     public static void playMusic(String name, boolean loop, float volume) {
         Music music = musicMap.get(name);
-        if (music == null) return;
+        if (music == null) {
+            return;
+        }
 
         if (currentMusic != null && currentMusic != music) {
             currentMusic.stop();
@@ -32,22 +36,28 @@ public class SoundManager {
         currentMusic = music;
         currentMusic.setLooping(loop);
         targetVolume = volume;
-        currentMusic.setVolume(0f); 
+        currentMusic.setVolume(0f);
         currentMusic.play();
     }
 
     // Llamar cada frame desde render()
     public static void update() {
-        if (currentMusic == null) return;
+        if (currentMusic == null) {
+            return;
+        }
 
         float vol = currentMusic.getVolume();
         if (vol < targetVolume) {
             vol += fadeSpeed;
-            if (vol > targetVolume) vol = targetVolume;
+            if (vol > targetVolume) {
+                vol = targetVolume;
+            }
             currentMusic.setVolume(vol);
         } else if (vol > targetVolume) {
             vol -= fadeSpeed;
-            if (vol < targetVolume) vol = targetVolume;
+            if (vol < targetVolume) {
+                vol = targetVolume;
+            }
             currentMusic.setVolume(vol);
         }
     }
@@ -58,12 +68,20 @@ public class SoundManager {
 
     public static void resumeMusic() {
         targetVolume = 1f; // sube volumen hasta 1
-        if (!currentMusic.isPlaying()) currentMusic.play();
+        if (!currentMusic.isPlaying()) {
+            currentMusic.play();
+        }
     }
 
-    public static void playCaminar(float volume) {
+    public static void playCaminar(float volume) {//por si acaso
         if (caminarSound != null) {
-            caminarSound.play(volume);
+            caminarSound.play(targetVolume);
+        }
+    }
+
+    public static void playPou(float volume) {//el float volume es por si acaso
+        if (pou != null) {
+            pou.play(targetVolume);
         }
     }
 
@@ -74,12 +92,15 @@ public class SoundManager {
     }
 
     public static void dispose() {
-        for (Music m : musicMap.values()) m.dispose();
-        if (caminarSound != null) caminarSound.dispose();
+        for (Music m : musicMap.values()) {
+            m.dispose();
+        }
+        if (caminarSound != null) {
+            caminarSound.dispose();
+        }
     }
-    
-    public static void setVolume(float volumen)
-    {
-    targetVolume = volumen;
+
+    public static void setVolume(float volumen) {
+        targetVolume = volumen;
     }
 }

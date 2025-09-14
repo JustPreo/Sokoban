@@ -511,6 +511,7 @@ public abstract class JuegoBase implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                 overlayPausa.remove();
+                SoundManager.resumeMusic();
             }
         });
 
@@ -595,7 +596,7 @@ public abstract class JuegoBase implements Screen {
         paredes.clear();
         objetivos.clear();
         pisos.clear();
-
+        
         timer = 0f;
         vecesEmpujado = 0;
         pasos = 0;
@@ -603,6 +604,7 @@ public abstract class JuegoBase implements Screen {
         gano = false;
         pausa = false;
         cantidadPous = 0;
+        SoundManager.resumeMusic();
 
         configurarNivel();
         spawnear();

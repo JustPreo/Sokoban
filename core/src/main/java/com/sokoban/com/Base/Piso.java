@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.sokoban.com.SoundManager;
 import java.util.Random;
 
 /**
@@ -20,6 +21,7 @@ public class Piso {
     Sprite sprite;
     Rectangle hitbox;
     boolean pou;
+    boolean pouAplastado;
 
     public Piso(float x, float y, float TILE) {
         textura = new Texture(textura());
@@ -74,21 +76,26 @@ public class Piso {
 
             SText = "pisoPou1.png";
             pou = true;
+            pouAplastado = false;
         }
 
         return SText;
     }
 
     public void setPouAplastado() {
-        if (textura != null) {
-            textura.dispose(); // liberar la textura anterior
+        if (!pouAplastado) {
+            if (textura != null) {
+                textura.dispose(); // liberar la textura anterior
+            }
+
+            textura = new Texture("pisoPou2.png");
+            sprite = new Sprite(textura);
+            sprite.setSize(hitbox.getWidth(), hitbox.getHeight());
+            sprite.setPosition(hitbox.x, hitbox.y);
+            pouAplastado = true;
+            SoundManager.playPou(1);
+
         }
-
-        textura = new Texture("pisoPou2.png");
-        sprite = new Sprite(textura);
-        sprite.setSize(hitbox.getWidth(), hitbox.getHeight());
-        sprite.setPosition(hitbox.x, hitbox.y);
-
     }
 
     public boolean isPou() {
