@@ -90,10 +90,11 @@ public class MenuScreen implements Screen {
 
         Button btnJugar = new Button(estiloJugar);
         Button btnPerfil = new Button(estiloExtra);
+        Button btnAmigos = new Button(estiloExtra); // boton nuevo para amigos
         Button btnLogin = new Button(estiloExtra);
         Button btnSalir = new Button(estiloSalir);
 
-        // Listeners para botones
+        // Listeners para botones existentes
         btnJugar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -114,6 +115,20 @@ public class MenuScreen implements Screen {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
                         mostrarPerfil();
+                    } else {
+                        mostrarMensajeLogin();
+                    }
+                }
+            }
+        });
+
+        // nuevo listener para el boton de amigos
+        btnAmigos.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (puedeInteractuar) {
+                    if (sistemaUsuarios.haySesionActiva()) {
+                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaAmigos());
                     } else {
                         mostrarMensajeLogin();
                     }
@@ -149,7 +164,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // Layout
+        // Layout - agregar el nuevo boton
         Table table = new Table();
         table.setFillParent(true);
         table.center();
@@ -158,6 +173,11 @@ public class MenuScreen implements Screen {
         table.add(labelUsuario).padBottom(30).row();
         table.add(btnJugar).size(200, 60).padBottom(15).row();
         table.add(btnPerfil).size(200, 60).padBottom(15).row();
+        
+        // agregar boton de amigos con su label
+        Label labelAmigos = new Label("Mis Amigos", skin);
+        btnAmigos.add(labelAmigos);
+        table.add(btnAmigos).size(200, 60).padBottom(15).row();
         
         // Cambiar texto del botón según el estado de sesión
         Label labelBotonLogin = new Label(
@@ -234,7 +254,7 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(400).height(300);
+        overlay.add(panel).width(400).height(350); // hacer un poco mas grande para el nuevo boton
 
         Label titulo = new Label("PERFIL DE USUARIO", skin);
         titulo.setColor(Color.CYAN);
@@ -255,7 +275,7 @@ public class MenuScreen implements Screen {
         panel.add(partidasLabel).left().padBottom(5).row();
         panel.add(puntosLabel).left().padBottom(15).row();
 
-        // Botones
+        // Botones - agregar el nuevo boton de avatares aqui tambien
         Table botonesTable = new Table();
 
         Button btnEstadisticas = new Button(skin);
@@ -266,6 +286,16 @@ public class MenuScreen implements Screen {
                 overlay.remove();
                 mostrarEstadisticas();
             }
+        });
+
+        Button btnAvatares = new Button(skin);
+        btnAvatares.add(new Label("Avatares", skin));
+        btnAvatares.addListener(new ClickListener() {
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaAvatares());
+             }
         });
 
         Button btnConfiguracion = new Button(skin);
@@ -288,9 +318,12 @@ public class MenuScreen implements Screen {
             }
         });
 
-        botonesTable.add(btnEstadisticas).size(100, 40).padRight(5);
-        botonesTable.add(btnConfiguracion).size(100, 40).padRight(5);
-        botonesTable.add(btnCerrar).size(100, 40);
+        // organizar botones en 2 filas para que quepan mejor
+        botonesTable.add(btnEstadisticas).size(90, 35).padRight(5);
+        botonesTable.add(btnAvatares).size(90, 35).padRight(5).row();
+        botonesTable.add(btnConfiguracion).size(90, 35).padRight(5).padTop(5);
+        botonesTable.add(btnCerrar).size(90, 35).padTop(5);
+        
         panel.add(botonesTable).row();
 
         stage.addActor(overlay);
@@ -414,6 +447,23 @@ public class MenuScreen implements Screen {
         panel.add(btnCerrar).size(100, 40).row();
 
         stage.addActor(overlay);
+    }
+
+    // metodo helper para mostrar mensajes temporales
+    private void mostrarMensaje(String texto, Color color) {
+        Label mensajeTemporal = new Label(texto, skin);
+        mensajeTemporal.setColor(color);
+        mensajeTemporal.setPosition(10, Gdx.graphics.getHeight() - 50);
+        stage.addActor(mensajeTemporal);
+
+        new Thread(() -> {
+            try {
+                Thread.sleep(3000);
+                Gdx.app.postRunnable(() -> mensajeTemporal.remove());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
