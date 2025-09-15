@@ -39,46 +39,58 @@ public class MenuScreen implements Screen {
         sistemaUsuarios = SistemaUsuarios.getInstance();
     }
 
-    @Override
     public void show() {
-        // Configurar texturas de botones
+        //JUGAR
         Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
-        Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
         Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
-        Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
-        
         Button.ButtonStyle estiloJugar = new Button.ButtonStyle();
-        estiloJugar.up = fondoJugar;
-        estiloJugar.down = fondoJugar2;
+        estiloJugar.up = new TextureRegionDrawable(new TextureRegion(texturaJugar));
+        estiloJugar.down = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
 
-        Texture texturaExtra = new Texture(Gdx.files.internal("extra.png"));
-        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        Texture texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
-        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
-        
-        Button.ButtonStyle estiloExtra = new Button.ButtonStyle();
-        estiloExtra.up = fondoExtra;
-        estiloExtra.down = fondoExtra2;
+        // PERFIL
+        Texture texturaPerfil = new Texture(Gdx.files.internal("perfil.png"));
+        Texture texturaPerfil2 = new Texture(Gdx.files.internal("perfil2.png"));
+        Button.ButtonStyle estiloPerfil = new Button.ButtonStyle();
+        estiloPerfil.up = new TextureRegionDrawable(new TextureRegion(texturaPerfil));
+        estiloPerfil.down = new TextureRegionDrawable(new TextureRegion(texturaPerfil2));
 
+        //FRIENDZ
+        Texture texturaAmigos = new Texture(Gdx.files.internal("amigos.png"));
+        Texture texturaAmigos2 = new Texture(Gdx.files.internal("amigos2.png"));
+        Button.ButtonStyle estiloAmigos = new Button.ButtonStyle();
+        estiloAmigos.up = new TextureRegionDrawable(new TextureRegion(texturaAmigos));
+        estiloAmigos.down = new TextureRegionDrawable(new TextureRegion(texturaAmigos2));
+
+        //LOGIN/LOGOUT
+        Texture texturaLogin, texturaLogin2;
+        if (sistemaUsuarios.haySesionActiva()) {
+            texturaLogin = new Texture(Gdx.files.internal("logout.png"));
+            texturaLogin2 = new Texture(Gdx.files.internal("logout2.png"));
+        } else {
+            texturaLogin = new Texture(Gdx.files.internal("login.png"));
+            texturaLogin2 = new Texture(Gdx.files.internal("login2.png"));
+        }
+        Button.ButtonStyle estiloLogin = new Button.ButtonStyle();
+        estiloLogin.up = new TextureRegionDrawable(new TextureRegion(texturaLogin));
+        estiloLogin.down = new TextureRegionDrawable(new TextureRegion(texturaLogin2));
+
+        //SALIR
         Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
-        Drawable fondoSalir = new TextureRegionDrawable(new TextureRegion(texturaSalir));
         Texture texturaSalir2 = new Texture(Gdx.files.internal("salir2.png"));
-        Drawable fondoSalir2 = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
-        
         Button.ButtonStyle estiloSalir = new Button.ButtonStyle();
-        estiloSalir.up = fondoSalir;
-        estiloSalir.down = fondoSalir2;
+        estiloSalir.up = new TextureRegionDrawable(new TextureRegion(texturaSalir));
+        estiloSalir.down = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
 
+        
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         bg = new Texture("fondoM.png");
 
-        // Crear elementos UI
+        
         Label titulo = new Label("Sokoban", skin);
         titulo.setColor(Color.CYAN);
 
-        // Información del usuario
         Usuario usuarioActual = sistemaUsuarios.getUsuarioActual();
         if (usuarioActual != null) {
             labelUsuario = new Label("Bienvenido: " + usuarioActual.getNombreCompleto(), skin);
@@ -89,12 +101,12 @@ public class MenuScreen implements Screen {
         }
 
         Button btnJugar = new Button(estiloJugar);
-        Button btnPerfil = new Button(estiloExtra);
-        Button btnAmigos = new Button(estiloExtra); // boton nuevo para amigos
-        Button btnLogin = new Button(estiloExtra);
+        Button btnPerfil = new Button(estiloPerfil);
+        Button btnAmigos = new Button(estiloAmigos);
+        Button btnLogin = new Button(estiloLogin);
         Button btnSalir = new Button(estiloSalir);
 
-        // Listeners para botones existentes
+        // === LISTENERS ===
         btnJugar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -122,7 +134,6 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // nuevo listener para el boton de amigos
         btnAmigos.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -141,11 +152,9 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
-                        // Cerrar sesión
                         sistemaUsuarios.cerrarSesion();
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
                     } else {
-                        // Ir a login
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
                     }
                 }
@@ -164,7 +173,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // Layout - agregar el nuevo boton
+        // === LAYOUT ===
         Table table = new Table();
         table.setFillParent(true);
         table.center();
@@ -173,19 +182,7 @@ public class MenuScreen implements Screen {
         table.add(labelUsuario).padBottom(30).row();
         table.add(btnJugar).size(200, 60).padBottom(15).row();
         table.add(btnPerfil).size(200, 60).padBottom(15).row();
-        
-        // agregar boton de amigos con su label
-        Label labelAmigos = new Label("Mis Amigos", skin);
-        btnAmigos.add(labelAmigos);
         table.add(btnAmigos).size(200, 60).padBottom(15).row();
-        
-        // Cambiar texto del botón según el estado de sesión
-        Label labelBotonLogin = new Label(
-            sistemaUsuarios.haySesionActiva() ? "Cerrar Sesión" : "Iniciar Sesión", 
-            skin
-        );
-        btnLogin.add(labelBotonLogin);
-        
         table.add(btnLogin).size(200, 60).padBottom(15).row();
         table.add(btnSalir).size(200, 60).row();
 
