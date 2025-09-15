@@ -15,7 +15,7 @@ public class SoundManager {
     private static float targetVolume = 0.5f;  // Volumen deseado , MUSICA
     private static float targetVolumeEffects = 0.5f;//Volumen deseado , EFECTOS
     private static float fadeSpeed = 0.02f;  // Velocidad de fade
-    private static float controlVolumen = 0f;
+    private static float controlVolumen = 0.5f;
 
     static {
         musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/Simplicity.WAV")));

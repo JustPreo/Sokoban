@@ -22,7 +22,7 @@ public class Jugador {
     private float posObjetivoX, posObjetivoY;
     private boolean animandoMovimiento;
     private float tiempoAnimacionMovimiento;
-    private float duracionAnimacionMovimiento = 0.15f;
+    private float duracionAnimacionMovimiento = 0.25f;
     private float tiempoAnimacionSprite = 0f;
     private int direccionActual = 0; // 0=abajo, 1=arriba, 2=derecha, 3=izq
     private int direccionAnterior = 0;
