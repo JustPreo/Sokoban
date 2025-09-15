@@ -26,34 +26,19 @@ public class PantallaAvatares implements Screen {
     private SistemaUsuarios sistemaUsuarios;
 
     // texturas de botones
-    private Texture texturaExtra, texturaExtra2, texturaVolver, texturaVolver2;
-    private Button.ButtonStyle estiloExtra, estiloVolver;
+    private Texture texturaGuardar, texturaGuardar2, texturaVolver, texturaVolver2;
+    private Button.ButtonStyle estiloGuardar, estiloVolver;
 
-    // avatares disponibles usando texturas existentes
+    // avatares disponibles
     private String[] avatares = {
-        "personaje.png",    // avatar por defecto
-        "caja.png",         // caja como avatar,xq why not 
-        "objetivo.png",     // objetivo como avatar, amo los avatars randoms, con tematica del mismo juego ok.
-        "tp1.png",          // portales como avatares, tambien los portales por aja
-        "tp2.png",
-        "tp3.png",
-        "tp4.png",
-        "tp5.png",
-        "tp6.png",
-        "tp7.png"
+        "personaje.png", "caja.png", "objetivo.png", "tp1.png",
+        "tp2.png", "tp3.png", "tp4.png", "tp5.png", "tp6.png", "tp7.png"
     };
 
     private String[] nombresAvatares = {
-        "Personaje Clasico", //podes cambiar eso si queres, 0 creatvidad la mia actually
-        "Caja Misteriosa", 
-        "Portal Objetivo",
-        "Portal Nivel 1",
-        "Portal Nivel 2", 
-        "Portal Nivel 3",
-        "Portal Nivel 4",
-        "Portal Nivel 5",
-        "Portal Nivel 6",
-        "Portal Nivel 7"
+        "Personaje Clasico", "Caja Misteriosa", "Portal Objetivo",
+        "Portal Nivel 1", "Portal Nivel 2", "Portal Nivel 3",
+        "Portal Nivel 4", "Portal Nivel 5", "Portal Nivel 6", "Portal Nivel 7"
     };
 
     private String avatarSeleccionado;
@@ -61,11 +46,9 @@ public class PantallaAvatares implements Screen {
 
     public PantallaAvatares() {
         sistemaUsuarios = SistemaUsuarios.getInstance();
-        // cargar avatar actual del usuario
         Usuario usuario = sistemaUsuarios.getUsuarioActual();
         avatarSeleccionado = usuario != null ? usuario.getRutaAvatar() : avatares[0];
-        
-        // si el avatar actual no esta en la lista, usar el default
+
         boolean encontrado = false;
         for (String avatar : avatares) {
             if (avatarSeleccionado.equals(avatar) || avatarSeleccionado.contains(avatar)) {
@@ -81,24 +64,18 @@ public class PantallaAvatares implements Screen {
 
     @Override
     public void show() {
-        // setup de texturas igual que otras pantallas
-        texturaExtra = new Texture(Gdx.files.internal("extra.png"));
-        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
-        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
-
-        estiloExtra = new Button.ButtonStyle();
-        estiloExtra.up = fondoExtra;
-        estiloExtra.down = fondoExtra2;
+        // cargar texturas de botones
+        texturaGuardar = new Texture(Gdx.files.internal("guardar.png"));
+        texturaGuardar2 = new Texture(Gdx.files.internal("guardar2.png"));
+        estiloGuardar = new Button.ButtonStyle();
+        estiloGuardar.up = new TextureRegionDrawable(new TextureRegion(texturaGuardar));
+        estiloGuardar.down = new TextureRegionDrawable(new TextureRegion(texturaGuardar2));
 
         texturaVolver = new Texture(Gdx.files.internal("volver.png"));
-        Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
         texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
-        Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
-
         estiloVolver = new Button.ButtonStyle();
-        estiloVolver.up = fondoVolver;
-        estiloVolver.down = fondoVolver2;
+        estiloVolver.up = new TextureRegionDrawable(new TextureRegion(texturaVolver));
+        estiloVolver.down = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -113,15 +90,12 @@ public class PantallaAvatares implements Screen {
         tablaPrincipal.setFillParent(true);
         tablaPrincipal.center();
 
-        // titulo
         Label titulo = new Label("SELECCIONAR AVATAR", skin);
         titulo.setColor(Color.CYAN);
         tablaPrincipal.add(titulo).padBottom(20).row();
 
-        // seccion de preview y seleccion
         Table tablaContenido = new Table();
 
-        // panel izquierdo - preview
         Table panelPreview = new Table(skin);
         panelPreview.setBackground(skin.newDrawable("default-round", new Color(0.2f, 0.2f, 0.2f, 0.8f)));
         panelPreview.pad(20);
@@ -130,13 +104,11 @@ public class PantallaAvatares implements Screen {
         labelPreview.setColor(Color.YELLOW);
         panelPreview.add(labelPreview).padBottom(15).row();
 
-        // imagen de preview
         Texture texturaAvatar = new Texture(Gdx.files.internal(avatarSeleccionado));
         imagenPrevia = new Image(texturaAvatar);
         imagenPrevia.setSize(80, 80);
         panelPreview.add(imagenPrevia).size(80, 80).padBottom(15).row();
 
-        // info del usuario
         Usuario usuario = sistemaUsuarios.getUsuarioActual();
         Label labelUsuario = new Label("Usuario: " + (usuario != null ? usuario.getNombreUsuario() : "N/A"), skin);
         labelUsuario.setColor(Color.WHITE);
@@ -148,7 +120,6 @@ public class PantallaAvatares implements Screen {
 
         tablaContenido.add(panelPreview).width(200).height(250).padRight(30);
 
-        // panel derecho - grilla de avatares
         Table panelAvatares = new Table(skin);
         panelAvatares.setBackground(skin.newDrawable("default-round", new Color(0.2f, 0.2f, 0.2f, 0.8f)));
         panelAvatares.pad(20);
@@ -157,23 +128,19 @@ public class PantallaAvatares implements Screen {
         labelAvatares.setColor(Color.YELLOW);
         panelAvatares.add(labelAvatares).padBottom(15).colspan(3).row();
 
-        // crear grilla de avatares 3x4 aprox
         int columnas = 3;
         for (int i = 0; i < avatares.length; i++) {
             String avatar = avatares[i];
-            
             try {
                 Texture texturaBtn = new Texture(Gdx.files.internal(avatar));
                 Button btnAvatar = new Button(new TextureRegionDrawable(new TextureRegion(texturaBtn)));
-                
-                // resaltar el avatar seleccionado
+
                 if (avatar.equals(avatarSeleccionado)) {
-                    // crear un borde o cambiar el tint
                     btnAvatar.setColor(Color.CYAN);
                 } else {
                     btnAvatar.setColor(Color.WHITE);
                 }
-                
+
                 btnAvatar.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -184,26 +151,22 @@ public class PantallaAvatares implements Screen {
                 });
 
                 panelAvatares.add(btnAvatar).size(50, 50).pad(5);
-                
-                // nueva fila cada 3 elementos
                 if ((i + 1) % columnas == 0) {
                     panelAvatares.row();
                 }
-                
+
             } catch (Exception e) {
                 System.out.println("No se pudo cargar avatar: " + avatar);
-                // continuar con el siguiente avatar
             }
         }
 
         tablaContenido.add(panelAvatares).width(250).height(250);
         tablaPrincipal.add(tablaContenido).padBottom(30).row();
 
-        // botones de accion
+        // botones de accion con texturas
         Table tablaBotones = new Table();
 
-        Button btnGuardar = new Button(estiloExtra);
-        btnGuardar.add(new Label("Guardar", skin));
+        Button btnGuardar = new Button(estiloGuardar);
         btnGuardar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -214,7 +177,6 @@ public class PantallaAvatares implements Screen {
         });
 
         Button btnCancelar = new Button(estiloVolver);
-        btnCancelar.add(new Label("Cancelar", skin));
         btnCancelar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -233,57 +195,41 @@ public class PantallaAvatares implements Screen {
 
     private void seleccionarAvatar(String nuevoAvatar) {
         avatarSeleccionado = nuevoAvatar;
-        
-        // actualizar preview
         try {
             Texture nuevaTextura = new Texture(Gdx.files.internal(nuevoAvatar));
             imagenPrevia.setDrawable(new TextureRegionDrawable(new TextureRegion(nuevaTextura)));
         } catch (Exception e) {
             System.out.println("Error actualizando preview: " + e.getMessage());
         }
-
-        // actualizar colores de los botones
         recrearGrilla();
-        mostrarMensaje("Avatar seleccionado: " + obtenerNombreAvatar(nuevoAvatar), Color.GREEN);
     }
 
     private void recrearGrilla() {
-        // esta es una version simplificada, en una implementacion real
-        // seria mejor mantener referencias a los botones
         stage.clear();
         crearInterfaz();
     }
 
     private void guardarAvatar() {
         if (!sistemaUsuarios.haySesionActiva()) {
-            mostrarMensaje("No hay sesion activa", Color.RED);
             return;
         }
 
         Usuario usuario = sistemaUsuarios.getUsuarioActual();
         String avatarAnterior = usuario.getRutaAvatar();
-        
         usuario.setRutaAvatar(avatarSeleccionado);
         boolean exito = sistemaUsuarios.guardarProgreso();
 
-        if (exito) {
-            mostrarMensaje("Avatar guardado correctamente!", Color.GREEN);
-            
-            // delay y volver al menu
+        if (!exito) {
+            usuario.setRutaAvatar(avatarAnterior);
+        } else {
             new Thread(() -> {
                 try {
                     Thread.sleep(2000);
-                    Gdx.app.postRunnable(() -> 
-                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen())
-                    );
-                } catch (InterruptedException e) {
+                    Gdx.app.postRunnable(() -> ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen()));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }).start();
-            
-        } else {
-            mostrarMensaje("Error al guardar avatar", Color.RED);
-            usuario.setRutaAvatar(avatarAnterior); // revertir cambio
         }
     }
 
@@ -294,22 +240,6 @@ public class PantallaAvatares implements Screen {
             }
         }
         return "Avatar Personalizado";
-    }
-
-    private void mostrarMensaje(String texto, Color color) {
-        Label mensajeTemporal = new Label(texto, skin);
-        mensajeTemporal.setColor(color);
-        mensajeTemporal.setPosition(10, Gdx.graphics.getHeight() - 50);
-        stage.addActor(mensajeTemporal);
-
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-                Gdx.app.postRunnable(() -> mensajeTemporal.remove());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 
     @Override
@@ -332,20 +262,39 @@ public class PantallaAvatares implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
-        if (texturaExtra != null) texturaExtra.dispose();
-        if (texturaExtra2 != null) texturaExtra2.dispose();
-        if (texturaVolver != null) texturaVolver.dispose();
-        if (texturaVolver2 != null) texturaVolver2.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
+        if (texturaGuardar != null) {
+            texturaGuardar.dispose();
+        }
+        if (texturaGuardar2 != null) {
+            texturaGuardar2.dispose();
+        }
+        if (texturaVolver != null) {
+            texturaVolver.dispose();
+        }
+        if (texturaVolver2 != null) {
+            texturaVolver2.dispose();
+        }
     }
 }

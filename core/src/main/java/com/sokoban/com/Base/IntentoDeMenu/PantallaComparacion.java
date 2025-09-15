@@ -31,7 +31,8 @@ public class PantallaComparacion implements Screen {
 
     // texturas de botones
     private Texture texturaExtra, texturaExtra2, texturaVolver, texturaVolver2;
-    private Button.ButtonStyle estiloExtra, estiloVolver;
+    private Texture texturaComparar, texturaComparar2;
+    private Button.ButtonStyle estiloExtra, estiloVolver, estiloComparar;
 
     // datos de comparacion
     private Usuario usuarioActual;
@@ -46,7 +47,7 @@ public class PantallaComparacion implements Screen {
         sistemaUsuarios = SistemaUsuarios.getInstance();
         gestorArchivos = GestorArchivos.getInstancia();
         shapeRenderer = new ShapeRenderer();
-        
+
         if (sistemaUsuarios.haySesionActiva()) {
             usuarioActual = sistemaUsuarios.getUsuarioActual();
         }
@@ -55,14 +56,11 @@ public class PantallaComparacion implements Screen {
     @Override
     public void show() {
         // setup texturas
-        texturaExtra = new Texture(Gdx.files.internal("extra.png"));
-        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
-        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
-
-        estiloExtra = new Button.ButtonStyle();
-        estiloExtra.up = fondoExtra;
-        estiloExtra.down = fondoExtra2;
+        texturaComparar = new Texture(Gdx.files.internal("comparar.png"));
+        texturaComparar2 = new Texture(Gdx.files.internal("comparar2.png"));
+        estiloComparar = new Button.ButtonStyle();
+        estiloComparar.up = new TextureRegionDrawable(new TextureRegion(texturaComparar));
+        estiloComparar.down = new TextureRegionDrawable(new TextureRegion(texturaComparar2));
 
         texturaVolver = new Texture(Gdx.files.internal("volver.png"));
         Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
@@ -120,13 +118,13 @@ public class PantallaComparacion implements Screen {
 
         // selector de usuario para comparar
         Table tablaSelectorUsuario = new Table();
-        
+
         Label labelSelector = new Label("Comparar con:", skin);
         labelSelector.setColor(Color.WHITE);
-        
+
         selectorAmigo = new SelectBox<>(skin);
         cargarListaAmigos();
-        
+
         selectorAmigo.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -136,8 +134,7 @@ public class PantallaComparacion implements Screen {
             }
         });
 
-        Button btnComparar = new Button(estiloExtra);
-        btnComparar.add(new Label("Comparar", skin));
+        Button btnComparar = new Button(estiloComparar);
         btnComparar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -156,7 +153,7 @@ public class PantallaComparacion implements Screen {
         // tabla de comparacion
         tablaComparacion = new Table();
         crearTablaComparacionVacia();
-        
+
         ScrollPane scrollComparacion = new ScrollPane(tablaComparacion, skin);
         scrollComparacion.setScrollingDisabled(true, false);
         tablaPrincipal.add(scrollComparacion).size(700, 350).padBottom(20).row();
@@ -193,7 +190,7 @@ public class PantallaComparacion implements Screen {
 
     private void seleccionarUsuarioComparar() {
         String seleccionado = selectorAmigo.getSelected();
-        
+
         if (seleccionado.equals("No tienes amigos agregados")) {
             mostrarMensaje("Primero agrega algunos amigos", Color.YELLOW);
             return;
@@ -213,7 +210,7 @@ public class PantallaComparacion implements Screen {
 
     private void crearTablaComparacionVacia() {
         tablaComparacion.clear();
-        
+
         Label mensaje = new Label("Selecciona un amigo para comparar estadisticas", skin);
         mensaje.setColor(Color.GRAY);
         tablaComparacion.add(mensaje).pad(50);
@@ -224,13 +221,13 @@ public class PantallaComparacion implements Screen {
 
         // header con nombres
         Table headerTable = new Table();
-        
+
         Label tuNombre = new Label("TU: " + usuarioActual.getNombreUsuario(), skin);
         tuNombre.setColor(Color.CYAN);
-        
+
         Label vs = new Label("VS", skin);
         vs.setColor(Color.WHITE);
-        
+
         Label rivalNombre = new Label("RIVAL: " + usuarioComparar.getNombreUsuario(), skin);
         rivalNombre.setColor(Color.ORANGE);
 
@@ -242,37 +239,41 @@ public class PantallaComparacion implements Screen {
 
         // seccion niveles completados
         crearSeccionComparacion("NIVELES COMPLETADOS",
-            usuarioActual.getNivelMaximoAlcanzado(), 7,
-            usuarioComparar.getNivelMaximoAlcanzado(), 7);
+                usuarioActual.getNivelMaximoAlcanzado(), 7,
+                usuarioComparar.getNivelMaximoAlcanzado(), 7);
 
         // seccion puntuacion total
         int maxPuntos = Math.max(usuarioActual.getPuntuacionTotal(), usuarioComparar.getPuntuacionTotal());
-        if (maxPuntos == 0) maxPuntos = 1000; // evitar division por zero
-        
+        if (maxPuntos == 0) {
+            maxPuntos = 1000; // evitar division por zero
+        }
         crearSeccionComparacion("PUNTUACION TOTAL",
-            usuarioActual.getPuntuacionTotal(), maxPuntos,
-            usuarioComparar.getPuntuacionTotal(), maxPuntos);
+                usuarioActual.getPuntuacionTotal(), maxPuntos,
+                usuarioComparar.getPuntuacionTotal(), maxPuntos);
 
         // seccion tiempo promedio por nivel
-        long tiempoPromedioTu = usuarioActual.getPartidasCompletadas() > 0 ? 
-            usuarioActual.getTiempoTotalJugado() / usuarioActual.getPartidasCompletadas() : 0;
-        long tiempoPromedioRival = usuarioComparar.getPartidasCompletadas() > 0 ?
-            usuarioComparar.getTiempoTotalJugado() / usuarioComparar.getPartidasCompletadas() : 0;
+        long tiempoPromedioTu = usuarioActual.getPartidasCompletadas() > 0
+                ? usuarioActual.getTiempoTotalJugado() / usuarioActual.getPartidasCompletadas() : 0;
+        long tiempoPromedioRival = usuarioComparar.getPartidasCompletadas() > 0
+                ? usuarioComparar.getTiempoTotalJugado() / usuarioComparar.getPartidasCompletadas() : 0;
 
         long maxTiempo = Math.max(tiempoPromedioTu, tiempoPromedioRival);
-        if (maxTiempo == 0) maxTiempo = 60000; // 1 minuto default
-
+        if (maxTiempo == 0) {
+            maxTiempo = 60000; // 1 minuto default
+        }
         crearSeccionComparacion("TIEMPO PROMEDIO POR NIVEL",
-            (int)(tiempoPromedioTu / 1000), (int)(maxTiempo / 1000),
-            (int)(tiempoPromedioRival / 1000), (int)(maxTiempo / 1000));
+                (int) (tiempoPromedioTu / 1000), (int) (maxTiempo / 1000),
+                (int) (tiempoPromedioRival / 1000), (int) (maxTiempo / 1000));
 
         // seccion partidas completadas
         int maxPartidas = Math.max(usuarioActual.getPartidasCompletadas(), usuarioComparar.getPartidasCompletadas());
-        if (maxPartidas == 0) maxPartidas = 10;
+        if (maxPartidas == 0) {
+            maxPartidas = 10;
+        }
 
         crearSeccionComparacion("PARTIDAS COMPLETADAS",
-            usuarioActual.getPartidasCompletadas(), maxPartidas,
-            usuarioComparar.getPartidasCompletadas(), maxPartidas);
+                usuarioActual.getPartidasCompletadas(), maxPartidas,
+                usuarioComparar.getPartidasCompletadas(), maxPartidas);
     }
 
     private void crearSeccionComparacion(String titulo, int valorTu, int maxValor, int valorRival, int maxRival) {
@@ -290,7 +291,7 @@ public class PantallaComparacion implements Screen {
         String textoTu = formatearValor(titulo, valorTu);
         Label labelTu = new Label("Tu: " + textoTu, skin);
         labelTu.setColor(Color.WHITE);
-        
+
         contenedorTuBarra.add(barraTu).width(300).height(20).row();
         contenedorTuBarra.add(labelTu).left().padTop(5);
 
@@ -300,7 +301,7 @@ public class PantallaComparacion implements Screen {
         String textoRival = formatearValor(titulo, valorRival);
         Label labelRival = new Label("Rival: " + textoRival, skin);
         labelRival.setColor(Color.WHITE);
-        
+
         contenedorRivalBarra.add(barraRival).width(300).height(20).row();
         contenedorRivalBarra.add(labelRival).left().padTop(5);
 
@@ -312,26 +313,26 @@ public class PantallaComparacion implements Screen {
 
     private Table crearBarraProgreso(int valor, int maxValor, Color color) {
         Table barra = new Table();
-        
+
         // calcular porcentaje
-        float porcentaje = maxValor > 0 ? Math.min(1.0f, (float)valor / maxValor) : 0f;
-        
+        float porcentaje = maxValor > 0 ? Math.min(1.0f, (float) valor / maxValor) : 0f;
+
         // fondo de la barra
         Table fondo = new Table();
         fondo.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        
+
         // parte llena de la barra
         Table progreso = new Table();
         progreso.setBackground(skin.newDrawable("default-round", color));
-        
+
         // contenedor principal
         Table contenedor = new Table();
         contenedor.add(progreso).width(300 * porcentaje).height(20).left();
         contenedor.add().expandX(); // espacio restante
-        
+
         barra.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         barra.add(contenedor).fill();
-        
+
         return barra;
     }
 
@@ -342,7 +343,9 @@ public class PantallaComparacion implements Screen {
             case "PUNTUACION TOTAL":
                 return String.format("%,d pts", valor);
             case "TIEMPO PROMEDIO POR NIVEL":
-                if (valor == 0) return "0s";
+                if (valor == 0) {
+                    return "0s";
+                }
                 int minutos = valor / 60;
                 int segundos = valor % 60;
                 return minutos > 0 ? String.format("%dm %ds", minutos, segundos) : String.format("%ds", segundos);
@@ -389,21 +392,42 @@ public class PantallaComparacion implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
-        if (shapeRenderer != null) shapeRenderer.dispose();
-        if (texturaExtra != null) texturaExtra.dispose();
-        if (texturaExtra2 != null) texturaExtra2.dispose();
-        if (texturaVolver != null) texturaVolver.dispose();
-        if (texturaVolver2 != null) texturaVolver2.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
+        if (shapeRenderer != null) {
+            shapeRenderer.dispose();
+        }
+        if (texturaExtra != null) {
+            texturaExtra.dispose();
+        }
+        if (texturaExtra2 != null) {
+            texturaExtra2.dispose();
+        }
+        if (texturaVolver != null) {
+            texturaVolver.dispose();
+        }
+        if (texturaVolver2 != null) {
+            texturaVolver2.dispose();
+        }
     }
 }

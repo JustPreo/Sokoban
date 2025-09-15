@@ -34,6 +34,8 @@ public class PantallaRanking implements Screen {
     // texturas de botones
     private Texture texturaExtra, texturaExtra2, texturaVolver, texturaVolver2;
     private Button.ButtonStyle estiloExtra, estiloVolver;
+    private Texture texturaActualizar, texturaActualizar2, texturaPerfil, texturaPerfil2;
+    private Button.ButtonStyle estiloActualizar, estiloPerfil;
 
     // componentes UI
     private SelectBox<String> filtroTipo;
@@ -49,6 +51,7 @@ public class PantallaRanking implements Screen {
 
     // clase interna para manejar datos de usuarios
     private static class DatosUsuario {
+
         String nombreUsuario;
         String nombreCompleto;
         int puntuacionTotal;
@@ -137,21 +140,21 @@ public class PantallaRanking implements Screen {
 
         // filtros
         Table tablaFiltros = new Table();
-        
+
         Label labelFiltroTipo = new Label("Ordenar por:", skin);
         labelFiltroTipo.setColor(Color.WHITE);
         filtroTipo = new SelectBox<>(skin);
         filtroTipo.setItems("Puntuacion Total", "Nivel Maximo", "Partidas Completadas", "Tiempo Jugado");
         filtroTipo.setSelected(tipoFiltroActual);
         filtroTipo.addListener(new ClickListener() {
-         @Override
-         public void clicked(InputEvent event, float x, float y) {
-           if (puedeInteractuar) {
-            tipoFiltroActual = filtroTipo.getSelected();
-            actualizarRanking();
-          }
-        }
-      });
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (puedeInteractuar) {
+                    tipoFiltroActual = filtroTipo.getSelected();
+                    actualizarRanking();
+                }
+            }
+        });
 
         Label labelFiltroPeriodo = new Label("Periodo:", skin);
         labelFiltroPeriodo.setColor(Color.WHITE);
@@ -159,14 +162,14 @@ public class PantallaRanking implements Screen {
         filtroPeriodo.setItems("Historico", "Este Mes", "Esta Semana");
         filtroPeriodo.setSelected(periodoFiltroActual);
         filtroPeriodo.addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-        if (puedeInteractuar) {
-            periodoFiltroActual = filtroPeriodo.getSelected();
-            actualizarRanking();
-         }
-       }
-     });
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (puedeInteractuar) {
+                    periodoFiltroActual = filtroPeriodo.getSelected();
+                    actualizarRanking();
+                }
+            }
+        });
 
         tablaFiltros.add(labelFiltroTipo).padRight(10);
         tablaFiltros.add(filtroTipo).width(150).padRight(30);
@@ -193,8 +196,21 @@ public class PantallaRanking implements Screen {
         // botones
         Table tablaBotones = new Table();
 
-        Button btnActualizar = new Button(estiloExtra);
-        btnActualizar.add(new Label("Actualizar", skin));
+        // texturas botones
+        texturaActualizar = new Texture(Gdx.files.internal("actualizar.png"));
+        texturaActualizar2 = new Texture(Gdx.files.internal("actualizar2.png"));
+        estiloActualizar = new Button.ButtonStyle();
+        estiloActualizar.up = new TextureRegionDrawable(new TextureRegion(texturaActualizar));
+        estiloActualizar.down = new TextureRegionDrawable(new TextureRegion(texturaActualizar2));
+
+        texturaPerfil = new Texture(Gdx.files.internal("perfil.png"));
+        texturaPerfil2 = new Texture(Gdx.files.internal("perfil2.png"));
+        estiloPerfil = new Button.ButtonStyle();
+        estiloPerfil.up = new TextureRegionDrawable(new TextureRegion(texturaPerfil));
+        estiloPerfil.down = new TextureRegionDrawable(new TextureRegion(texturaPerfil2));
+
+        // actualziar
+        Button btnActualizar = new Button(estiloActualizar);
         btnActualizar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -205,8 +221,8 @@ public class PantallaRanking implements Screen {
             }
         });
 
-        Button btnMiPerfil = new Button(estiloExtra);
-        btnMiPerfil.add(new Label("Mi Perfil", skin));
+        // perfil
+        Button btnMiPerfil = new Button(estiloPerfil);
         btnMiPerfil.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -220,8 +236,8 @@ public class PantallaRanking implements Screen {
             }
         });
 
+        // volver
         Button btnVolver = new Button(estiloVolver);
-        btnVolver.add(new Label("Volver", skin));
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -231,11 +247,12 @@ public class PantallaRanking implements Screen {
             }
         });
 
-        tablaBotones.add(btnActualizar).size(100, 45).padRight(15);
-        tablaBotones.add(btnMiPerfil).size(100, 45).padRight(15);
-        tablaBotones.add(btnVolver).size(100, 45);
+        tablaBotones.add(btnActualizar).size(120, 50).padRight(15);
+        tablaBotones.add(btnMiPerfil).size(120, 50).padRight(15);
+        tablaBotones.add(btnVolver).size(120, 50);
 
         tablaPrincipal.add(tablaBotones).row();
+
         stage.addActor(tablaPrincipal);
     }
 
@@ -304,15 +321,14 @@ public class PantallaRanking implements Screen {
     private void crearFilaUsuario(int posicion, DatosUsuario datos) {
         Table fila = new Table(skin);
         Color colorFondo = new Color(0.15f, 0.15f, 0.15f, 0.8f);
-        
+
         // resaltar usuario actual
-        boolean esUsuarioActual = sistemaUsuarios.haySesionActiva() && 
-            sistemaUsuarios.getUsuarioActual().getNombreUsuario().equals(datos.nombreUsuario);
-        
+        boolean esUsuarioActual = sistemaUsuarios.haySesionActiva()
+                && sistemaUsuarios.getUsuarioActual().getNombreUsuario().equals(datos.nombreUsuario);
+
         if (esUsuarioActual) {
             colorFondo = new Color(0.2f, 0.4f, 0.2f, 0.8f); // verde oscuro
-        }
-        // destacar top 3
+        } // destacar top 3
         else if (posicion <= 3) {
             colorFondo = new Color(0.3f, 0.2f, 0.1f, 0.8f); // dorado oscuro
         }
@@ -333,7 +349,7 @@ public class PantallaRanking implements Screen {
 
         Label labelPos = new Label(textoPos, skin);
         labelPos.setColor(colorPos);
-        
+
         // nombre del jugador
         String nombreMostrar = datos.nombreCompleto + " (" + datos.nombreUsuario + ")";
         if (nombreMostrar.length() > 25) {
@@ -360,27 +376,32 @@ public class PantallaRanking implements Screen {
 
     private String obtenerTituloValor() {
         switch (tipoFiltroActual) {
-            case "Puntuacion Total": return "Puntos";
-            case "Nivel Maximo": return "Nivel Max";
-            case "Partidas Completadas": return "Completadas";
-            case "Tiempo Jugado": return "Tiempo";
-            default: return "Valor";
+            case "Puntuacion Total":
+                return "Puntos";
+            case "Nivel Maximo":
+                return "Nivel Max";
+            case "Partidas Completadas":
+                return "Completadas";
+            case "Tiempo Jugado":
+                return "Tiempo";
+            default:
+                return "Valor";
         }
     }
 
     private String obtenerValorMostrar(DatosUsuario datos) {
         switch (tipoFiltroActual) {
-            case "Puntuacion Total": 
+            case "Puntuacion Total":
                 return String.format("%,d pts", datos.puntuacionTotal);
-            case "Nivel Maximo": 
+            case "Nivel Maximo":
                 return "Nivel " + datos.nivelMaximo;
-            case "Partidas Completadas": 
+            case "Partidas Completadas":
                 return datos.partidasCompletadas + " partidas";
-            case "Tiempo Jugado": 
+            case "Tiempo Jugado":
                 long horas = datos.tiempoTotal / 3600000;
                 long minutos = (datos.tiempoTotal % 3600000) / 60000;
                 return String.format("%dh %dm", horas, minutos);
-            default: 
+            default:
                 return "N/A";
         }
     }
@@ -448,20 +469,39 @@ public class PantallaRanking implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
-        if (texturaExtra != null) texturaExtra.dispose();
-        if (texturaExtra2 != null) texturaExtra2.dispose();
-        if (texturaVolver != null) texturaVolver.dispose();
-        if (texturaVolver2 != null) texturaVolver2.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
+        if (texturaExtra != null) {
+            texturaExtra.dispose();
+        }
+        if (texturaExtra2 != null) {
+            texturaExtra2.dispose();
+        }
+        if (texturaVolver != null) {
+            texturaVolver.dispose();
+        }
+        if (texturaVolver2 != null) {
+            texturaVolver2.dispose();
+        }
     }
 }

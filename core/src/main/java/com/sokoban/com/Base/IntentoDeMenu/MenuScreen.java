@@ -34,12 +34,41 @@ public class MenuScreen implements Screen {
     private boolean puedeInteractuar = true;
     private SistemaUsuarios sistemaUsuarios;
     private Label labelUsuario;
+    private Texture texturaEstadisticas, texturaEstadisticas2;
+    private Texture texturaAvatares, texturaAvatares2;
+    private Texture texturaConfiguracion, texturaConfiguracion2;
+    private Texture texturaCerrar, texturaCerrar2;
+    private Button.ButtonStyle estiloEstadisticas, estiloAvatares, estiloConfiguracion, estiloCerrar;
 
     public MenuScreen() {
         sistemaUsuarios = SistemaUsuarios.getInstance();
     }
 
     public void show() {
+        //STSTS
+        texturaEstadisticas = new Texture(Gdx.files.internal("estadisticas.png"));
+        texturaEstadisticas2 = new Texture(Gdx.files.internal("estadisticas2.png"));
+        estiloEstadisticas = new Button.ButtonStyle();
+        estiloEstadisticas.up = new TextureRegionDrawable(new TextureRegion(texturaEstadisticas));
+        estiloEstadisticas.down = new TextureRegionDrawable(new TextureRegion(texturaEstadisticas2));
+        //AVARARES
+        texturaAvatares = new Texture(Gdx.files.internal("avatares.png"));
+        texturaAvatares2 = new Texture(Gdx.files.internal("avatares2.png"));
+        estiloAvatares = new Button.ButtonStyle();
+        estiloAvatares.up = new TextureRegionDrawable(new TextureRegion(texturaAvatares));
+        estiloAvatares.down = new TextureRegionDrawable(new TextureRegion(texturaAvatares2));
+        //CONFIG
+        texturaConfiguracion = new Texture(Gdx.files.internal("configuracion.png"));
+        texturaConfiguracion2 = new Texture(Gdx.files.internal("configuracion2.png"));
+        estiloConfiguracion = new Button.ButtonStyle();
+        estiloConfiguracion.up = new TextureRegionDrawable(new TextureRegion(texturaConfiguracion));
+        estiloConfiguracion.down = new TextureRegionDrawable(new TextureRegion(texturaConfiguracion2));
+        //CERRAR
+        texturaCerrar = new Texture(Gdx.files.internal("cerrar.png"));
+        texturaCerrar2 = new Texture(Gdx.files.internal("cerrar2.png"));
+        estiloCerrar = new Button.ButtonStyle();
+        estiloCerrar.up = new TextureRegionDrawable(new TextureRegion(texturaCerrar));
+        estiloCerrar.down = new TextureRegionDrawable(new TextureRegion(texturaCerrar2));
         //JUGAR
         Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
         Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
@@ -81,13 +110,11 @@ public class MenuScreen implements Screen {
         estiloSalir.up = new TextureRegionDrawable(new TextureRegion(texturaSalir));
         estiloSalir.down = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
 
-        
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         bg = new Texture("fondoM.png");
 
-        
         Label titulo = new Label("Sokoban", skin);
         titulo.setColor(Color.CYAN);
 
@@ -275,8 +302,7 @@ public class MenuScreen implements Screen {
         // Botones - agregar el nuevo boton de avatares aqui tambien
         Table botonesTable = new Table();
 
-        Button btnEstadisticas = new Button(skin);
-        btnEstadisticas.add(new Label("Estadísticas", skin));
+        Button btnEstadisticas = new Button(estiloEstadisticas);
         btnEstadisticas.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -285,18 +311,16 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnAvatares = new Button(skin);
-        btnAvatares.add(new Label("Avatares", skin));
+        Button btnAvatares = new Button(estiloAvatares);
         btnAvatares.addListener(new ClickListener() {
-          @Override
-          public void clicked(InputEvent event, float x, float y) {
-            overlay.remove();
-             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaAvatares());
-             }
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaAvatares());
+            }
         });
 
-        Button btnConfiguracion = new Button(skin);
-        btnConfiguracion.add(new Label("Configuración", skin));
+        Button btnConfiguracion = new Button(estiloConfiguracion);
         btnConfiguracion.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -305,8 +329,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnCerrar = new Button(skin);
-        btnCerrar.add(new Label("Cerrar", skin));
+        Button btnCerrar = new Button(estiloCerrar);
         btnCerrar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -320,7 +343,7 @@ public class MenuScreen implements Screen {
         botonesTable.add(btnAvatares).size(90, 35).padRight(5).row();
         botonesTable.add(btnConfiguracion).size(90, 35).padRight(5).padTop(5);
         botonesTable.add(btnCerrar).size(90, 35).padTop(5);
-        
+
         panel.add(botonesTable).row();
 
         stage.addActor(overlay);
@@ -352,7 +375,7 @@ public class MenuScreen implements Screen {
         for (int i = 1; i <= 7; i++) {
             String estado = i <= usuario.getNivelMaximoAlcanzado() ? "Desbloqueado" : "Bloqueado";
             String color = i <= usuario.getNivelMaximoAlcanzado() ? "Verde" : "Rojo";
-            
+
             Label nivelInfo = new Label("Nivel " + i + ": " + estado, skin);
             if (i <= usuario.getNivelMaximoAlcanzado()) {
                 nivelInfo.setColor(Color.GREEN);
@@ -369,10 +392,10 @@ public class MenuScreen implements Screen {
 
         long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
         Label tiempoLabel = new Label("Tiempo total jugado: " + tiempoMinutos + " minutos", skin);
-        Label porcentajeLabel = new Label("Tasa de éxito: " + 
-            (usuario.getPartidasTotales() > 0 ? 
-                String.format("%.1f%%", (double)usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100) : 
-                "0%"), skin);
+        Label porcentajeLabel = new Label("Tasa de éxito: "
+                + (usuario.getPartidasTotales() > 0
+                ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
+                : "0%"), skin);
 
         panel.add(tiempoLabel).left().padBottom(5).row();
         panel.add(porcentajeLabel).left().padBottom(15).row();
@@ -420,11 +443,11 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 boolean exito = sistemaUsuarios.crearBackup();
                 Label resultado = new Label(
-                    exito ? "¡Backup creado exitosamente!" : "Error creando backup", 
-                    skin
+                        exito ? "¡Backup creado exitosamente!" : "Error creando backup",
+                        skin
                 );
                 resultado.setColor(exito ? Color.GREEN : Color.RED);
-                
+
                 // Mostrar mensaje temporal
                 panel.add(resultado).padBottom(10).row();
             }
@@ -465,7 +488,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        
+
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -481,22 +504,31 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        stage.getCamera().update(); 
+        stage.getCamera().update();
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
     }
 }
