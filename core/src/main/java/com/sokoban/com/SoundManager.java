@@ -12,8 +12,10 @@ public class SoundManager {
     private static Sound pou;
 
     private static Music currentMusic = null;
-    private static float targetVolume = 1f;  // Volumen deseado , se puede cambiar a futuro con metodo de nad
+    private static float targetVolume = 0.5f;  // Volumen deseado , MUSICA
+    private static float targetVolumeEffects = 0.5f;//Volumen deseado , EFECTOS
     private static float fadeSpeed = 0.02f;  // Velocidad de fade
+    private static float controlVolumen = 0f;
 
     static {
         musicMap.put("lobby", Gdx.audio.newMusic(Gdx.files.internal("Musica/Simplicity.WAV")));
@@ -47,27 +49,27 @@ public class SoundManager {
         }
 
         float vol = currentMusic.getVolume();
-        if (vol < targetVolume) {
+        if (vol < controlVolumen) {
             vol += fadeSpeed;
-            if (vol > targetVolume) {
-                vol = targetVolume;
+            if (vol > controlVolumen) {
+                vol = controlVolumen;
             }
             currentMusic.setVolume(vol);
-        } else if (vol > targetVolume) {
+        } else if (vol > controlVolumen) {
             vol -= fadeSpeed;
-            if (vol < targetVolume) {
-                vol = targetVolume;
+            if (vol < controlVolumen) {
+                vol = controlVolumen;
             }
             currentMusic.setVolume(vol);
         }
     }
 
     public static void pauseMusic() {
-        targetVolume = 0f; // baja volumen con fade
+        controlVolumen = 0f; // baja volumen con fade
     }
 
     public static void resumeMusic() {
-        targetVolume = 1f; // sube volumen hasta 1
+        controlVolumen = targetVolume;
         if (!currentMusic.isPlaying()) {
             currentMusic.play();
         }
@@ -75,13 +77,13 @@ public class SoundManager {
 
     public static void playCaminar(float volume) {//por si acaso
         if (caminarSound != null) {
-            caminarSound.play(targetVolume);
+            caminarSound.play(targetVolumeEffects);
         }
     }
 
     public static void playPou(float volume) {//el float volume es por si acaso
         if (pou != null) {
-            pou.play(targetVolume);
+            pou.play(targetVolumeEffects);
         }
     }
 
@@ -102,5 +104,9 @@ public class SoundManager {
 
     public static void setVolume(float volumen) {
         targetVolume = volumen;
+    }
+
+    public static void setVolumeEffects(float volumen) {
+        targetVolumeEffects = volumen;
     }
 }

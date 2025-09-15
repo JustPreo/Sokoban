@@ -31,14 +31,13 @@ public class PantallaAvatares implements Screen {
 
     // avatares disponibles
     private String[] avatares = {
-        "personaje.png", "caja.png", "objetivo.png", "tp1.png",
-        "tp2.png", "tp3.png", "tp4.png", "tp5.png", "tp6.png", "tp7.png"
+        "personaje.png", "caja.png", "objetivo.png","srek.png"
     };
-
+    //Pongaos solo 9 avatares , pero que sean "unicos"
+    //Talvez hacer un avatar del munequito ese
     private String[] nombresAvatares = {
         "Personaje Clasico", "Caja Misteriosa", "Portal Objetivo",
-        "Portal Nivel 1", "Portal Nivel 2", "Portal Nivel 3",
-        "Portal Nivel 4", "Portal Nivel 5", "Portal Nivel 6", "Portal Nivel 7"
+         "Mike Sullivan"
     };
 
     private String avatarSeleccionado;

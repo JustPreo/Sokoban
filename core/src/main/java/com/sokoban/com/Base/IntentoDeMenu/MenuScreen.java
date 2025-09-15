@@ -123,9 +123,18 @@ public class MenuScreen implements Screen {
             labelUsuario = new Label("Bienvenido: " + usuarioActual.getNombreCompleto(), skin);
             labelUsuario.setColor(Color.LIGHT_GRAY);
         } else {
-            labelUsuario = new Label("Sin sesión activa", skin);
+            labelUsuario = new Label("Sin sesion activa", skin);
             labelUsuario.setColor(Color.GRAY);
         }
+        float volumenMusica = 0.5f; // default
+        float volumenEfectos = 0.5f;//Default
+        if (usuarioActual != null && usuarioActual.getPreferencias() != null) {
+            volumenMusica = usuarioActual.getPreferencias().getVolumenMusica();
+            volumenEfectos = usuarioActual.getPreferencias().getVolumenEfectos();
+            
+        }
+        SoundManager.setVolume(volumenMusica);
+        SoundManager.setVolumeEffects(volumenEfectos);
 
         Button btnJugar = new Button(estiloJugar);
         Button btnPerfil = new Button(estiloPerfil);
@@ -233,14 +242,14 @@ public class MenuScreen implements Screen {
         titulo.setColor(Color.YELLOW);
         panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label("Necesitas iniciar sesión\npara acceder a esta función", skin);
+        Label mensaje = new Label("Necesitas iniciar sesion\npara acceder a esta funcion", skin);
         mensaje.setColor(Color.WHITE);
         panel.add(mensaje).padBottom(20).row();
 
         Table botonesTable = new Table();
 
         Button btnLogin = new Button(skin);
-        btnLogin.add(new Label("Iniciar Sesión", skin));
+        btnLogin.add(new Label("Iniciar sesion", skin));
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -288,7 +297,7 @@ public class MenuScreen implements Screen {
         Label nombreLabel = new Label("Usuario: " + usuario.getNombreUsuario(), skin);
         Label nombreCompletoLabel = new Label("Nombre: " + usuario.getNombreCompleto(), skin);
         Label nivelLabel = new Label("Nivel actual: " + usuario.getNivelActual(), skin);
-        Label nivelMaxLabel = new Label("Nivel máximo: " + usuario.getNivelMaximoAlcanzado(), skin);
+        Label nivelMaxLabel = new Label("Nivel maximo: " + usuario.getNivelMaximoAlcanzado(), skin);
         Label partidasLabel = new Label("Partidas jugadas: " + usuario.getPartidasTotales(), skin);
         Label puntosLabel = new Label("Puntos totales: " + usuario.getPuntuacionTotal(), skin);
 
@@ -363,7 +372,7 @@ public class MenuScreen implements Screen {
         panel.pad(20);
         overlay.add(panel).width(500).height(400);
 
-        Label titulo = new Label("ESTADÍSTICAS DETALLADAS", skin);
+        Label titulo = new Label("ESTADISTICAS DETALLADAS", skin);
         titulo.setColor(Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
@@ -386,13 +395,13 @@ public class MenuScreen implements Screen {
         }
 
         // Estadísticas generales
-        Label subtitulo2 = new Label("\nEstadísticas Generales:", skin);
+        Label subtitulo2 = new Label("\nEstadisticas Generales:", skin);
         subtitulo2.setColor(Color.YELLOW);
         panel.add(subtitulo2).left().padBottom(10).row();
 
         long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
         Label tiempoLabel = new Label("Tiempo total jugado: " + tiempoMinutos + " minutos", skin);
-        Label porcentajeLabel = new Label("Tasa de éxito: "
+        Label porcentajeLabel = new Label("Tasa de exito: "
                 + (usuario.getPartidasTotales() > 0
                 ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
                 : "0%"), skin);
@@ -432,7 +441,7 @@ public class MenuScreen implements Screen {
         titulo.setColor(Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label("Configuraciones del juego\n(Próximamente más opciones)", skin);
+        Label mensaje = new Label("Configuraciones del juego\n(Proximamente mas opciones)", skin);
         panel.add(mensaje).padBottom(20).row();
 
         // Botón para crear backup
