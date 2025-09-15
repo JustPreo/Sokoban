@@ -67,7 +67,6 @@ public class Jugador {
                     String rutaArchivo = "jugador/" + direccion + "/" + direccion + frame + ".png";
                     Texture textura = new Texture(rutaArchivo);
                     texturesTemp.add(textura);
-                    System.out.println("Cargado: " + rutaArchivo);
                 } catch (Exception e) {
                     
                     System.out.println("No se pudo cargar frame " + frame + " para dir " + direccion);
