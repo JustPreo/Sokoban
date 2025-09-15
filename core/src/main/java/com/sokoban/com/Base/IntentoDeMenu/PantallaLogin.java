@@ -54,130 +54,124 @@ public class PantallaLogin implements Screen {
     }
 
     private void crearUI() {
-        // Texturas para botones
-        texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
-        texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
-        Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
-        Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
-        
-        texturaVolver = new Texture(Gdx.files.internal("volver.png"));
-        texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
-        Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
-        Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
+    // === TEXTURAS LOGIN ===
+    Texture texLogin = new Texture(Gdx.files.internal("login.png"));
+    Texture texLoginPressed = new Texture(Gdx.files.internal("login2.png"));
+    Button.ButtonStyle estiloLogin = new Button.ButtonStyle();
+    estiloLogin.up = new TextureRegionDrawable(new TextureRegion(texLogin));
+    estiloLogin.down = new TextureRegionDrawable(new TextureRegion(texLoginPressed));
 
-        Button.ButtonStyle estiloBoton = new Button.ButtonStyle();
-        estiloBoton.up = fondoJugar;
-        estiloBoton.down = fondoJugar2;
-        
-         Button.ButtonStyle estiloBotonVolver = new Button.ButtonStyle();
-        estiloBotonVolver.up = fondoVolver;
-        estiloBotonVolver.down = fondoVolver2;
+    // === TEXTURAS REGISTER ===
+    Texture texRegister = new Texture(Gdx.files.internal("register.png"));
+    Texture texRegisterPressed = new Texture(Gdx.files.internal("register2.png"));
+    Button.ButtonStyle estiloRegister = new Button.ButtonStyle();
+    estiloRegister.up = new TextureRegionDrawable(new TextureRegion(texRegister));
+    estiloRegister.down = new TextureRegionDrawable(new TextureRegion(texRegisterPressed));
 
-        // Tabla principal
-        Table tablaPrincipal = new Table();
-        tablaPrincipal.setFillParent(true);
-        tablaPrincipal.center();
+    // === TEXTURAS CAMBIAR MODO ===
+    Texture texModo = new Texture(Gdx.files.internal("modo.png"));
+    Texture texModoPressed = new Texture(Gdx.files.internal("modo2.png"));
+    Button.ButtonStyle estiloModo = new Button.ButtonStyle();
+    estiloModo.up = new TextureRegionDrawable(new TextureRegion(texModo));
+    estiloModo.down = new TextureRegionDrawable(new TextureRegion(texModoPressed));
 
-        // Panel login
-        Table panelLogin = new Table(skin);
-        panelLogin.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.7f)));
-        panelLogin.pad(30);
+    // === TEXTURAS VOLVER ===
+    Texture texVolver = new Texture(Gdx.files.internal("volver.png"));
+    Texture texVolverPressed = new Texture(Gdx.files.internal("volver2.png"));
+    Button.ButtonStyle estiloVolver = new Button.ButtonStyle();
+    estiloVolver.up = new TextureRegionDrawable(new TextureRegion(texVolver));
+    estiloVolver.down = new TextureRegionDrawable(new TextureRegion(texVolverPressed));
 
-        // Título
-        Label titulo = new Label("INICIAR SESIÓN", skin);
-        titulo.setColor(Color.CYAN);
-        titulo.setName("titulo");
-        panelLogin.add(titulo).padBottom(20).row();
+    // === TABLA PRINCIPAL ===
+    Table tablaPrincipal = new Table();
+    tablaPrincipal.setFillParent(true);
+    tablaPrincipal.center();
 
-        // Campos de texto
-        Label labelUsuario = new Label("Usuario:", skin);
-        campoUsuario = new TextField("", skin);
-        campoUsuario.setMessageText("Ingresa tu usuario");
-        panelLogin.add(labelUsuario).left().padBottom(5).row();
-        panelLogin.add(campoUsuario).width(250).padBottom(15).row();
+    // === PANEL LOGIN/REGISTRO ===
+    Table panelLogin = new Table(skin);
+    panelLogin.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.7f)));
+    panelLogin.pad(30);
 
-        Label labelContrasena = new Label("Contraseña:", skin);
-        campoContrasena = new TextField("", skin);
-        campoContrasena.setPasswordMode(true);
-        campoContrasena.setPasswordCharacter('*');
-        campoContrasena.setMessageText("Ingresa tu contraseña");
-        panelLogin.add(labelContrasena).left().padBottom(5).row();
-        panelLogin.add(campoContrasena).width(250).padBottom(15).row();
+    // Título dinámico
+    Label titulo = new Label("INICIAR SESION", skin);
+    titulo.setColor(Color.CYAN);
+    titulo.setName("titulo");
+    panelLogin.add(titulo).padBottom(20).row();
 
-        Label labelNombreCompleto = new Label("Nombre completo:", skin);
-        labelNombreCompleto.setName("labelNombreCompleto");
-        campoNombreCompleto = new TextField("", skin);
-        campoNombreCompleto.setMessageText("Tu nombre completo");
-        campoNombreCompleto.setVisible(false);
-        labelNombreCompleto.setVisible(false);
-        panelLogin.add(labelNombreCompleto).left().padBottom(5).row();
-        panelLogin.add(campoNombreCompleto).width(250).padBottom(15).row();
+    // Usuario
+    Label labelUsuario = new Label("Usuario:", skin);
+    campoUsuario = new TextField("", skin);
+    campoUsuario.setMessageText("Ingresa tu usuario");
+    panelLogin.add(labelUsuario).left().padBottom(5).row();
+    panelLogin.add(campoUsuario).width(250).padBottom(15).row();
 
-        // Botones
-        Button btnAccion = new Button(estiloBoton);//Login/Register
-        Button btnCambiarModo = new Button(estiloBoton);//Login/Register
-        btnCambiarModo.setName("btnCambiarModo");
-        Button btnVolver = new Button(estiloBotonVolver);//Volver
+    // Contraseña
+    Label labelContrasena = new Label("Contrasena:", skin);
+    campoContrasena = new TextField("", skin);
+    campoContrasena.setPasswordMode(true);
+    campoContrasena.setPasswordCharacter('*');
+    campoContrasena.setMessageText("Ingresa tu contrasena");
+    panelLogin.add(labelContrasena).left().padBottom(5).row();
+    panelLogin.add(campoContrasena).width(250).padBottom(15).row();
 
-        // Listeners ENTER
-        campoContrasena.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ENTER) {
-                    if (modoRegistro) registrarUsuario();
-                    else iniciarSesion();
-                    return true;
-                }
-                return false;
+    // Nombre completo (solo visible en registro)
+    Label labelNombreCompleto = new Label("Nombre completo:", skin);
+    labelNombreCompleto.setName("labelNombreCompleto");
+    campoNombreCompleto = new TextField("", skin);
+    campoNombreCompleto.setMessageText("Tu nombre completo");
+    campoNombreCompleto.setVisible(false);
+    labelNombreCompleto.setVisible(false);
+    panelLogin.add(labelNombreCompleto).left().padBottom(5).row();
+    panelLogin.add(campoNombreCompleto).width(250).padBottom(15).row();
+
+    // === BOTONES ===
+    Button btnAccion = new Button(estiloLogin); // Por defecto Login
+    Button btnCambiarModo = new Button(estiloModo);
+    btnCambiarModo.setName("btnCambiarModo");
+    Button btnVolver = new Button(estiloVolver);
+
+    // Listener: Acción principal
+    btnAccion.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            if (modoRegistro) registrarUsuario();
+            else iniciarSesion();
+        }
+    });
+
+    // Listener: Cambiar entre Login/Registro
+    btnCambiarModo.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            cambiarModo();
+            if (modoRegistro) {
+                btnAccion.setStyle(estiloRegister);
+            } else {
+                btnAccion.setStyle(estiloLogin);
             }
-        });
+        }
+    });
 
-        campoNombreCompleto.addListener(new InputListener() {
-            @Override
-            public boolean keyDown(InputEvent event, int keycode) {
-                if (keycode == Input.Keys.ENTER && modoRegistro) {
-                    registrarUsuario();
-                    return true;
-                }
-                return false;
-            }
-        });
+    // Listener: Volver al menú
+    btnVolver.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+        }
+    });
 
-        // Botones click
-        btnAccion.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (modoRegistro) registrarUsuario();
-                else iniciarSesion();
-            }
-        });
+    // === AGREGAR BOTONES Y MENSAJE ===
+    panelLogin.add(btnAccion).size(200, 50).padBottom(10).row();
+    panelLogin.add(btnCambiarModo).size(200, 50).padBottom(10).row();
+    panelLogin.add(btnVolver).size(200, 50).padBottom(20).row();
 
-        btnCambiarModo.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                cambiarModo();
-            }
-        });
+    labelMensaje = new Label("", skin);
+    labelMensaje.setColor(Color.WHITE);
+    panelLogin.add(labelMensaje).padBottom(10).row();
 
-        btnVolver.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
-            }
-        });
-
-        // Agregar botones y labelMensaje
-        panelLogin.add(btnAccion).size(200, 50).padBottom(10).row();
-        panelLogin.add(btnCambiarModo).size(200, 50).padBottom(10).row();
-        panelLogin.add(btnVolver).size(200, 50).padBottom(20).row();
-
-        labelMensaje = new Label("", skin);
-        labelMensaje.setColor(Color.WHITE);
-        panelLogin.add(labelMensaje).padBottom(10).row();
-
-        tablaPrincipal.add(panelLogin);
-        stage.addActor(tablaPrincipal);
-    }
+    tablaPrincipal.add(panelLogin);
+    stage.addActor(tablaPrincipal);
+}
 
     private void cambiarModo() {
         modoRegistro = !modoRegistro;
@@ -190,7 +184,7 @@ public class PantallaLogin implements Screen {
             if (labelNombreCompleto != null) labelNombreCompleto.setVisible(true);
             campoNombreCompleto.setVisible(true);
         } else {
-            if (titulo != null) titulo.setText("INICIAR SESIÓN");
+            if (titulo != null) titulo.setText("INICIAR SESION");
             if (labelNombreCompleto != null) labelNombreCompleto.setVisible(false);
             campoNombreCompleto.setVisible(false);
         }
@@ -217,7 +211,7 @@ public class PantallaLogin implements Screen {
                     Actions.run(() -> ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen()))
             ));
         } else {
-            mostrarMensaje("Usuario o contraseña incorrectos", Color.RED);
+            mostrarMensaje("Usuario o contrasena incorrectos", Color.RED);
         }
     }
 
@@ -232,17 +226,17 @@ public class PantallaLogin implements Screen {
         }
 
         if (!SistemaUsuarios.validarNombreUsuario(usuario)) {
-            mostrarMensaje("Usuario inválido (3-20 chars, solo letras/números)", Color.RED);
+            mostrarMensaje("Usuario invalido (3-20 chars, solo letras/numeros)", Color.RED);
             return;
         }
 
         if (contrasena.length() < 4) {
-            mostrarMensaje("La contraseña debe tener al menos 4 caracteres", Color.RED);
+            mostrarMensaje("La contrasena debe tener al menos 4 caracteres", Color.RED);
             return;
         }
 
         if (sistemaUsuarios.registrarUsuario(usuario, contrasena, nombreCompleto)) {
-            mostrarMensaje("¡Usuario registrado! Ahora puedes iniciar sesión", Color.GREEN);
+            mostrarMensaje("¡Usuario registrado! Ahora puedes iniciar sesion", Color.GREEN);
 
             // Cambiar a login después de 2 segundos
             stage.addAction(Actions.sequence(

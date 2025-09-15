@@ -25,11 +25,13 @@ public class PantallaAmigos implements Screen {
     private Texture bg;
     private boolean puedeInteractuar = true;
     private SistemaUsuarios sistemaUsuarios;
-    
+
     // texturas de botones para mantener consistencia
+    private Texture texturaBuscar, texturaBuscar2;
+    private Texture texturaActualizar, texturaActualizar2;
     private Texture texturaExtra, texturaExtra2, texturaVolver, texturaVolver2;
-    private Button.ButtonStyle estiloExtra, estiloVolver;
-    
+    private Button.ButtonStyle estiloBuscar, estiloActualizar, estiloVolver;
+
     // campos de busqueda
     private TextField campoBusqueda;
     private ScrollPane scrollAmigos;
@@ -41,25 +43,37 @@ public class PantallaAmigos implements Screen {
 
     @Override
     public void show() {
-        // estetik parecido a MenuScreen
-        texturaExtra = new Texture(Gdx.files.internal("extra.png"));
-        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
-        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
-        
-        estiloExtra = new Button.ButtonStyle();
-        estiloExtra.up = fondoExtra;
-        estiloExtra.down = fondoExtra2;
+        // === BOTÓN BUSCAR ===
+        texturaBuscar = new Texture(Gdx.files.internal("buscar.png"));
+        Drawable fondoBuscar = new TextureRegionDrawable(new TextureRegion(texturaBuscar));
+        texturaBuscar2 = new Texture(Gdx.files.internal("buscar2.png"));
+        Drawable fondoBuscar2 = new TextureRegionDrawable(new TextureRegion(texturaBuscar2));
 
+        estiloBuscar = new Button.ButtonStyle();
+        estiloBuscar.up = fondoBuscar;
+        estiloBuscar.down = fondoBuscar2;
+
+        // === BOTÓN ACTUALIZAR ===
+        texturaActualizar = new Texture(Gdx.files.internal("actualizar.png"));
+        Drawable fondoActualizar = new TextureRegionDrawable(new TextureRegion(texturaActualizar));
+        texturaActualizar2 = new Texture(Gdx.files.internal("actualizar2.png"));
+        Drawable fondoActualizar2 = new TextureRegionDrawable(new TextureRegion(texturaActualizar2));
+
+        estiloActualizar = new Button.ButtonStyle();
+        estiloActualizar.up = fondoActualizar;
+        estiloActualizar.down = fondoActualizar2;
+
+        // === BOTÓN VOLVER ===
         texturaVolver = new Texture(Gdx.files.internal("volver.png"));
         Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
         texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
         Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
-        
+
         estiloVolver = new Button.ButtonStyle();
         estiloVolver.up = fondoVolver;
         estiloVolver.down = fondoVolver2;
 
+        // === STAGE Y SKIN ===
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
@@ -84,9 +98,8 @@ public class PantallaAmigos implements Screen {
         labelBuscar.setColor(Color.WHITE);
         campoBusqueda = new TextField("", skin);
         campoBusqueda.setMessageText("Nombre del usuario...");
-        
-        Button btnBuscar = new Button(estiloExtra);
-        btnBuscar.add(new Label("Buscar", skin));
+
+        Button btnBuscar = new Button(estiloBuscar);
         btnBuscar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -98,28 +111,26 @@ public class PantallaAmigos implements Screen {
 
         tablaBusqueda.add(labelBuscar).padRight(10);
         tablaBusqueda.add(campoBusqueda).width(200).padRight(10);
-        tablaBusqueda.add(btnBuscar).size(80, 40);
+        tablaBusqueda.add(btnBuscar).size(120, 50);
         tablaPrincipal.add(tablaBusqueda).padBottom(20).row();
 
-        // seccion de friends actuales
+        // seccion de amigos
         Label labelAmigos = new Label("MIS AMIGOS", skin);
         labelAmigos.setColor(Color.YELLOW);
         tablaPrincipal.add(labelAmigos).left().padBottom(10).row();
 
-        // tabla scrolleable para la lista de friends
         tablaAmigos = new Table();
         actualizarListaAmigos();
-        
+
         scrollAmigos = new ScrollPane(tablaAmigos, skin);
         scrollAmigos.setSize(600, 200);
         scrollAmigos.setScrollingDisabled(true, false);
         tablaPrincipal.add(scrollAmigos).size(600, 200).padBottom(20).row();
 
-        // botones de navegacion
+        // botones de navegación
         Table tablaBotones = new Table();
-        
-        Button btnActualizar = new Button(estiloExtra);
-        btnActualizar.add(new Label("Actualizar", skin));
+
+        Button btnActualizar = new Button(estiloActualizar);
         btnActualizar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -130,7 +141,6 @@ public class PantallaAmigos implements Screen {
         });
 
         Button btnVolver = new Button(estiloVolver);
-        btnVolver.add(new Label("Volver", skin));
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -149,7 +159,7 @@ public class PantallaAmigos implements Screen {
 
     private void actualizarListaAmigos() {
         tablaAmigos.clear();
-        
+
         if (!sistemaUsuarios.haySesionActiva()) {
             Label sinSesion = new Label("No hay sesion activa", skin);
             sinSesion.setColor(Color.RED);
@@ -167,7 +177,6 @@ public class PantallaAmigos implements Screen {
             return;
         }
 
-        // crear fila para cada amigo
         for (String nombreAmigo : amigos) {
             crearFilaAmigo(nombreAmigo);
         }
@@ -178,25 +187,15 @@ public class PantallaAmigos implements Screen {
         filaAmigo.setBackground(skin.newDrawable("default-round", new Color(0.2f, 0.2f, 0.2f, 0.8f)));
         filaAmigo.pad(10);
 
-        // info basica del amigo
         Label labelNombre = new Label(nombreAmigo, skin);
         labelNombre.setColor(Color.WHITE);
         filaAmigo.add(labelNombre).width(150).left();
 
-        // intentar obtener stats del amigo si esta cargado
         String infoExtra = "Usuario offline";
-        try {
-            // aqui podriamos cargar info del amigo desde archivos pero por ahora placeholder
-            infoExtra = "Niv: ? Puntos: ?";
-        } catch (Exception e) {
-            // si no se puede cargar, mantener placeholder
-        }
-        
         Label labelInfo = new Label(infoExtra, skin);
         labelInfo.setColor(Color.LIGHT_GRAY);
         filaAmigo.add(labelInfo).width(200).left().padLeft(20);
 
-        // botones de accion
         Button btnVer = new Button(skin);
         btnVer.add(new Label("Ver", skin));
         btnVer.addListener(new ClickListener() {
@@ -227,7 +226,7 @@ public class PantallaAmigos implements Screen {
 
     private void buscarUsuario() {
         String nombreBuscar = campoBusqueda.getText().trim();
-        
+
         if (nombreBuscar.isEmpty()) {
             mostrarMensaje("Escribe un nombre de usuario", Color.YELLOW);
             return;
@@ -238,7 +237,6 @@ public class PantallaAmigos implements Screen {
             return;
         }
 
-        // verificar si el usuario existe
         String[] todosLosUsuarios = sistemaUsuarios.listarUsuarios();
         boolean usuarioExiste = false;
         for (String usuario : todosLosUsuarios) {
@@ -253,20 +251,17 @@ public class PantallaAmigos implements Screen {
             return;
         }
 
-        // verificar si ya es un friend
         Usuario usuarioActual = sistemaUsuarios.getUsuarioActual();
         if (usuarioActual.getListaAmigos().contains(nombreBuscar)) {
             mostrarMensaje("Ya es tu amigo: " + nombreBuscar, Color.YELLOW);
             return;
         }
 
-        // verificar que no sea el mismo usuario
         if (nombreBuscar.equals(usuarioActual.getNombreUsuario())) {
             mostrarMensaje("No puedes agregarte a ti mismo", Color.YELLOW);
             return;
         }
 
-        // confirmar agregar amigo
         confirmarAgregarAmigo(nombreBuscar);
     }
 
@@ -291,7 +286,7 @@ public class PantallaAmigos implements Screen {
         panel.add(mensaje).padBottom(20).row();
 
         Table tablaBotones = new Table();
-        
+
         Button btnSi = new Button(skin);
         btnSi.add(new Label("Si", skin));
         btnSi.addListener(new ClickListener() {
@@ -323,7 +318,7 @@ public class PantallaAmigos implements Screen {
 
     private void agregarAmigo(String nombreAmigo) {
         boolean exito = sistemaUsuarios.agregarAmigo(nombreAmigo);
-        
+
         if (exito) {
             mostrarMensaje("Amigo agregado: " + nombreAmigo, Color.GREEN);
             actualizarListaAmigos();
@@ -354,7 +349,7 @@ public class PantallaAmigos implements Screen {
         panel.add(mensaje).padBottom(20).row();
 
         Table tablaBotones = new Table();
-        
+
         Button btnSi = new Button(skin);
         btnSi.add(new Label("Quitar", skin));
         btnSi.addListener(new ClickListener() {
@@ -387,7 +382,7 @@ public class PantallaAmigos implements Screen {
     private void quitarAmigo(String nombreAmigo) {
         Usuario usuarioActual = sistemaUsuarios.getUsuarioActual();
         boolean exito = usuarioActual.getListaAmigos().remove(nombreAmigo);
-        
+
         if (exito) {
             sistemaUsuarios.guardarProgreso();
             mostrarMensaje("Amigo quitado: " + nombreAmigo, Color.GREEN);
@@ -441,22 +436,39 @@ public class PantallaAmigos implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
 
     @Override
-    public void resume() {}
+    public void resume() {
+    }
 
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
-        if (texturaExtra != null) texturaExtra.dispose();
-        if (texturaExtra2 != null) texturaExtra2.dispose();
-        if (texturaVolver != null) texturaVolver.dispose();
-        if (texturaVolver2 != null) texturaVolver2.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
+        if (texturaExtra != null) {
+            texturaExtra.dispose();
+        }
+        if (texturaExtra2 != null) {
+            texturaExtra2.dispose();
+        }
+        if (texturaVolver != null) {
+            texturaVolver.dispose();
+        }
+        if (texturaVolver2 != null) {
+            texturaVolver2.dispose();
+        }
     }
 }
