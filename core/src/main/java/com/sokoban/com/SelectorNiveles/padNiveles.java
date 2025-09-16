@@ -13,6 +13,7 @@ import com.sokoban.com.Niveles.Lvl1;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.Niveles.Lvl2;
 import com.sokoban.com.Niveles.Lvl3;
+import com.sokoban.com.Tutorialez.Tutorial;
 
 /**
  *
