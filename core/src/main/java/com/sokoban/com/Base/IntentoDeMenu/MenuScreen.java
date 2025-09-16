@@ -34,115 +34,74 @@ public class MenuScreen implements Screen {
     private boolean puedeInteractuar = true;
     private SistemaUsuarios sistemaUsuarios;
     private Label labelUsuario;
-    private Texture texturaEstadisticas, texturaEstadisticas2;
-    private Texture texturaAvatares, texturaAvatares2;
-    private Texture texturaConfiguracion, texturaConfiguracion2;
-    private Texture texturaCerrar, texturaCerrar2;
-    private Button.ButtonStyle estiloEstadisticas, estiloAvatares, estiloConfiguracion, estiloCerrar;
 
     public MenuScreen() {
         sistemaUsuarios = SistemaUsuarios.getInstance();
     }
 
+    @Override
     public void show() {
-        //STSTS
-        texturaEstadisticas = new Texture(Gdx.files.internal("estadisticas.png"));
-        texturaEstadisticas2 = new Texture(Gdx.files.internal("estadisticas2.png"));
-        estiloEstadisticas = new Button.ButtonStyle();
-        estiloEstadisticas.up = new TextureRegionDrawable(new TextureRegion(texturaEstadisticas));
-        estiloEstadisticas.down = new TextureRegionDrawable(new TextureRegion(texturaEstadisticas2));
-        //AVARARES
-        texturaAvatares = new Texture(Gdx.files.internal("avatares.png"));
-        texturaAvatares2 = new Texture(Gdx.files.internal("avatares2.png"));
-        estiloAvatares = new Button.ButtonStyle();
-        estiloAvatares.up = new TextureRegionDrawable(new TextureRegion(texturaAvatares));
-        estiloAvatares.down = new TextureRegionDrawable(new TextureRegion(texturaAvatares2));
-        //CONFIG
-        texturaConfiguracion = new Texture(Gdx.files.internal("configuracion.png"));
-        texturaConfiguracion2 = new Texture(Gdx.files.internal("configuracion2.png"));
-        estiloConfiguracion = new Button.ButtonStyle();
-        estiloConfiguracion.up = new TextureRegionDrawable(new TextureRegion(texturaConfiguracion));
-        estiloConfiguracion.down = new TextureRegionDrawable(new TextureRegion(texturaConfiguracion2));
-        //CERRAR
-        texturaCerrar = new Texture(Gdx.files.internal("cerrar.png"));
-        texturaCerrar2 = new Texture(Gdx.files.internal("cerrar2.png"));
-        estiloCerrar = new Button.ButtonStyle();
-        estiloCerrar.up = new TextureRegionDrawable(new TextureRegion(texturaCerrar));
-        estiloCerrar.down = new TextureRegionDrawable(new TextureRegion(texturaCerrar2));
-        //JUGAR
+        // Configurar texturas de botones
         Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
+        Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
         Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
+        Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
+        
         Button.ButtonStyle estiloJugar = new Button.ButtonStyle();
-        estiloJugar.up = new TextureRegionDrawable(new TextureRegion(texturaJugar));
-        estiloJugar.down = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
+        estiloJugar.up = fondoJugar;
+        estiloJugar.down = fondoJugar2;
 
-        // PERFIL
-        Texture texturaPerfil = new Texture(Gdx.files.internal("perfil.png"));
-        Texture texturaPerfil2 = new Texture(Gdx.files.internal("perfil2.png"));
-        Button.ButtonStyle estiloPerfil = new Button.ButtonStyle();
-        estiloPerfil.up = new TextureRegionDrawable(new TextureRegion(texturaPerfil));
-        estiloPerfil.down = new TextureRegionDrawable(new TextureRegion(texturaPerfil2));
+        Texture texturaExtra = new Texture(Gdx.files.internal("extra.png"));
+        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
+        Texture texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
+        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
+        
+        Button.ButtonStyle estiloExtra = new Button.ButtonStyle();
+        estiloExtra.up = fondoExtra;
+        estiloExtra.down = fondoExtra2;
 
-        //FRIENDZ
-        Texture texturaAmigos = new Texture(Gdx.files.internal("amigos.png"));
-        Texture texturaAmigos2 = new Texture(Gdx.files.internal("amigos2.png"));
-        Button.ButtonStyle estiloAmigos = new Button.ButtonStyle();
-        estiloAmigos.up = new TextureRegionDrawable(new TextureRegion(texturaAmigos));
-        estiloAmigos.down = new TextureRegionDrawable(new TextureRegion(texturaAmigos2));
-
-        //LOGIN/LOGOUT
-        Texture texturaLogin, texturaLogin2;
-        if (sistemaUsuarios.haySesionActiva()) {
-            texturaLogin = new Texture(Gdx.files.internal("logout.png"));
-            texturaLogin2 = new Texture(Gdx.files.internal("logout2.png"));
-        } else {
-            texturaLogin = new Texture(Gdx.files.internal("login.png"));
-            texturaLogin2 = new Texture(Gdx.files.internal("login2.png"));
-        }
-        Button.ButtonStyle estiloLogin = new Button.ButtonStyle();
-        estiloLogin.up = new TextureRegionDrawable(new TextureRegion(texturaLogin));
-        estiloLogin.down = new TextureRegionDrawable(new TextureRegion(texturaLogin2));
-
-        //SALIR
         Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
+        Drawable fondoSalir = new TextureRegionDrawable(new TextureRegion(texturaSalir));
         Texture texturaSalir2 = new Texture(Gdx.files.internal("salir2.png"));
+        Drawable fondoSalir2 = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
+        
         Button.ButtonStyle estiloSalir = new Button.ButtonStyle();
-        estiloSalir.up = new TextureRegionDrawable(new TextureRegion(texturaSalir));
-        estiloSalir.down = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
+        estiloSalir.up = fondoSalir;
+        estiloSalir.down = fondoSalir2;
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         bg = new Texture("fondoM.png");
 
+        // Crear elementos UI
         Label titulo = new Label("Sokoban", skin);
         titulo.setColor(Color.CYAN);
 
+        // Información del usuario
         Usuario usuarioActual = sistemaUsuarios.getUsuarioActual();
         if (usuarioActual != null) {
-            labelUsuario = new Label("Bienvenido: " + usuarioActual.getNombreCompleto(), skin);
+            String textoUsuario = "Bienvenido: " + usuarioActual.getNombreCompleto();
+            
+            // si el usuario tiene muy pocas partidas, asumir que es nuevo
+            if (usuarioActual.getPartidasTotales() == 0) {
+                textoUsuario += " (Usuario nuevo - Visita el tutorial!)";
+            }
+            
+            labelUsuario = new Label(textoUsuario, skin);
             labelUsuario.setColor(Color.LIGHT_GRAY);
         } else {
-            labelUsuario = new Label("Sin sesion activa", skin);
+            labelUsuario = new Label("Sin sesión activa", skin);
             labelUsuario.setColor(Color.GRAY);
         }
-        float volumenMusica = 0.5f; // default
-        float volumenEfectos = 0.5f;//Default
-        if (usuarioActual != null && usuarioActual.getPreferencias() != null) {
-            volumenMusica = usuarioActual.getPreferencias().getVolumenMusica();
-            volumenEfectos = usuarioActual.getPreferencias().getVolumenEfectos();
-            
-        }
-        SoundManager.setVolume(volumenMusica);
-        SoundManager.setVolumeEffects(volumenEfectos);
 
         Button btnJugar = new Button(estiloJugar);
-        Button btnPerfil = new Button(estiloPerfil);
-        Button btnAmigos = new Button(estiloAmigos);
-        Button btnLogin = new Button(estiloLogin);
+        Button btnPerfil = new Button(estiloExtra);
+        Button btnAmigos = new Button(estiloExtra); // boton nuevo para amigos
+        Button btnLogin = new Button(estiloExtra);
         Button btnSalir = new Button(estiloSalir);
 
-        // === LISTENERS ===
+        // Listeners para botones existentes
         btnJugar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -170,6 +129,7 @@ public class MenuScreen implements Screen {
             }
         });
 
+        // nuevo listener para el boton de amigos
         btnAmigos.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -188,9 +148,11 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
+                        // Cerrar sesión
                         sistemaUsuarios.cerrarSesion();
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
                     } else {
+                        // Ir a login
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
                     }
                 }
@@ -209,7 +171,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // === LAYOUT ===
+        // Layout - agregar el nuevo boton
         Table table = new Table();
         table.setFillParent(true);
         table.center();
@@ -218,7 +180,19 @@ public class MenuScreen implements Screen {
         table.add(labelUsuario).padBottom(30).row();
         table.add(btnJugar).size(200, 60).padBottom(15).row();
         table.add(btnPerfil).size(200, 60).padBottom(15).row();
+        
+        // agregar boton de amigos con su label
+        Label labelAmigos = new Label("Mis Amigos", skin);
+        btnAmigos.add(labelAmigos);
         table.add(btnAmigos).size(200, 60).padBottom(15).row();
+        
+        // Cambiar texto del botón según el estado de sesión
+        Label labelBotonLogin = new Label(
+            sistemaUsuarios.haySesionActiva() ? "Cerrar Sesión" : "Iniciar Sesión", 
+            skin
+        );
+        btnLogin.add(labelBotonLogin);
+        
         table.add(btnLogin).size(200, 60).padBottom(15).row();
         table.add(btnSalir).size(200, 60).row();
 
@@ -242,14 +216,14 @@ public class MenuScreen implements Screen {
         titulo.setColor(Color.YELLOW);
         panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label("Necesitas iniciar sesion\npara acceder a esta funcion", skin);
+        Label mensaje = new Label("Necesitas iniciar sesión\npara acceder a esta función", skin);
         mensaje.setColor(Color.WHITE);
         panel.add(mensaje).padBottom(20).row();
 
         Table botonesTable = new Table();
 
         Button btnLogin = new Button(skin);
-        btnLogin.add(new Label("Iniciar sesion", skin));
+        btnLogin.add(new Label("Iniciar Sesión", skin));
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -287,7 +261,7 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(400).height(350); // hacer un poco mas grande para el nuevo boton
+        overlay.add(panel).width(400).height(370);
 
         Label titulo = new Label("PERFIL DE USUARIO", skin);
         titulo.setColor(Color.CYAN);
@@ -297,7 +271,7 @@ public class MenuScreen implements Screen {
         Label nombreLabel = new Label("Usuario: " + usuario.getNombreUsuario(), skin);
         Label nombreCompletoLabel = new Label("Nombre: " + usuario.getNombreCompleto(), skin);
         Label nivelLabel = new Label("Nivel actual: " + usuario.getNivelActual(), skin);
-        Label nivelMaxLabel = new Label("Nivel maximo: " + usuario.getNivelMaximoAlcanzado(), skin);
+        Label nivelMaxLabel = new Label("Nivel máximo: " + usuario.getNivelMaximoAlcanzado(), skin);
         Label partidasLabel = new Label("Partidas jugadas: " + usuario.getPartidasTotales(), skin);
         Label puntosLabel = new Label("Puntos totales: " + usuario.getPuntuacionTotal(), skin);
 
@@ -308,10 +282,11 @@ public class MenuScreen implements Screen {
         panel.add(partidasLabel).left().padBottom(5).row();
         panel.add(puntosLabel).left().padBottom(15).row();
 
-        // Botones - agregar el nuevo boton de avatares aqui tambien
+        // Botones
         Table botonesTable = new Table();
 
-        Button btnEstadisticas = new Button(estiloEstadisticas);
+        Button btnEstadisticas = new Button(skin);
+        btnEstadisticas.add(new Label("Estadísticas", skin));
         btnEstadisticas.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -320,7 +295,8 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnAvatares = new Button(estiloAvatares);
+        Button btnAvatares = new Button(skin);
+        btnAvatares.add(new Label("Avatares", skin));
         btnAvatares.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -329,7 +305,18 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnConfiguracion = new Button(estiloConfiguracion);
+        Button btnRanking = new Button(skin);
+        btnRanking.add(new Label("Ranking", skin));
+        btnRanking.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaRanking());
+            }
+        });
+
+        Button btnConfiguracion = new Button(skin);
+        btnConfiguracion.add(new Label("Configuración", skin));
         btnConfiguracion.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -338,7 +325,8 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnCerrar = new Button(estiloCerrar);
+        Button btnCerrar = new Button(skin);
+        btnCerrar.add(new Label("Cerrar", skin));
         btnCerrar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -347,12 +335,13 @@ public class MenuScreen implements Screen {
             }
         });
 
-        // organizar botones en 2 filas para que quepan mejor
+        // organizar botones en 2 filas
         botonesTable.add(btnEstadisticas).size(90, 35).padRight(5);
-        botonesTable.add(btnAvatares).size(90, 35).padRight(5).row();
+        botonesTable.add(btnAvatares).size(90, 35).padRight(5);
+        botonesTable.add(btnRanking).size(90, 35).row();
         botonesTable.add(btnConfiguracion).size(90, 35).padRight(5).padTop(5);
-        botonesTable.add(btnCerrar).size(90, 35).padTop(5);
-
+        botonesTable.add(btnCerrar).size(90, 35).padTop(5).colspan(2);
+        
         panel.add(botonesTable).row();
 
         stage.addActor(overlay);
@@ -372,7 +361,7 @@ public class MenuScreen implements Screen {
         panel.pad(20);
         overlay.add(panel).width(500).height(400);
 
-        Label titulo = new Label("ESTADISTICAS DETALLADAS", skin);
+        Label titulo = new Label("ESTADÍSTICAS DETALLADAS", skin);
         titulo.setColor(Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
@@ -383,8 +372,7 @@ public class MenuScreen implements Screen {
 
         for (int i = 1; i <= 7; i++) {
             String estado = i <= usuario.getNivelMaximoAlcanzado() ? "Desbloqueado" : "Bloqueado";
-            String color = i <= usuario.getNivelMaximoAlcanzado() ? "Verde" : "Rojo";
-
+            
             Label nivelInfo = new Label("Nivel " + i + ": " + estado, skin);
             if (i <= usuario.getNivelMaximoAlcanzado()) {
                 nivelInfo.setColor(Color.GREEN);
@@ -395,16 +383,16 @@ public class MenuScreen implements Screen {
         }
 
         // Estadísticas generales
-        Label subtitulo2 = new Label("\nEstadisticas Generales:", skin);
+        Label subtitulo2 = new Label("\nEstadísticas Generales:", skin);
         subtitulo2.setColor(Color.YELLOW);
         panel.add(subtitulo2).left().padBottom(10).row();
 
         long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
         Label tiempoLabel = new Label("Tiempo total jugado: " + tiempoMinutos + " minutos", skin);
-        Label porcentajeLabel = new Label("Tasa de exito: "
-                + (usuario.getPartidasTotales() > 0
-                ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
-                : "0%"), skin);
+        Label porcentajeLabel = new Label("Tasa de éxito: " + 
+            (usuario.getPartidasTotales() > 0 ? 
+                String.format("%.1f%%", (double)usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100) : 
+                "0%"), skin);
 
         panel.add(tiempoLabel).left().padBottom(5).row();
         panel.add(porcentajeLabel).left().padBottom(15).row();
@@ -441,7 +429,7 @@ public class MenuScreen implements Screen {
         titulo.setColor(Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label("Configuraciones del juego\n(Proximamente mas opciones)", skin);
+        Label mensaje = new Label("Configuraciones del juego\n(Próximamente más opciones)", skin);
         panel.add(mensaje).padBottom(20).row();
 
         // Botón para crear backup
@@ -452,11 +440,11 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 boolean exito = sistemaUsuarios.crearBackup();
                 Label resultado = new Label(
-                        exito ? "¡Backup creado exitosamente!" : "Error creando backup",
-                        skin
+                    exito ? "¡Backup creado exitosamente!" : "Error creando backup", 
+                    skin
                 );
                 resultado.setColor(exito ? Color.GREEN : Color.RED);
-
+                
                 // Mostrar mensaje temporal
                 panel.add(resultado).padBottom(10).row();
             }
@@ -497,7 +485,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-
+        
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -513,31 +501,22 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        stage.getCamera().update();
+        stage.getCamera().update(); 
     }
 
     @Override
-    public void pause() {
-    }
+    public void pause() {}
 
     @Override
-    public void resume() {
-    }
+    public void resume() {}
 
     @Override
-    public void hide() {
-    }
+    public void hide() {}
 
     @Override
     public void dispose() {
-        if (stage != null) {
-            stage.dispose();
-        }
-        if (skin != null) {
-            skin.dispose();
-        }
-        if (bg != null) {
-            bg.dispose();
-        }
+        if (stage != null) stage.dispose();
+        if (skin != null) skin.dispose();
+        if (bg != null) bg.dispose();
     }
 }

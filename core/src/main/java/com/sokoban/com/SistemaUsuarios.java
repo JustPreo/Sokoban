@@ -13,6 +13,19 @@ public class SistemaUsuarios {
     // Singleton de GestorArchivos
     private final GestorArchivos gestorArchivos;
 
+    // clase para resultado de login con mas informacion
+    public static class ResultadoLogin {
+        public final boolean exitoso;
+        public final boolean esPrimeraSesion;
+        public final String mensaje;
+        
+        public ResultadoLogin(boolean exitoso, boolean esPrimeraSesion, String mensaje) {
+            this.exitoso = exitoso;
+            this.esPrimeraSesion = esPrimeraSesion;
+            this.mensaje = mensaje;
+        }
+    }
+
     private SistemaUsuarios() {
         usuariosCargados = new HashMap<>();
         gestorArchivos = GestorArchivos.getInstancia();
@@ -63,13 +76,13 @@ public class SistemaUsuarios {
         }
     }
     
-    /** Inicia sesión con un usuario */
-    public boolean iniciarSesion(String nombreUsuario, String contrasena) {
+    /** Inicia sesion con informacion adicional sobre primera vez */
+    public ResultadoLogin iniciarSesionConInfo(String nombreUsuario, String contrasena) {
         lock.lock();
         try {
             if (!gestorArchivos.existeUsuario(nombreUsuario)) {
                 System.out.println("Usuario no encontrado: " + nombreUsuario);
-                return false;
+                return new ResultadoLogin(false, false, "Usuario no encontrado");
             }
             
             Usuario usuario = usuariosCargados.get(nombreUsuario);
@@ -77,25 +90,42 @@ public class SistemaUsuarios {
                 usuario = gestorArchivos.cargarUsuario(nombreUsuario);
                 if (usuario == null) {
                     System.out.println("Error cargando usuario: " + nombreUsuario);
-                    return false;
+                    return new ResultadoLogin(false, false, "Error cargando usuario");
                 }
                 usuariosCargados.put(nombreUsuario, usuario);
             }
             
             if (!usuario.verificarContrasena(contrasena)) {
                 System.out.println("Contraseña incorrecta para: " + nombreUsuario);
-                return false;
+                return new ResultadoLogin(false, false, "Contraseña incorrecta");
             }
+            
+            // revisar si es primera sesion
+            boolean esPrimera = usuario.esPrimeraSesion();
             
             usuario.iniciarSesion();
             usuarioActual = usuario;
-            gestorArchivos.guardarUsuario(usuario); // Actualizar última sesión
             
-            System.out.println("Sesión iniciada exitosamente para: " + nombreUsuario);
-            return true;
+            // marcar que ya no es primera sesion y guardar
+            if (esPrimera) {
+                usuario.setPrimeraSesion(false);
+            }
+            
+            gestorArchivos.guardarUsuario(usuario);
+            
+            System.out.println("Sesión iniciada exitosamente para: " + nombreUsuario + 
+                              (esPrimera ? " (Primera sesión)" : ""));
+            
+            return new ResultadoLogin(true, esPrimera, "Sesión iniciada exitosamente");
+            
         } finally {
             lock.unlock();
         }
+    }
+    
+    /** Inicia sesión con un usuario*/
+    public boolean iniciarSesion(String nombreUsuario, String contrasena) {
+        return iniciarSesionConInfo(nombreUsuario, contrasena).exitoso;
     }
     
     /** Cierra la sesión actual */
@@ -201,8 +231,43 @@ public class SistemaUsuarios {
         }
     }
     
+    /** Quita un amigo de la lista */
+    public boolean quitarAmigo(String nombreAmigo) {
+        lock.lock();
+        try {
+            if (usuarioActual == null) return false;
+            
+            boolean quitado = usuarioActual.getListaAmigos().remove(nombreAmigo);
+            if (quitado) guardarProgreso();
+            return quitado;
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    /** Cargar datos de un usuario especifico (para comparaciones, etc) */
+    public Usuario cargarDatosUsuario(String nombreUsuario) {
+        if (!gestorArchivos.existeUsuario(nombreUsuario)) {
+            return null;
+        }
+        
+        // primero revisar si ya esta cargado
+        Usuario usuario = usuariosCargados.get(nombreUsuario);
+        if (usuario != null) {
+            return usuario;
+        }
+        
+        // cargar desde archivo
+        usuario = gestorArchivos.cargarUsuario(nombreUsuario);
+        if (usuario != null) {
+            usuariosCargados.put(nombreUsuario, usuario);
+        }
+        
+        return usuario;
+    }
+    
     public String[] getRankingGlobal() {
-        return listarUsuarios(); // Temporal, se puede ordenar por puntuación
+        return listarUsuarios(); // se puede mejorar ordenando por puntuacion
     }
     
     public boolean crearBackup() {
@@ -219,5 +284,16 @@ public class SistemaUsuarios {
     public String getResumenUsuarioActual() {
         if (usuarioActual == null) return "No hay usuario activo";
         return usuarioActual.getResumenUsuario();
+    }
+    
+    /** Metodo helper para verificar si un usuario es nuevo */
+    public boolean esUsuarioNuevo(String nombreUsuario) {
+        Usuario usuario = cargarDatosUsuario(nombreUsuario);
+        return usuario != null && usuario.getPartidasTotales() == 0;
+    }
+    
+    /** Obtener cantidad total de usuarios registrados */
+    public int getCantidadUsuarios() {
+        return gestorArchivos.listarUsuarios().size();
     }
 }

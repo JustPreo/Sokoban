@@ -16,7 +16,8 @@ public class Usuario implements Serializable {
     private String contrasenaHash;          
     private String nombreCompleto;          
     private LocalDateTime fechaRegistro;   
-    private LocalDateTime ultimaSesion;     
+    private LocalDateTime ultimaSesion;  
+    private boolean esPrimeraSesion;   
     
     // Progreso del juego
     private int nivelActual;                
@@ -45,6 +46,7 @@ public class Usuario implements Serializable {
         this.nombreCompleto = nombreCompleto;
         this.fechaRegistro = LocalDateTime.now();
         this.ultimaSesion = LocalDateTime.now();
+        this.esPrimeraSesion = true; // nueva cuenta = primera sesion
         
         
         this.nivelActual = 1;
@@ -253,4 +255,7 @@ public class Usuario implements Serializable {
     public Map<Integer, EstadisticasNivel> getEstadisticasPorNivel() { 
         return new HashMap<>(estadisticasPorNivel); 
     }
+    
+    public boolean esPrimeraSesion() { return esPrimeraSesion; }
+    public void setPrimeraSesion(boolean esPrimeraSesion) { this.esPrimeraSesion = esPrimeraSesion; }
 }
