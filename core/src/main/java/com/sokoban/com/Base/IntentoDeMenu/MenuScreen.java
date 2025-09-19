@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -19,13 +20,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.SoundManager;
 import com.sokoban.com.Usuario;
-import com.sokoban.com.Idiomas;
 
 public class MenuScreen implements Screen {
 
@@ -544,53 +544,82 @@ public class MenuScreen implements Screen {
     }
 
     private void mostrarConfiguracion() {
-        puedeInteractuar = false;
+    puedeInteractuar = false;
 
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
+    Table overlay = new Table();
+    overlay.setFillParent(true);
+    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlay.center();
 
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel).width(400).height(300);
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlay.add(panel).width(400).height(350);
 
-        Label titulo = new Label(idiomas.obtenerTexto("perfil.configuracion"), skin);
-        titulo.setColor(Color.CYAN);
-        panel.add(titulo).padBottom(15).row();
+    Label titulo = new Label(idiomas.obtenerTexto("perfil.configuracion"), skin);
+    titulo.setColor(Color.CYAN);
+    panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label(idiomas.obtenerTexto("config.proximamente"), skin);
-        panel.add(mensaje).padBottom(20).row();
+    // Botón para configuración de juego (Settings)
+    Button btnConfigJuego = new Button(skin);
+    Label labelConfigJuego = new Label(idiomas.obtenerTexto("menu.configuracion"), skin);
+    labelConfigJuego.setFontScale(0.8f);
+    btnConfigJuego.add(labelConfigJuego);
+    btnConfigJuego.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaSettings());
+        }
+    });
 
-        Button btnBackup = new Button(skin);
-        btnBackup.add(new Label(idiomas.obtenerTexto("config.crear_backup"), skin));
-        btnBackup.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                boolean exito = sistemaUsuarios.crearBackup();
-                mostrarMensaje(exito ? 
-                    idiomas.obtenerTexto("config.backup_creado") : 
-                    idiomas.obtenerTexto("config.error_backup"), 
-                    exito ? Color.GREEN : Color.RED);
-            }
-        });
+    // Botón para configuración de idioma
+    Button btnIdioma = new Button(skin);
+    Label labelIdioma = new Label("Idioma / Language", skin);
+    labelIdioma.setFontScale(0.8f);
+    btnIdioma.add(labelIdioma);
+    btnIdioma.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            mostrarConfiguracionIdioma();
+        }
+    });
 
-        Button btnCerrar = new Button(skin);
-        btnCerrar.add(new Label(idiomas.obtenerTexto("general.cerrar"), skin));
-        btnCerrar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                puedeInteractuar = true;
-            }
-        });
+    Button btnBackup = new Button(skin);
+    Label labelBackup = new Label(idiomas.obtenerTexto("config.crear_backup"), skin);
+    labelBackup.setFontScale(0.8f);
+    btnBackup.add(labelBackup);
+    btnBackup.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            boolean exito = sistemaUsuarios.crearBackup();
+            mostrarMensaje(exito ? 
+                idiomas.obtenerTexto("config.backup_creado") : 
+                idiomas.obtenerTexto("config.error_backup"), 
+                exito ? Color.GREEN : Color.RED);
+        }
+    });
 
-        panel.add(btnBackup).size(200, 40).padBottom(10).row();
-        panel.add(btnCerrar).size(100, 40).row();
+    Button btnCerrar = new Button(skin);
+    Label labelCerrar = new Label(idiomas.obtenerTexto("general.cerrar"), skin);
+    labelCerrar.setFontScale(0.8f);
+    btnCerrar.add(labelCerrar);
+    btnCerrar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            puedeInteractuar = true;
+        }
+    });
 
-        stage.addActor(overlay);
-    }
+    panel.add(btnConfigJuego).size(200, 40).padBottom(10).row();
+    panel.add(btnIdioma).size(200, 40).padBottom(10).row();
+    panel.add(btnBackup).size(200, 40).padBottom(10).row();
+    panel.add(btnCerrar).size(100, 40).row();
+
+    stage.addActor(overlay);
+}
 
     private void mostrarMensaje(String texto, Color color) {
         Label mensajeTemporal = new Label(texto, skin);

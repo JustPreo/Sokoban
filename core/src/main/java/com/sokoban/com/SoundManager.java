@@ -1,9 +1,10 @@
 package com.sokoban.com;
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import java.util.HashMap;
 
 public class SoundManager {
 
@@ -15,6 +16,7 @@ public class SoundManager {
     private static float targetVolume = 0.5f;  // Volumen deseado , MUSICA
     private static float targetVolumeEffects = 0.5f;//Volumen deseado , EFECTOS
     private static float fadeSpeed = 0.02f;  // Velocidad de fade
+
     private static float controlVolumen = 0.5f;
 
     static {
@@ -108,5 +110,31 @@ public class SoundManager {
 
     public static void setVolumeEffects(float volumen) {
         targetVolumeEffects = volumen;
+    }
+
+    // MÉTODOS AGREGADOS PARA PANTALLA SETTINGS:
+    
+    // Métodos para controlar volumen de música (compatibles con PantallaSettings)
+    public static void setMusicVolume(float volume) {
+        setVolume(volume); // usa tu método existente
+        controlVolumen = targetVolume; // actualiza el control inmediatamente
+    }
+    
+    public static float getMusicVolume() {
+        return targetVolume;
+    }
+    
+    // Métodos para controlar volumen de efectos (compatibles con PantallaSettings)
+    public static void setSoundVolume(float volume) {
+        setVolumeEffects(volume); // usa tu método existente
+    }
+    
+    public static float getSoundVolume() {
+        return targetVolumeEffects;
+    }
+    
+    // Método adicional para verificar si la música está reproduciéndose
+    public static boolean isMusicPlaying() {
+        return currentMusic != null && currentMusic.isPlaying();
     }
 }
