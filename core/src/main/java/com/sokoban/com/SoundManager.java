@@ -112,28 +112,28 @@ public class SoundManager {
         targetVolumeEffects = volumen;
     }
 
-    // MÉTODOS AGREGADOS PARA PANTALLA SETTINGS:
+    // MÉTODOS AGREGADOS PARA PANTALLA SETTINGS YA TENGO MUCHO SUEÑO LOL
     
-    // Métodos para controlar volumen de música (compatibles con PantallaSettings)
+    // Métodos para controlar volumen de música (compatibles con PantallaSettings que cree para el setting)
     public static void setMusicVolume(float volume) {
-        setVolume(volume); // usa tu método existente
-        controlVolumen = targetVolume; // actualiza el control inmediatamente
+        setVolume(volume); // usa el método existente
+        controlVolumen = targetVolume; // esto actualiza el control inmediatamente
     }
     
     public static float getMusicVolume() {
         return targetVolume;
     }
     
-    // Métodos para controlar volumen de efectos (compatibles con PantallaSettings)
+    // Métodos para controlar volumen de efectos (compatibles con PantallaSettings yet again)
     public static void setSoundVolume(float volume) {
-        setVolumeEffects(volume); // usa tu método existente
+        setVolumeEffects(volume); // same as the last
     }
     
     public static float getSoundVolume() {
         return targetVolumeEffects;
     }
     
-    // Método adicional para verificar si la música está reproduciéndose
+    // nada mas para verificar si se esta reproduciendo
     public static boolean isMusicPlaying() {
         return currentMusic != null && currentMusic.isPlaying();
     }
