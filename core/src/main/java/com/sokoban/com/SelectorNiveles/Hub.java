@@ -175,7 +175,7 @@ public class Hub implements Screen {
 
         // Actualizar jugador
         jogador.update();
-
+        
         ScreenUtils.clear(Color.DARK_GRAY);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);

@@ -9,13 +9,16 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -36,6 +39,7 @@ public class MenuScreen implements Screen {
     private SistemaUsuarios sistemaUsuarios;
     private Idiomas idiomas;
     private Label labelUsuario;
+    protected BitmapFont font;
 
     public MenuScreen() {
         sistemaUsuarios = SistemaUsuarios.getInstance();
@@ -46,43 +50,50 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        // Configurar texturas de botones
-        Texture texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
-        Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
-        Texture texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
-        Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
-        
-        Button.ButtonStyle estiloJugar = new Button.ButtonStyle();
-        estiloJugar.up = fondoJugar;
-        estiloJugar.down = fondoJugar2;
 
-        Texture texturaExtra = new Texture(Gdx.files.internal("extra.png"));
-        Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        Texture texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
-        Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
-        
-        Button.ButtonStyle estiloExtra = new Button.ButtonStyle();
-        estiloExtra.up = fondoExtra;
-        estiloExtra.down = fondoExtra2;
+        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
 
-        Texture texturaSalir = new Texture(Gdx.files.internal("salir.png"));
-        Drawable fondoSalir = new TextureRegionDrawable(new TextureRegion(texturaSalir));
-        Texture texturaSalir2 = new Texture(Gdx.files.internal("salir2.png"));
-        Drawable fondoSalir2 = new TextureRegionDrawable(new TextureRegion(texturaSalir2));
-        
-        Button.ButtonStyle estiloSalir = new Button.ButtonStyle();
-        estiloSalir.up = fondoSalir;
-        estiloSalir.down = fondoSalir2;
+        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+
+        // Crear estilo único para todos los botones
+        Button.ButtonStyle estiloBoton = new Button.ButtonStyle();
+        estiloBoton.up = fondoNormalUp;
+        estiloBoton.down = fondoNormalDown;
 
         stage = new Stage(new ScreenViewport());
+
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+        createPixelFont();
+
         bg = new Texture("fondoM.png");
 
-        crearInterfaz(estiloJugar, estiloExtra, estiloSalir);
+        crearInterfaz(estiloBoton);
     }
 
-    private void crearInterfaz(Button.ButtonStyle estiloJugar, Button.ButtonStyle estiloExtra, Button.ButtonStyle estiloSalir) {
+    private void createPixelFont() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P-vaV7.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 16; // Tamaño de fuente para los botones del menú principal
+        font = generator.generateFont(parameter);
+        skin.add("default-font", font, BitmapFont.class);
+
+        // Generar una fuente más pequeña para submenús
+        parameter.size = 12;
+        BitmapFont mediumFont = generator.generateFont(parameter);
+        skin.add("medium-font", mediumFont, BitmapFont.class);
+
+        // Generar la fuente más pequeña para los submenús y los botones
+        parameter.size = 8; 
+        BitmapFont smallFont = generator.generateFont(parameter);
+        skin.add("small-font", smallFont, BitmapFont.class);
+
+        generator.dispose();
+    }
+
+    private void crearInterfaz(Button.ButtonStyle estiloBoton) {
         // Crear elementos UI con textos traducidos
         Label titulo = new Label(idiomas.obtenerTexto("menu.titulo"), skin);
         titulo.setColor(Color.CYAN);
@@ -97,12 +108,22 @@ public class MenuScreen implements Screen {
             labelUsuario.setColor(Color.GRAY);
         }
 
-        Button btnJugar = new Button(estiloJugar);
-        Button btnPerfil = new Button(estiloExtra);
-        Button btnAmigos = new Button(estiloExtra);
-        Button btnIdioma = new Button(estiloExtra);
-        Button btnLogin = new Button(estiloExtra);
-        Button btnSalir = new Button(estiloSalir);
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.up = estiloBoton.up;
+        textButtonStyle.down = estiloBoton.down;
+        textButtonStyle.font = skin.getFont("medium-font"); // Changed font to medium-font
+        textButtonStyle.fontColor = Color.WHITE;
+
+        TextButton btnJugar = new TextButton(idiomas.obtenerTexto("menu.jugar"), textButtonStyle);
+        TextButton btnPerfil = new TextButton(idiomas.obtenerTexto("menu.perfil"), textButtonStyle);
+        TextButton btnAmigos = new TextButton(idiomas.obtenerTexto("menu.amigos"), textButtonStyle);
+        TextButton btnIdioma = new TextButton("Idioma / Language", textButtonStyle);
+        TextButton btnLogin = new TextButton(
+                sistemaUsuarios.haySesionActiva()
+                ? idiomas.obtenerTexto("menu.cerrar_sesion")
+                : idiomas.obtenerTexto("menu.iniciar_sesion"), textButtonStyle
+        );
+        TextButton btnSalir = new TextButton(idiomas.obtenerTexto("menu.salir"), textButtonStyle);
 
         // Listeners para botones
         btnJugar.addListener(new ClickListener() {
@@ -185,30 +206,14 @@ public class MenuScreen implements Screen {
         table.setFillParent(true);
         table.center();
 
-        // agregar labels traducidos a botones
-        btnJugar.add(new Label(idiomas.obtenerTexto("menu.jugar"), skin));
-        btnPerfil.add(new Label(idiomas.obtenerTexto("menu.perfil"), skin));
-        btnAmigos.add(new Label(idiomas.obtenerTexto("menu.amigos"), skin));
-        btnIdioma.add(new Label("Idioma / Language", skin));
-        
-        Label labelBotonLogin = new Label(
-            sistemaUsuarios.haySesionActiva() ? 
-                idiomas.obtenerTexto("menu.cerrar_sesion") : 
-                idiomas.obtenerTexto("menu.iniciar_sesion"), 
-            skin
-        );
-        btnLogin.add(labelBotonLogin);
-        
-        btnSalir.add(new Label(idiomas.obtenerTexto("menu.salir"), skin));
-
         table.add(titulo).padBottom(20).row();
         table.add(labelUsuario).padBottom(30).row();
-        table.add(btnJugar).size(200, 60).padBottom(15).row();
-        table.add(btnPerfil).size(200, 60).padBottom(15).row();
-        table.add(btnAmigos).size(200, 60).padBottom(15).row();
-        table.add(btnIdioma).size(200, 60).padBottom(15).row();
-        table.add(btnLogin).size(200, 60).padBottom(15).row();
-        table.add(btnSalir).size(200, 60).row();
+        table.add(btnJugar).size(180, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnPerfil).size(180, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnAmigos).size(180, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnIdioma).size(180, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnLogin).size(180, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnSalir).size(180, 50).row(); // Adjusted size
 
         stage.addActor(table);
     }
@@ -224,31 +229,32 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(350).height(300);
+        overlay.add(panel).width(350).height(300); // Tamaño del panel reducido
 
-        Label titulo = new Label(idiomas.obtenerTexto("config.titulo"), skin);
-        titulo.setColor(Color.CYAN);
-        panel.add(titulo).padBottom(20).row();
+        Label titulo = new Label(idiomas.obtenerTexto("config.titulo"), skin, "small-font", Color.CYAN);
+        panel.add(titulo).padBottom(15).row();
 
         // mostrar idioma actual
-        Label labelActual = new Label(idiomas.obtenerTexto("config.idioma_actual"), skin);
-        labelActual.setColor(Color.WHITE);
+        Label labelActual = new Label(idiomas.obtenerTexto("config.idioma_actual"), skin, "small-font", Color.WHITE);
         panel.add(labelActual).left().padBottom(5).row();
 
-        Label idiomaActual = new Label(idiomas.getNombreIdioma(idiomas.getIdiomaActual()), skin);
-        idiomaActual.setColor(Color.YELLOW);
-        panel.add(idiomaActual).left().padBottom(20).row();
+        Label idiomaActual = new Label(idiomas.getNombreIdioma(idiomas.getIdiomaActual()), skin, "small-font", Color.YELLOW);
+        panel.add(idiomaActual).left().padBottom(15).row();
 
         // selector de idioma
-        Label labelSelector = new Label(idiomas.obtenerTexto("config.seleccionar"), skin);
-        labelSelector.setColor(Color.WHITE);
+        Label labelSelector = new Label(idiomas.obtenerTexto("config.seleccionar"), skin, "small-font", Color.WHITE);
         panel.add(labelSelector).left().padBottom(10).row();
 
         // botones para cada idioma
         Table tablaIdiomas = new Table();
 
-        Button btnEspanol = new Button(skin);
-        btnEspanol.add(new Label("Español", skin));
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("small-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.up = skin.getDrawable("default-round");
+        textButtonStyle.down = skin.getDrawable("default-round-down");
+
+        TextButton btnEspanol = new TextButton("Español", textButtonStyle);
         btnEspanol.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -256,8 +262,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnIngles = new Button(skin);
-        btnIngles.add(new Label("English", skin));
+        TextButton btnIngles = new TextButton("English", textButtonStyle);
         btnIngles.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -265,8 +270,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnFrances = new Button(skin);
-        btnFrances.add(new Label("Français", skin));
+        TextButton btnFrances = new TextButton("Français", textButtonStyle);
         btnFrances.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -274,15 +278,14 @@ public class MenuScreen implements Screen {
             }
         });
 
-        tablaIdiomas.add(btnEspanol).size(80, 35).padBottom(5).row();
-        tablaIdiomas.add(btnIngles).size(80, 35).padBottom(5).row();
-        tablaIdiomas.add(btnFrances).size(80, 35).padBottom(15).row();
+        tablaIdiomas.add(btnEspanol).size(150, 40).padBottom(8).row();
+        tablaIdiomas.add(btnIngles).size(150, 40).padBottom(8).row();
+        tablaIdiomas.add(btnFrances).size(150, 40).padBottom(8).row();
 
         panel.add(tablaIdiomas).row();
 
         // boton cerrar
-        Button btnCerrar = new Button(skin);
-        btnCerrar.add(new Label(idiomas.obtenerTexto("general.cerrar"), skin));
+        TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("general.cerrar"), textButtonStyle);
         btnCerrar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -290,22 +293,21 @@ public class MenuScreen implements Screen {
                 puedeInteractuar = true;
             }
         });
-
-        panel.add(btnCerrar).size(100, 40).row();
+        panel.add(btnCerrar).size(150, 40).row();
         stage.addActor(overlay);
     }
 
     private void cambiarIdioma(String nuevoIdioma, Table overlay) {
         idiomas.cambiarIdioma(nuevoIdioma);
-        
+
         // guardar en perfil del usuario si hay sesion activa
         if (sistemaUsuarios.haySesionActiva()) {
             idiomas.guardarIdiomaUsuario(nuevoIdioma);
         }
-        
+
         overlay.remove();
         mostrarMensaje(idiomas.obtenerTexto("config.idioma_cambiado"), Color.GREEN);
-        
+
         // recargar la pantalla con el nuevo idioma después de un delay
         new Thread(() -> {
             try {
@@ -330,20 +332,23 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel);
+        overlay.add(panel).width(350).height(200); // Tamaño del panel reducido
 
-        Label titulo = new Label(idiomas.obtenerTexto("login.acceso_requerido"), skin);
-        titulo.setColor(Color.YELLOW);
-        panel.add(titulo).padBottom(15).row();
+        Label titulo = new Label(idiomas.obtenerTexto("login.acceso_requerido"), skin, "small-font", Color.YELLOW);
+        panel.add(titulo).padBottom(10).row();
 
-        Label mensaje = new Label(idiomas.obtenerTexto("login.necesita_sesion"), skin);
-        mensaje.setColor(Color.WHITE);
-        panel.add(mensaje).padBottom(20).row();
+        Label mensaje = new Label(idiomas.obtenerTexto("login.necesita_sesion"), skin, "small-font", Color.WHITE);
+        panel.add(mensaje).padBottom(15).row();
 
         Table botonesTable = new Table();
 
-        Button btnLogin = new Button(skin);
-        btnLogin.add(new Label(idiomas.obtenerTexto("menu.iniciar_sesion"), skin));
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("small-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.up = skin.getDrawable("default-round");
+        textButtonStyle.down = skin.getDrawable("default-round-down");
+
+        TextButton btnLogin = new TextButton(idiomas.obtenerTexto("menu.iniciar_sesion"), textButtonStyle);
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -352,8 +357,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnCancelar = new Button(skin);
-        btnCancelar.add(new Label(idiomas.obtenerTexto("general.cancelar"), skin));
+        TextButton btnCancelar = new TextButton(idiomas.obtenerTexto("general.cancelar"), textButtonStyle);
         btnCancelar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -362,8 +366,8 @@ public class MenuScreen implements Screen {
             }
         });
 
-        botonesTable.add(btnLogin).size(120, 40).padRight(10);
-        botonesTable.add(btnCancelar).size(120, 40);
+        botonesTable.add(btnLogin).size(150, 40).padRight(10);
+        botonesTable.add(btnCancelar).size(150, 40);
         panel.add(botonesTable).row();
 
         stage.addActor(overlay);
@@ -381,19 +385,18 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(400).height(370);
+        overlay.add(panel).width(400).height(350); // Tamaño del panel reducido
 
-        Label titulo = new Label(idiomas.obtenerTexto("perfil.titulo"), skin);
-        titulo.setColor(Color.CYAN);
+        Label titulo = new Label(idiomas.obtenerTexto("perfil.titulo"), skin, "default-font", Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
         // Información del usuario
-        Label nombreLabel = new Label(idiomas.obtenerTexto("perfil.usuario") + " " + usuario.getNombreUsuario(), skin);
-        Label nombreCompletoLabel = new Label(idiomas.obtenerTexto("perfil.nombre") + " " + usuario.getNombreCompleto(), skin);
-        Label nivelLabel = new Label(idiomas.obtenerTexto("perfil.nivel_actual") + " " + usuario.getNivelActual(), skin);
-        Label nivelMaxLabel = new Label(idiomas.obtenerTexto("perfil.nivel_maximo") + " " + usuario.getNivelMaximoAlcanzado(), skin);
-        Label partidasLabel = new Label(idiomas.obtenerTexto("perfil.partidas_jugadas") + " " + usuario.getPartidasTotales(), skin);
-        Label puntosLabel = new Label(idiomas.obtenerTexto("perfil.puntos_totales") + " " + usuario.getPuntuacionTotal(), skin);
+        Label nombreLabel = new Label(idiomas.obtenerTexto("perfil.usuario") + " " + usuario.getNombreUsuario(), skin, "small-font", Color.WHITE);
+        Label nombreCompletoLabel = new Label(idiomas.obtenerTexto("perfil.nombre") + " " + usuario.getNombreCompleto(), skin, "small-font", Color.WHITE);
+        Label nivelLabel = new Label(idiomas.obtenerTexto("perfil.nivel_actual") + " " + usuario.getNivelActual(), skin, "small-font", Color.WHITE);
+        Label nivelMaxLabel = new Label(idiomas.obtenerTexto("perfil.nivel_maximo") + " " + usuario.getNivelMaximoAlcanzado(), skin, "small-font", Color.WHITE);
+        Label partidasLabel = new Label(idiomas.obtenerTexto("perfil.partidas_jugadas") + " " + usuario.getPartidasTotales(), skin, "small-font", Color.WHITE);
+        Label puntosLabel = new Label(idiomas.obtenerTexto("perfil.puntos_totales") + " " + usuario.getPuntuacionTotal(), skin, "small-font", Color.WHITE);
 
         panel.add(nombreLabel).left().padBottom(5).row();
         panel.add(nombreCompletoLabel).left().padBottom(5).row();
@@ -404,9 +407,13 @@ public class MenuScreen implements Screen {
 
         // Botones
         Table botonesTable = new Table();
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("small-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.up = skin.getDrawable("default-round");
+        textButtonStyle.down = skin.getDrawable("default-round-down");
 
-        Button btnEstadisticas = new Button(skin);
-        btnEstadisticas.add(new Label(idiomas.obtenerTexto("perfil.estadisticas"), skin));
+        TextButton btnEstadisticas = new TextButton(idiomas.obtenerTexto("perfil.estadisticas"), textButtonStyle);
         btnEstadisticas.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -415,8 +422,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnAvatares = new Button(skin);
-        btnAvatares.add(new Label(idiomas.obtenerTexto("perfil.avatares"), skin));
+        TextButton btnAvatares = new TextButton(idiomas.obtenerTexto("perfil.avatares"), textButtonStyle);
         btnAvatares.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -425,8 +431,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnRanking = new Button(skin);
-        btnRanking.add(new Label(idiomas.obtenerTexto("perfil.ranking"), skin));
+        TextButton btnRanking = new TextButton(idiomas.obtenerTexto("perfil.ranking"), textButtonStyle);
         btnRanking.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -435,8 +440,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnComparar = new Button(skin);
-        btnComparar.add(new Label(idiomas.obtenerTexto("perfil.comparar"), skin));
+        TextButton btnComparar = new TextButton(idiomas.obtenerTexto("perfil.comparar"), textButtonStyle);
         btnComparar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -445,8 +449,8 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnConfiguracion = new Button(skin);
-        btnConfiguracion.add(new Label(idiomas.obtenerTexto("perfil.configuracion"), skin));
+        TextButton btnConfiguracion = new TextButton(idiomas.obtenerTexto("perfil.configuracion"), textButtonStyle);
+        btnConfiguracion.getLabel().setStyle(new Label.LabelStyle(skin.getFont("small-font"), Color.WHITE));
         btnConfiguracion.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -455,8 +459,7 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Button btnCerrar = new Button(skin);
-        btnCerrar.add(new Label(idiomas.obtenerTexto("perfil.cerrar"), skin));
+        TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("perfil.cerrar"), textButtonStyle);
         btnCerrar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -466,13 +469,13 @@ public class MenuScreen implements Screen {
         });
 
         // organizar botones en 3 filas
-        botonesTable.add(btnEstadisticas).size(80, 30).padRight(3);
-        botonesTable.add(btnAvatares).size(80, 30).padRight(3);
-        botonesTable.add(btnRanking).size(80, 30).row();
-        botonesTable.add(btnComparar).size(80, 30).padRight(3).padTop(3);
-        botonesTable.add(btnConfiguracion).size(80, 30).padRight(3).padTop(3);
-        botonesTable.add(btnCerrar).size(80, 30).padTop(3);
-        
+        botonesTable.add(btnEstadisticas).size(100, 35).padRight(5);
+        botonesTable.add(btnAvatares).size(100, 35).padRight(5);
+        botonesTable.add(btnRanking).size(100, 35).row();
+        botonesTable.add(btnComparar).size(100, 35).padRight(5).padTop(8);
+        botonesTable.add(btnConfiguracion).size(100, 35).padRight(5).padTop(8);
+        botonesTable.add(btnCerrar).size(100, 35).padTop(8);
+
         panel.add(botonesTable).row();
         stage.addActor(overlay);
     }
@@ -489,23 +492,21 @@ public class MenuScreen implements Screen {
         Table panel = new Table(skin);
         panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
         panel.pad(20);
-        overlay.add(panel).width(500).height(400);
+        overlay.add(panel).width(500).height(400); // Tamaño del panel reducido
 
-        Label titulo = new Label(idiomas.obtenerTexto("perfil.estadisticas_detalladas"), skin);
-        titulo.setColor(Color.CYAN);
+        Label titulo = new Label(idiomas.obtenerTexto("perfil.estadisticas_detalladas"), skin, "default-font", Color.CYAN);
         panel.add(titulo).padBottom(15).row();
 
         // Estadísticas por nivel
-        Label subtitulo = new Label(idiomas.obtenerTexto("perfil.progreso_niveles"), skin);
-        subtitulo.setColor(Color.YELLOW);
+        Label subtitulo = new Label(idiomas.obtenerTexto("perfil.progreso_niveles"), skin, "small-font", Color.YELLOW);
         panel.add(subtitulo).left().padBottom(10).row();
 
         for (int i = 1; i <= 7; i++) {
-            String estado = i <= usuario.getNivelMaximoAlcanzado() ? 
-                idiomas.obtenerTexto("perfil.desbloqueado") : 
-                idiomas.obtenerTexto("perfil.bloqueado");
-            
-            Label nivelInfo = new Label(idiomas.obtenerTexto("perfil.nivel") + " " + i + ": " + estado, skin);
+            String estado = i <= usuario.getNivelMaximoAlcanzado()
+                    ? idiomas.obtenerTexto("perfil.desbloqueado")
+                    : idiomas.obtenerTexto("perfil.bloqueado");
+
+            Label nivelInfo = new Label(idiomas.obtenerTexto("perfil.nivel") + " " + i + ": " + estado, skin, "small-font", Color.WHITE);
             if (i <= usuario.getNivelMaximoAlcanzado()) {
                 nivelInfo.setColor(Color.GREEN);
             } else {
@@ -515,22 +516,92 @@ public class MenuScreen implements Screen {
         }
 
         // Estadísticas generales
-        Label subtitulo2 = new Label(idiomas.obtenerTexto("perfil.estadisticas_generales"), skin);
-        subtitulo2.setColor(Color.YELLOW);
+        Label subtitulo2 = new Label(idiomas.obtenerTexto("perfil.estadisticas_generales"), skin, "small-font", Color.YELLOW);
         panel.add(subtitulo2).left().padBottom(10).row();
 
         long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
-        Label tiempoLabel = new Label(idiomas.obtenerTexto("perfil.tiempo_total") + " " + tiempoMinutos + " " + idiomas.obtenerTexto("perfil.minutos"), skin);
-        Label porcentajeLabel = new Label(idiomas.obtenerTexto("perfil.tasa_exito") + " " + 
-            (usuario.getPartidasTotales() > 0 ? 
-                String.format("%.1f%%", (double)usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100) : 
-                "0%"), skin);
+        Label tiempoLabel = new Label(idiomas.obtenerTexto("perfil.tiempo_total") + " " + tiempoMinutos + " " + idiomas.obtenerTexto("perfil.minutos"), skin, "small-font", Color.WHITE);
+        Label porcentajeLabel = new Label(idiomas.obtenerTexto("perfil.tasa_exito") + " "
+                + (usuario.getPartidasTotales() > 0
+                ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
+                : "0%"), skin, "small-font", Color.WHITE);
 
         panel.add(tiempoLabel).left().padBottom(5).row();
         panel.add(porcentajeLabel).left().padBottom(15).row();
 
-        Button btnCerrar = new Button(skin);
-        btnCerrar.add(new Label(idiomas.obtenerTexto("general.cerrar"), skin));
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("small-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.up = skin.getDrawable("default-round");
+        textButtonStyle.down = skin.getDrawable("default-round-down");
+
+        TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("general.cerrar"), textButtonStyle);
+        btnCerrar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                puedeInteractuar = true;
+            }
+        });
+        panel.add(btnCerrar).size(150, 40).row();
+        stage.addActor(overlay);
+    }
+
+    private void mostrarConfiguracion() {
+        puedeInteractuar = false;
+
+        Table overlay = new Table();
+        overlay.setFillParent(true);
+        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+        overlay.center();
+
+        Table panel = new Table(skin);
+        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+        panel.pad(20);
+        overlay.add(panel).width(400).height(300); // Tamaño del panel reducido
+
+        Label titulo = new Label(idiomas.obtenerTexto("perfil.configuracion"), skin, "default-font", Color.CYAN);
+        panel.add(titulo).padBottom(15).row();
+
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("small-font");
+        textButtonStyle.fontColor = Color.WHITE;
+        textButtonStyle.up = skin.getDrawable("default-round");
+        textButtonStyle.down = skin.getDrawable("default-round-down");
+
+        // Botón para configuración de juego (Settings)
+        TextButton btnConfigJuego = new TextButton(idiomas.obtenerTexto("menu.configuracion"), textButtonStyle);
+        btnConfigJuego.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaSettings());
+            }
+        });
+
+        // Botón para configuración de idioma
+        TextButton btnIdioma = new TextButton("Idioma / Language", textButtonStyle);
+        btnIdioma.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                overlay.remove();
+                mostrarConfiguracionIdioma();
+            }
+        });
+
+        TextButton btnBackup = new TextButton(idiomas.obtenerTexto("config.crear_backup"), textButtonStyle);
+        btnBackup.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                boolean exito = sistemaUsuarios.crearBackup();
+                mostrarMensaje(exito
+                        ? idiomas.obtenerTexto("config.backup_creado")
+                        : idiomas.obtenerTexto("config.error_backup"),
+                        exito ? Color.GREEN : Color.RED);
+            }
+        });
+
+        TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("general.cerrar"), textButtonStyle);
         btnCerrar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -539,87 +610,13 @@ public class MenuScreen implements Screen {
             }
         });
 
-        panel.add(btnCerrar).size(100, 40).row();
+        panel.add(btnConfigJuego).size(200, 40).padBottom(8).row();
+        panel.add(btnIdioma).size(200, 40).padBottom(8).row();
+        panel.add(btnBackup).size(200, 40).padBottom(8).row();
+        panel.add(btnCerrar).size(150, 40).row();
+
         stage.addActor(overlay);
     }
-
-    private void mostrarConfiguracion() {
-    puedeInteractuar = false;
-
-    Table overlay = new Table();
-    overlay.setFillParent(true);
-    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-    overlay.center();
-
-    Table panel = new Table(skin);
-    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-    panel.pad(20);
-    overlay.add(panel).width(400).height(350);
-
-    Label titulo = new Label(idiomas.obtenerTexto("perfil.configuracion"), skin);
-    titulo.setColor(Color.CYAN);
-    panel.add(titulo).padBottom(15).row();
-
-    // Botón para configuración de juego (Settings)
-    Button btnConfigJuego = new Button(skin);
-    Label labelConfigJuego = new Label(idiomas.obtenerTexto("menu.configuracion"), skin);
-    labelConfigJuego.setFontScale(0.8f);
-    btnConfigJuego.add(labelConfigJuego);
-    btnConfigJuego.addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-            overlay.remove();
-            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaSettings());
-        }
-    });
-
-    // Botón para configuración de idioma
-    Button btnIdioma = new Button(skin);
-    Label labelIdioma = new Label("Idioma / Language", skin);
-    labelIdioma.setFontScale(0.8f);
-    btnIdioma.add(labelIdioma);
-    btnIdioma.addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-            overlay.remove();
-            mostrarConfiguracionIdioma();
-        }
-    });
-
-    Button btnBackup = new Button(skin);
-    Label labelBackup = new Label(idiomas.obtenerTexto("config.crear_backup"), skin);
-    labelBackup.setFontScale(0.8f);
-    btnBackup.add(labelBackup);
-    btnBackup.addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-            boolean exito = sistemaUsuarios.crearBackup();
-            mostrarMensaje(exito ? 
-                idiomas.obtenerTexto("config.backup_creado") : 
-                idiomas.obtenerTexto("config.error_backup"), 
-                exito ? Color.GREEN : Color.RED);
-        }
-    });
-
-    Button btnCerrar = new Button(skin);
-    Label labelCerrar = new Label(idiomas.obtenerTexto("general.cerrar"), skin);
-    labelCerrar.setFontScale(0.8f);
-    btnCerrar.add(labelCerrar);
-    btnCerrar.addListener(new ClickListener() {
-        @Override
-        public void clicked(InputEvent event, float x, float y) {
-            overlay.remove();
-            puedeInteractuar = true;
-        }
-    });
-
-    panel.add(btnConfigJuego).size(200, 40).padBottom(10).row();
-    panel.add(btnIdioma).size(200, 40).padBottom(10).row();
-    panel.add(btnBackup).size(200, 40).padBottom(10).row();
-    panel.add(btnCerrar).size(100, 40).row();
-
-    stage.addActor(overlay);
-}
 
     private void mostrarMensaje(String texto, Color color) {
         Label mensajeTemporal = new Label(texto, skin);
@@ -653,20 +650,28 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        stage.getCamera().update(); 
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+        stage.dispose();
+        skin.dispose();
+        bg.dispose();
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
+        stage.dispose();
+        skin.dispose();
+        bg.dispose();
     }
+
 }
