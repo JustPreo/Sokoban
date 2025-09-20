@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Base.Jugador;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class Hub implements Screen {
 
     private SpriteBatch spriteBatch;
-    private ScreenViewport viewport;
+    private FitViewport viewport;
     private BitmapFont fontTitulo;
     private BitmapFont fontInstrucciones;
     private BitmapFont fontInfo;
@@ -60,7 +61,7 @@ public class Hub implements Screen {
     @Override
     public void show() {
         spriteBatch = new SpriteBatch();
-        viewport = viewport = new ScreenViewport();
+        viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
         layout = new GlyphLayout();
 
         // Configurar fuentes Press Start 2P
