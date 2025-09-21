@@ -90,48 +90,47 @@ public class SlideshowTutorial implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    Gdx.gl.glClearColor(0, 0, 0, 1);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-        stage.draw();
+    stage.act(delta);
+    stage.draw();
 
-        // No hagas nada si hay una transición en curso
-    if (isFadingIn || isFadingOut) {
-        return;
-    }
+    // Solo aumenta el temporizador si no hay acciones en curso en el actor.
+    // Esto asegura que la lógica no se ejecute durante el fade-in o fade-out.
+    if (!imageActor.hasActions()) {
+        timer += delta;
+        if (timer >= displayTime) {
+            timer = 0f;
 
-    timer += delta;
-    if (timer >= displayTime) {
-        timer = 0f;
-        
-        // Comienza el fade out de la imagen actual
-        imageActor.addAction(Actions.sequence(
-            Actions.fadeOut(fadeDuration),
-            Actions.run(() -> {
-                currentIndex++;
-                
-                if (currentIndex < images.length) {
-                    // Prepara la siguiente imagen y comienza el fade in
-                    imageActor.setDrawable(new Image(images[currentIndex]).getDrawable());
-                    imageActor.addAction(Actions.fadeIn(fadeDuration));
-                    
-                    // Maneja la visibilidad del texto
-                    if (currentIndex == images.length - 1) {
-                        textLabel.setText(obtenerTextoUltimoSlide());
-                        textLabel.setVisible(true);
-                        // Centrar el texto dinamicaemten
-                        textLabel.setPosition((Gdx.graphics.getWidth() - textLabel.getWidth()) / 2, (Gdx.graphics.getHeight() - textLabel.getHeight()) / 2);
-                    } else {
-                        textLabel.setVisible(false);
-                    }
+            // Incrementa el índice para la siguiente imagen
+            currentIndex++;
+
+            if (currentIndex < images.length) {
+                // Comienza el fade out de la imagen actual
+                imageActor.addAction(Actions.sequence(
+                    Actions.fadeOut(fadeDuration),
+                    Actions.run(() -> {
+                        // Cuando el fade out termina, cambia la imagen y empieza el fade in
+                        imageActor.setDrawable(new Image(images[currentIndex]).getDrawable());
+                        imageActor.addAction(Actions.fadeIn(fadeDuration));
+                    })
+                ));
+
+                // Maneja la visibilidad y el texto del último slide
+                if (currentIndex == images.length - 1) {
+                    textLabel.setText(obtenerTextoUltimoSlide());
+                    textLabel.setVisible(true);
+                    textLabel.setPosition((Gdx.graphics.getWidth() - textLabel.getWidth()) / 2, 50);
                 } else {
-                    // fin del slideshow
-                    game.setScreen(new Tutorial());
-                    dispose();
+                    textLabel.setVisible(false);
                 }
-            })
-        ));
+            } else {
+                // Si no hay más imágenes, pasa a la siguiente pantalla
+                game.setScreen(new Tutorial());
+                dispose();
+            }
+        }
     }
 }
 

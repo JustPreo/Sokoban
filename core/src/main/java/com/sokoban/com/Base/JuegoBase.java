@@ -50,6 +50,7 @@ public abstract class JuegoBase implements Screen {
     protected Stage stage;
     protected Skin skin;
     private Table overlayPausa;
+    private float winCheckTimer = 0f;
 
     // Agregue estas variables de instancia después de las existentes:
     protected SistemaUsuarios sistemaUsuarios;
@@ -78,8 +79,6 @@ public abstract class JuegoBase implements Screen {
     protected int cantidadPousPermitidas = 1;
 
     protected Idiomas idiomas;
-
-    
 
     // Mapa de ejemplo
     private int[][] mapa = {
@@ -267,10 +266,21 @@ public abstract class JuegoBase implements Screen {
         }
     }
 
-    public void render() {
+    // Reemplaza tu método render() con este
+    @Override
+    public void render(float delta) {
         SoundManager.update();
+
+        // Lógica de actualización del juego
         if (!gano && !pausa) {
             timer += Gdx.graphics.getDeltaTime();
+            winCheckTimer += Gdx.graphics.getDeltaTime();
+
+            // Revisa la condición de victoria cada 0.5 segundos
+            if (winCheckTimer >= 0.5f) {
+                revisarWin();
+                winCheckTimer = 0f; // Reinicia el temporizador
+            }
         }
 
         // Control de pausa
@@ -278,7 +288,7 @@ public abstract class JuegoBase implements Screen {
             if (!pausa) {
                 SoundManager.pauseMusic();
                 pause();
-            } else if (pausa) {
+            } else {
                 SoundManager.resumeMusic();
                 resume();
             }
@@ -320,7 +330,7 @@ public abstract class JuegoBase implements Screen {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
 
-        // Render// Actualizar animacion de fondo
+        // Actualizar animacion de fondo
         timerFondo += Gdx.graphics.getDeltaTime();
         if (timerFondo >= tiempoPorFrame) {
             frameActual = (frameActual + 1) % fondoFrames.length;
@@ -365,9 +375,8 @@ public abstract class JuegoBase implements Screen {
             debugMostrarFinNivel();
         }
 
-        revisarWin();
         if (gano || pausa) {
-            stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true); // <-- importante
+            stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
             stage.act(Gdx.graphics.getDeltaTime());
             stage.draw();
         }
@@ -473,10 +482,15 @@ public abstract class JuegoBase implements Screen {
 
     public void revisarWin() {
         objetivosRealizados = 0;
+
+        // Itera sobre cada objetivo
         for (Cajita caja : cajas) {
+            // Itera sobre cada caja para ver si se superpone con el objetivo
             for (Objetivo obj : objetivos) {
                 if (caja.getHitbox().overlaps(obj.getHitbox())) {
                     objetivosRealizados++;
+                    System.out.println("++");
+                    break; // Una vez que se encuentra una caja, pasa al siguiente objetivo
                 }
             }
         }
@@ -485,7 +499,6 @@ public abstract class JuegoBase implements Screen {
             System.out.println("¡Nivel completado!");
             gano = true;
 
-            // Finalizar partida y registrar en el sistema
             if (partidaActual != null && sistemaUsuarios.haySesionActiva()) {
                 partidaActual.setMovimientos(vecesEmpujado);
                 partidaActual.finalizarPartida(true, "completado");
@@ -496,10 +509,7 @@ public abstract class JuegoBase implements Screen {
         }
     }
 
-    @Override
-    public void render(float f) {
-        render();
-    }
+    
 
     @Override
     public void hide() {
@@ -724,4 +734,7 @@ public abstract class JuegoBase implements Screen {
     public void debugMostrarFinNivel() {
         finNivel();
     }
+    
+    
+    
 }
