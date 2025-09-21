@@ -314,13 +314,13 @@ public class Idiomas {
         fr.put("NIVEL_COMPLETADO", "NIVEAU TERMINE !");
 
         // Botones fin de nivel
-        es.put("menu.fin.siguiente", "Siguiente Nivel");
-        en.put("menu.fin.siguiente", "Next Level");
-        fr.put("menu.fin.siguiente", "Niveau Suivant");
+        es.put("menu.fin.siguiente", "Siguiente");
+        en.put("menu.fin.siguiente", "Next");
+        fr.put("menu.fin.siguiente", "Niveau");
 
-        es.put("menu.fin.reiniciar", "Reiniciar Nivel");
-        en.put("menu.fin.reiniciar", "Restart Level");
-        fr.put("menu.fin.reiniciar", "Redemarrer Niveau");
+        es.put("menu.fin.reiniciar", "Reiniciar");
+        en.put("menu.fin.reiniciar", "Restart");
+        fr.put("menu.fin.reiniciar", "Redemarrer");
 
         es.put("menu.fin.menu", "Menu");
         en.put("menu.fin.menu", "Menu");
@@ -567,12 +567,12 @@ public class Idiomas {
 
         es.put("ranking.titulo", "Ranking");
         es.put("ranking.filtro_tipo", "Filtrar por:");
-        es.put("ranking.tipo_puntuacion", "Puntuación Total");
-        es.put("ranking.tipo_nivel", "Nivel Máximo");
+        es.put("ranking.tipo_puntuacion", "Puntuacion Total");
+        es.put("ranking.tipo_nivel", "Nivel Maximo");
         es.put("ranking.tipo_partidas", "Partidas Completadas");
         es.put("ranking.tipo_tiempo", "Tiempo Jugado");
         es.put("ranking.filtro_periodo", "Periodo:");
-        es.put("ranking.periodo_historico", "Histórico");
+        es.put("ranking.periodo_historico", "Historico");
         es.put("ranking.periodo_mes", "Este Mes");
         es.put("ranking.periodo_semana", "Esta Semana");
         es.put("ranking.header_pos", "Pos");
@@ -584,11 +584,11 @@ public class Idiomas {
         es.put("ranking.puntos_abreviatura", "pts");
         es.put("ranking.nivel", "Nivel");
         es.put("ranking.partidas", "partidas");
-        es.put("ranking.sin_sesion", "Inicia sesión para ver tu posición");
+        es.put("ranking.sin_sesion", "Inicia Sesion para ver tu posicion");
         es.put("ranking.posicion_actual", "Tu posición actual: #%d de %d jugadores");
-        es.put("ranking.no_encontrado", "No se encontró tu posición en el ranking");
+        es.put("ranking.no_encontrado", "No se encontro tu posicion en el ranking");
         es.put("ranking.actualizado", "Ranking actualizado");
-        es.put("ranking.no_sesion", "Debes iniciar sesión para ver tu perfil");
+        es.put("ranking.no_sesion", "Debes iniciar sesion para ver tu perfil");
 
 // Inglés
         en.put("ranking.titulo", "Ranking");
@@ -707,6 +707,30 @@ public class Idiomas {
         fr.put("tutorial.empujar", "Poussez les caisses vers les cibles");
         fr.put("tutorial.evitar", "Évitez de rester coincé");
         fr.put("tutorial.resolver", "Terminez tous les niveaux pour gagner");
+
+        // Español
+        es.put("controles.titulo", "Configuracion de Controles");
+        es.put("controles.cambiar", "Cambiar");
+        es.put("controles.volver", "Volver");
+
+// Inglés
+        en.put("controles.titulo", "Controls Settings");
+        en.put("controles.cambiar", "Change");
+        en.put("controles.volver", "Back");
+
+// Francés
+        fr.put("controles.titulo", "Configuration des Contrôles");
+        fr.put("controles.cambiar", "Changer");
+        fr.put("controles.volver", "Retour");
+        
+        // Español
+es.put("settings.cambiar_controles", "Controles");
+
+// Inglés
+en.put("settings.cambiar_controles", "Controls");
+
+// Francés
+fr.put("settings.cambiar_controles", "Les contrôles");
     }
 
     public String obtenerTexto(String clave) {

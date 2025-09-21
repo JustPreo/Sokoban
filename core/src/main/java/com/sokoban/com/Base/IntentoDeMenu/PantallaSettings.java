@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -124,7 +125,6 @@ public class PantallaSettings implements Screen {
         BitmapFont pixelFont = generator.generateFont(parameter);
         generator.dispose(); // liberar recursos
 
-
         Label.LabelStyle estiloPixel = new Label.LabelStyle();
         estiloPixel.font = pixelFont;
         Button btnGuardar = new Button(estiloJugar);
@@ -165,9 +165,22 @@ public class PantallaSettings implements Screen {
                 }
             }
         });
+        Button btnControles = new Button(estiloVolver); // mismo estilo que btnVolver
+        Label labelControles = new Label(idiomas.obtenerTexto("settings.cambiar_controles"), estiloPixel);
+        labelControles.setFontScale(1f);
+        btnControles.add(labelControles);
+        btnControles.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (puedeInteractuar) {
+                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaControles());
+                }
+            }
+        });
 
         tablaBotones.add(btnGuardar).size(120, 45).padRight(15);
         tablaBotones.add(btnRestablecer).size(150, 45).padRight(15);
+        tablaBotones.add(btnControles).size(180, 45).padRight(15);
         tablaBotones.add(btnVolver).size(120, 45);
 
         tablaPrincipal.add(tablaBotones).row();
@@ -342,7 +355,7 @@ public class PantallaSettings implements Screen {
         // Aplicar configuraciones de gráficos
         config.setPantallaCompleta(checkPantallaCompleta.isChecked());
         config.setVsync(checkVsync.isChecked());
-        config.setMostrarFPS(checkFPS.isChecked());
+        //config.setMostrarFPS(checkFPS.isChecked());
 
         // Aplicar configuraciones de juego
         /* String dificultadSeleccionada;

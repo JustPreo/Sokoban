@@ -1,5 +1,7 @@
 package com.sokoban.com;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class ConfiguracionJuego {
@@ -21,9 +23,36 @@ public class ConfiguracionJuego {
     private boolean autoGuardar = true;
     private boolean mostrarTutorial = true;
     //Quite esto porque no es necesario
+    private Map<String, Integer> controles;  // NUEVO
     
     private ConfiguracionJuego() {
+        controles = new HashMap<>();
+         // Controles por defecto
+        controles.put("arriba", com.badlogic.gdx.Input.Keys.W);
+        controles.put("abajo", com.badlogic.gdx.Input.Keys.S);
+        controles.put("izquierda", com.badlogic.gdx.Input.Keys.A);
+        controles.put("derecha", com.badlogic.gdx.Input.Keys.D);
+
+        controles.put("arribaAlt", com.badlogic.gdx.Input.Keys.UP);
+        controles.put("abajoAlt", com.badlogic.gdx.Input.Keys.DOWN);
+        controles.put("izquierdaAlt", com.badlogic.gdx.Input.Keys.LEFT);
+        controles.put("derechaAlt", com.badlogic.gdx.Input.Keys.RIGHT);
         // configuracion por defecto
+    }
+    public void setControles(Map<String, Integer> controles) { 
+        this.controles = new HashMap<>(controles); 
+    }
+
+    public void setControl(String accion, int keycode) {
+        controles.put(accion, keycode);
+    }
+
+    public int getControl(String accion) {
+        return controles.getOrDefault(accion, -1);
+    }
+    public Map<String, Integer> getControles()
+    {
+    return controles;
     }
     
     public static ConfiguracionJuego getInstance() {

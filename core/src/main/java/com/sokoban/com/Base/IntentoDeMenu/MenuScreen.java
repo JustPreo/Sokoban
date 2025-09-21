@@ -51,7 +51,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-
+        
         Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
 

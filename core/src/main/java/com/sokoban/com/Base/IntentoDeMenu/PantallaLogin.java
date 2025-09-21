@@ -272,6 +272,7 @@ public class PantallaLogin implements Screen {
                             // por ahora mandar al menu normal con mensajito estetik
                             System.out.println("Usuario nuevo detectado - debería ir al tutorial");
                             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                            
                             // TODO: cambiar MenuScreen por Tutorial cuando este listo
                         })
                 ));

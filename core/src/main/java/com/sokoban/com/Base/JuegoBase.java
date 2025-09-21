@@ -79,6 +79,8 @@ public abstract class JuegoBase implements Screen {
 
     protected Idiomas idiomas;
 
+    
+
     // Mapa de ejemplo
     private int[][] mapa = {
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -114,6 +116,7 @@ public abstract class JuegoBase implements Screen {
 
     @Override
     public void show() {
+
         sistemaUsuarios = SistemaUsuarios.getInstance();
         if (sistemaUsuarios.haySesionActiva()) {
             partidaActual = new RegistroPartida(obtenerNumeroNivel());
@@ -357,10 +360,15 @@ public abstract class JuegoBase implements Screen {
 
         spriteBatch.end();
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
+            gano = true;
+            debugMostrarFinNivel();
+        }
+
         revisarWin();
         if (gano || pausa) {
+            stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true); // <-- importante
             stage.act(Gdx.graphics.getDeltaTime());
-            stage.getViewport().apply();
             stage.draw();
         }
     }
@@ -562,6 +570,8 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void finNivel() {
+        SoundManager.pauseMusic();//Parar musiquita
+        SoundManager.playVictorySound();
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -579,9 +589,9 @@ public abstract class JuegoBase implements Screen {
 
         // Estadísticas de la partida
         if (partidaActual != null) {
-            Label tiempoLabel = new Label(idiomas.obtenerTexto("fin.tiempo")+":" + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
-            Label movimientosLabel = new Label(idiomas.obtenerTexto("fin.movimientos")+":" + partidaActual.getMovimientos(), skin);
-            Label puntuacionLabel = new Label(idiomas.obtenerTexto("fin.puntuacion")+":" + partidaActual.getPuntuacion(), skin);
+            Label tiempoLabel = new Label(idiomas.obtenerTexto("fin.tiempo") + ":" + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
+            Label movimientosLabel = new Label(idiomas.obtenerTexto("fin.movimientos") + ":" + partidaActual.getMovimientos(), skin);
+            Label puntuacionLabel = new Label(idiomas.obtenerTexto("fin.puntuacion") + ":" + partidaActual.getPuntuacion(), skin);
 
             panel.add(tiempoLabel).padBottom(5).row();
             panel.add(movimientosLabel).padBottom(5).row();
@@ -598,7 +608,7 @@ public abstract class JuegoBase implements Screen {
         TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
         estiloBoton.up = fondoNormalUp;
         estiloBoton.down = fondoNormalDown;
-        estiloBoton.font = fontStats;
+        estiloBoton.font = fontSmall;
         estiloBoton.fontColor = Color.WHITE;
 
         // Botones
@@ -610,6 +620,7 @@ public abstract class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
+                SoundManager.resumeMusic();
                 irSiguienteNivel();
             }
         });
@@ -618,6 +629,7 @@ public abstract class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 overlay.remove();
+                SoundManager.resumeMusic();
                 reiniciarNivel();
             }
         });
@@ -626,13 +638,14 @@ public abstract class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+                SoundManager.playMusic("lobby", true, 0.5f);//0.5f es el volumen
             }
         });
 
         Table botonesTable = new Table();
-        botonesTable.add(btnSiguiente).size(120, 50).padRight(10);
-        botonesTable.add(btnReiniciar).size(120, 50).padRight(10);
-        botonesTable.add(btnMenu).size(120, 50);
+        botonesTable.add(btnSiguiente).size(180, 50).padRight(10);
+        botonesTable.add(btnReiniciar).size(200, 50).padRight(10);
+        botonesTable.add(btnMenu).size(150, 50);
 
         panel.add(botonesTable).row();
         stage.addActor(overlay);
@@ -705,5 +718,10 @@ public abstract class JuegoBase implements Screen {
             // No hay más niveles o no están desbloqueados
             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
         }
+    }
+    // DEBUG: mostrar overlay de fin de nivel sin terminar
+
+    public void debugMostrarFinNivel() {
+        finNivel();
     }
 }

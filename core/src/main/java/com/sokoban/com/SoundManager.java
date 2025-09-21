@@ -11,6 +11,7 @@ public class SoundManager {
     private static HashMap<String, Music> musicMap = new HashMap<>();
     private static Sound caminarSound;
     private static Sound pou;
+    private static Sound victory;
 
     private static Music currentMusic = null;
     private static float targetVolume = 0.5f;  // Volumen deseado , MUSICA
@@ -26,6 +27,7 @@ public class SoundManager {
 
         pou = Gdx.audio.newSound(Gdx.files.internal("Musica/POU.WAV"));
         caminarSound = Gdx.audio.newSound(Gdx.files.internal("Musica/walk.WAV"));
+        victory = Gdx.audio.newSound(Gdx.files.internal("Musica/victory.WAV"));
     }
 
     public static void playMusic(String name, boolean loop, float volume) {
@@ -40,7 +42,6 @@ public class SoundManager {
 
         currentMusic = music;
         currentMusic.setLooping(loop);
-        targetVolume = volume;
         currentMusic.setVolume(0f);
         currentMusic.play();
     }
@@ -90,6 +91,12 @@ public class SoundManager {
     public static void playPou(float volume) {//el float volume es por si acaso
         if (pou != null) {
             pou.play(targetVolumeEffects);
+        }
+    }
+
+    public static void playVictorySound() {
+        if (victory != null) {
+            victory.play(targetVolumeEffects);
         }
     }
 
