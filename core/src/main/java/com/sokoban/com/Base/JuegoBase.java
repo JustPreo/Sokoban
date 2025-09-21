@@ -24,7 +24,14 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
+import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
+import com.sokoban.com.Niveles.Lvl1;
+import com.sokoban.com.Niveles.Lvl2;
+import com.sokoban.com.Niveles.Lvl3;
+import com.sokoban.com.Niveles.Lvl4;
+import com.sokoban.com.Niveles.Lvl5;
+import com.sokoban.com.Niveles.Lvl6;
 import com.sokoban.com.RegistroPartida;
 import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
@@ -37,7 +44,9 @@ public abstract class JuegoBase implements Screen {
     private SpriteBatch spriteBatch;
     private FitViewport viewport;
     private ShapeRenderer shape;
-    protected BitmapFont font;
+    protected BitmapFont fontStats;
+    protected BitmapFont fontSmall;
+    protected BitmapFont fontTitulo;
     protected Stage stage;
     protected Skin skin;
     private Table overlayPausa;
@@ -68,6 +77,8 @@ public abstract class JuegoBase implements Screen {
     protected int cantidadPous = 0;
     protected int cantidadPousPermitidas = 1;
 
+    protected Idiomas idiomas;
+
     // Mapa de ejemplo
     private int[][] mapa = {
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -81,6 +92,11 @@ public abstract class JuegoBase implements Screen {
     //No se si hacer tipo que 1 = pared normal | 2 = esquina izquierda 3 = esquina derecha y asi
     //Mas que nada para mantener el tile
     //O se podria hacer algo tipo 
+    //Animacion para fondo
+    private Texture[] fondoFrames;
+    private int frameActual = 0;
+    private float timerFondo = 0f;
+    private float tiempoPorFrame = 0.15f; // 0.15 segundos por frame
 
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
@@ -102,7 +118,14 @@ public abstract class JuegoBase implements Screen {
         if (sistemaUsuarios.haySesionActiva()) {
             partidaActual = new RegistroPartida(obtenerNumeroNivel());
         }
+        idiomas = Idiomas.getInstance();
+        // DEBUG: Ver qué idioma tiene la instancia
+        System.out.println("DEBUG: Idioma actual antes de cargar: " + idiomas.getIdiomaActual());
 
+        // Si quieres probar cómo se comporta cargando el usuario
+        idiomas.cargarIdiomaUsuario();
+        System.out.println("DEBUG: Idioma actual después de cargar (si se llama cargarIdiomaUsuario): " + idiomas.getIdiomaActual());
+        System.out.println("DEBUG: Texto PAUSA: " + Idiomas.getInstance().obtenerTexto("PAUSA"));
         configurarNivel();
         conseguirCantCajas();
 
@@ -122,6 +145,12 @@ public abstract class JuegoBase implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        // Cargar fondo animado
+        fondoFrames = new Texture[7];
+        for (int i = 0; i < 7; i++) {
+            fondoFrames[i] = new Texture(Gdx.files.internal("Fondo/Espacio" + (i + 1) + ".png"));
+        }
     }
 
     private void createPixelFont() {
@@ -130,36 +159,32 @@ public abstract class JuegoBase implements Screen {
                     Gdx.files.internal("fonts/PressStart2P-vaV7.ttf")
             );
 
-            FreeTypeFontGenerator.FreeTypeFontParameter par
-                    = new FreeTypeFontGenerator.FreeTypeFontParameter();
-
-            // Configuración para fuente pixel perfect
-            par.size = Math.max(12, TILE / 4); // Size base , despues se puede mod
+            FreeTypeFontGenerator.FreeTypeFontParameter par = new FreeTypeFontGenerator.FreeTypeFontParameter();
             par.color = Color.WHITE;
-
-            //usar Nearest para mantener pixeles nitidos
             par.magFilter = Texture.TextureFilter.Nearest;
             par.minFilter = Texture.TextureFilter.Nearest;
-            //Es como un tipo de filtro que trae eso
-
-            // Borde
             par.borderWidth = 1;
             par.borderColor = Color.BLACK;
 
-            font = generator.generateFont(par);
+            // Font pequeña (small)
+            par.size = Math.max(12, TILE / 6);
+            fontSmall = generator.generateFont(par);
+
+            // Font stats
+            par.size = Math.max(12, TILE / 5);
+            fontStats = generator.generateFont(par);
+
+            // Font título
+            par.size = Math.max(12, TILE / 4);
+            fontTitulo = generator.generateFont(par);
+
             generator.dispose();
-
         } catch (Exception e) {
-            System.err.println("Error cargando fuente :" + e.getMessage());
-
-            //fuente por defecto por si se borra de assets
-            font = new BitmapFont();
-            font.getRegion().getTexture().setFilter(
-                    Texture.TextureFilter.Nearest,
-                    Texture.TextureFilter.Nearest
-            );
-            font.setColor(Color.WHITE);
-            font.getData().setScale(TILE * 0.025f);
+            System.err.println("Error cargando fuentes: " + e.getMessage());
+            fontSmall = fontStats = fontTitulo = new BitmapFont();
+            fontSmall.getData().setScale(TILE * 0.025f);
+            fontStats.getData().setScale(TILE * 0.03f);
+            fontTitulo.getData().setScale(TILE * 0.04f);
         }
     }
 
@@ -289,13 +314,20 @@ public abstract class JuegoBase implements Screen {
             caja.update();
         }
 
-        // Render
-        ScreenUtils.clear(Color.DARK_GRAY);
+        ScreenUtils.clear(Color.BLACK);
         viewport.apply();
+
+        // Render// Actualizar animacion de fondo
+        timerFondo += Gdx.graphics.getDeltaTime();
+        if (timerFondo >= tiempoPorFrame) {
+            frameActual = (frameActual + 1) % fondoFrames.length;
+            timerFondo = 0f;
+        }
+
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
         spriteBatch.begin();
-
+        spriteBatch.draw(fondoFrames[frameActual], 0, 0, COLUMNAS * TILE, FILAS * TILE);
         for (Piso piso : pisos) {
             piso.render(spriteBatch);
             piso.update();
@@ -321,7 +353,7 @@ public abstract class JuegoBase implements Screen {
         int minutos = (int) (timer / 60);
         int segundos = (int) (timer % 60);
         float margen = TILE * 0.2f;
-        font.draw(spriteBatch, String.format("%02d:%02d   Empujones: %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
+        fontTitulo.draw(spriteBatch, String.format("%02d:%02d   Empujones: %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
 
         spriteBatch.end();
 
@@ -343,6 +375,11 @@ public abstract class JuegoBase implements Screen {
 
     @Override
     public void dispose() {
+        if (fondoFrames != null) {
+            for (Texture t : fondoFrames) {
+                t.dispose();
+            }
+        }
         spriteBatch.dispose();
         jogador.dispose();
         for (Pared pared : paredes) {
@@ -358,7 +395,9 @@ public abstract class JuegoBase implements Screen {
             piso.dispose();
         }
         shape.dispose();
-        font.dispose();
+        fontSmall.dispose();
+        fontTitulo.dispose();
+        fontStats.dispose();
         stage.dispose();
         skin.dispose();
     }
@@ -467,29 +506,7 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void menuPausa() {
-
-        //----------------------------------------------------------------------------------------
-        Texture texturaVolver = new Texture(Gdx.files.internal("menu.png"));
-        Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
-        //ON
-        Texture texturaVolver2 = new Texture(Gdx.files.internal("menu2.png"));
-        Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
-
-        Button.ButtonStyle estiloVolver = new Button.ButtonStyle();
-        estiloVolver.up = fondoVolver;
-        estiloVolver.down = fondoVolver2;
-        //----------------------------------------------------------------------------------------
-        Texture texturaReiniciar = new Texture(Gdx.files.internal("reiniciar.png"));
-        Drawable fondoReiniciar = new TextureRegionDrawable(new TextureRegion(texturaReiniciar));
-        //ON
-        Texture texturaReiniciar2 = new Texture(Gdx.files.internal("reiniciar2.png"));
-        Drawable fondoReiniciar2 = new TextureRegionDrawable(new TextureRegion(texturaReiniciar2));
-
-        Button.ButtonStyle estiloReiniciar = new Button.ButtonStyle();
-        estiloReiniciar.up = fondoReiniciar;
-        estiloReiniciar.down = fondoReiniciar;
-        //----------------------------------------------------------------------------------------
-
+        // Overlay semi-transparente
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -500,11 +517,26 @@ public abstract class JuegoBase implements Screen {
         panel.pad(20);
         overlayPausa.add(panel);
 
-        Label titulo = new Label("Juego Pausado", skin);
+        // Título
+        Label titulo = new Label(idiomas.obtenerTexto("PAUSA"), new Label.LabelStyle(fontTitulo, Color.WHITE));
         panel.add(titulo).padBottom(20).row();
 
-        Button btnVolver = new Button(estiloVolver);
-        Button btnReiniciar = new Button(estiloReiniciar);
+        // Texturas para botones
+        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
+        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+
+        // Estilo TextButton
+        TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
+        estiloBoton.up = fondoNormalUp;
+        estiloBoton.down = fondoNormalDown;
+        estiloBoton.font = fontSmall; // tu BitmapFont
+        estiloBoton.fontColor = Color.WHITE;
+
+        // Botones con texto
+        TextButton btnVolver = new TextButton(idiomas.obtenerTexto("menu.pausa.volver"), estiloBoton);
+        TextButton btnReiniciar = new TextButton(idiomas.obtenerTexto("menu.pausa.reiniciar"), estiloBoton);
 
         btnVolver.addListener(new ClickListener() {
             @Override
@@ -540,24 +572,39 @@ public abstract class JuegoBase implements Screen {
         panel.pad(20);
         overlay.add(panel);
 
-        Label titulo = new Label("¡NIVEL COMPLETADO!", skin);
+        // Título
+        Label titulo = new Label(idiomas.obtenerTexto("NIVEL_COMPLETADO"), new Label.LabelStyle(fontTitulo, Color.GREEN));
         titulo.setColor(Color.GREEN);
         panel.add(titulo).padBottom(20).row();
 
-        // Mostrar estadísticas de la partida
+        // Estadísticas de la partida
         if (partidaActual != null) {
-            Label tiempoLabel = new Label("Tiempo: " + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
-            Label movimientosLabel = new Label("Movimientos: " + partidaActual.getMovimientos(), skin);
-            Label puntuacionLabel = new Label("Puntuación: " + partidaActual.getPuntuacion(), skin);
+            Label tiempoLabel = new Label(idiomas.obtenerTexto("fin.tiempo")+":" + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
+            Label movimientosLabel = new Label(idiomas.obtenerTexto("fin.movimientos")+":" + partidaActual.getMovimientos(), skin);
+            Label puntuacionLabel = new Label(idiomas.obtenerTexto("fin.puntuacion")+":" + partidaActual.getPuntuacion(), skin);
 
             panel.add(tiempoLabel).padBottom(5).row();
             panel.add(movimientosLabel).padBottom(5).row();
             panel.add(puntuacionLabel).padBottom(15).row();
         }
 
-        TextButton btnSiguiente = new TextButton("Siguiente Nivel", skin);
-        TextButton btnReiniciar = new TextButton("Reiniciar", skin);
-        TextButton btnMenu = new TextButton("Menú Principal", skin);
+        // Texturas para botones
+        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
+        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+
+        // Estilo TextButton
+        TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
+        estiloBoton.up = fondoNormalUp;
+        estiloBoton.down = fondoNormalDown;
+        estiloBoton.font = fontStats;
+        estiloBoton.fontColor = Color.WHITE;
+
+        // Botones
+        TextButton btnSiguiente = new TextButton(idiomas.obtenerTexto("menu.fin.siguiente"), estiloBoton);
+        TextButton btnReiniciar = new TextButton(idiomas.obtenerTexto("menu.fin.reiniciar"), estiloBoton);
+        TextButton btnMenu = new TextButton(idiomas.obtenerTexto("menu.fin.menu"), estiloBoton);
 
         btnSiguiente.addListener(new ClickListener() {
             @Override
@@ -596,7 +643,7 @@ public abstract class JuegoBase implements Screen {
         paredes.clear();
         objetivos.clear();
         pisos.clear();
-        
+
         timer = 0f;
         vecesEmpujado = 0;
         pasos = 0;
@@ -627,9 +674,33 @@ public abstract class JuegoBase implements Screen {
                 && sistemaUsuarios.nivelDesbloqueado(nivelActual + 1)
                 && nivelActual < 7) {
 
-            // Ir al siguiente nivel 
-            // Por ahora regresar
-            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+            Juegito juego = (Juegito) Gdx.app.getApplicationListener();
+            int siguienteNivel = nivelActual + 1;
+
+            switch (siguienteNivel) {
+                case 1:
+                    juego.setScreen(new Lvl1());
+                    break;
+                case 2:
+                    juego.setScreen(new Lvl2());
+                    break;
+                case 3:
+                    juego.setScreen(new Lvl3());
+                    break;
+                case 4:
+                    juego.setScreen(new Lvl4());
+                    break;
+                case 5:
+                    juego.setScreen(new Lvl5());
+                    break;
+                case 6:
+                    juego.setScreen(new Lvl6());
+                    break;
+                default:
+                    // Si no hay más niveles, regresar al Hub
+                    juego.setScreen(new Hub());
+                    break;
+            }
         } else {
             // No hay más niveles o no están desbloqueados
             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());

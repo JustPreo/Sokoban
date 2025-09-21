@@ -1,11 +1,13 @@
 package com.sokoban.com;
 
+import java.util.Set;
+
 public class ConfiguracionJuego {
     private static ConfiguracionJuego instancia;
     
     // Configuraciones de audio
-    private float volumenMusica = 0.7f;
-    private float volumenEfectos = 0.8f;
+    private float volumenMusica = SoundManager.getMusicVolume();
+    private float volumenEfectos = SoundManager.getSoundVolume();
     private boolean musicaActivada = true;
     private boolean efectosActivados = true;
     
@@ -18,6 +20,7 @@ public class ConfiguracionJuego {
     private String dificultad = "medio"; // facil, medio, dificil
     private boolean autoGuardar = true;
     private boolean mostrarTutorial = true;
+    //Quite esto porque no es necesario
     
     private ConfiguracionJuego() {
         // configuracion por defecto
@@ -34,11 +37,14 @@ public class ConfiguracionJuego {
     public float getVolumenMusica() { return volumenMusica; }
     public void setVolumenMusica(float volumen) { 
         this.volumenMusica = Math.max(0.0f, Math.min(1.0f, volumen)); 
+        SoundManager.setMusicVolume(volumenMusica);
     }
     
     public float getVolumenEfectos() { return volumenEfectos; }
     public void setVolumenEfectos(float volumen) { 
-        this.volumenEfectos = Math.max(0.0f, Math.min(1.0f, volumen)); 
+        this.volumenEfectos = Math.max(0.0f, Math.min(1.0f, volumen));
+        SoundManager.setSoundVolume(volumenEfectos);
+        
     }
     
     public boolean isMusicaActivada() { return musicaActivada; }
@@ -69,8 +75,8 @@ public class ConfiguracionJuego {
     
     // Métodos de utilidad
     public void restablecerPorDefecto() {
-        volumenMusica = 0.7f;
-        volumenEfectos = 0.8f;
+        volumenMusica = SoundManager.getMusicVolume();
+        volumenEfectos = SoundManager.getSoundVolume();
         musicaActivada = true;
         efectosActivados = true;
         pantallaCompleta = false;

@@ -16,6 +16,7 @@ public class SoundManager {
     private static float targetVolume = 0.5f;  // Volumen deseado , MUSICA
     private static float targetVolumeEffects = 0.5f;//Volumen deseado , EFECTOS
     private static float fadeSpeed = 0.02f;  // Velocidad de fade
+    private static float volumenAntesDePausar = targetVolume;
 
     private static float controlVolumen = 0.5f;
 
@@ -67,13 +68,16 @@ public class SoundManager {
     }
 
     public static void pauseMusic() {
+        volumenAntesDePausar = currentMusic.getVolume();
         controlVolumen = 0f; // baja volumen con fade
     }
 
     public static void resumeMusic() {
-        controlVolumen = targetVolume;
-        if (!currentMusic.isPlaying()) {
-            currentMusic.play();
+        if (currentMusic != null) {
+            controlVolumen = volumenAntesDePausar; // restaura el volumen real antes de pausar
+            if (!currentMusic.isPlaying()) {
+                currentMusic.play();
+            }
         }
     }
 
@@ -104,35 +108,34 @@ public class SoundManager {
         }
     }
 
-    public static void setVolume(float volumen) {
+    private static void setVolume(float volumen) {
         targetVolume = volumen;
     }
 
-    public static void setVolumeEffects(float volumen) {
+    private static void setVolumeEffects(float volumen) {
         targetVolumeEffects = volumen;
     }
 
     // MÉTODOS AGREGADOS PARA PANTALLA SETTINGS YA TENGO MUCHO SUEÑO LOL
-    
     // Métodos para controlar volumen de música (compatibles con PantallaSettings que cree para el setting)
     public static void setMusicVolume(float volume) {
         setVolume(volume); // usa el método existente
         controlVolumen = targetVolume; // esto actualiza el control inmediatamente
     }
-    
+
     public static float getMusicVolume() {
         return targetVolume;
     }
-    
+
     // Métodos para controlar volumen de efectos (compatibles con PantallaSettings yet again)
     public static void setSoundVolume(float volume) {
         setVolumeEffects(volume); // same as the last
     }
-    
+
     public static float getSoundVolume() {
         return targetVolumeEffects;
     }
-    
+
     // nada mas para verificar si se esta reproduciendo
     public static boolean isMusicPlaying() {
         return currentMusic != null && currentMusic.isPlaying();

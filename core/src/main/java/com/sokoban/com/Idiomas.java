@@ -4,95 +4,96 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Idiomas {
+
     private static Idiomas instancia;
     private String idiomaActual = "es"; // español por defecto
     private Map<String, Map<String, String>> textos;
-    
+
     private Idiomas() {
         textos = new HashMap<>();
         cargarTextos();
     }
-    
+
     public static Idiomas getInstance() {
         if (instancia == null) {
             instancia = new Idiomas();
         }
         return instancia;
     }
-    
+
     private void cargarTextos() {
-        // TEXTOS EN ESPAÑOL
+        // TEXTOS EN ESPANOL
         Map<String, String> es = new HashMap<>();
-        
+
         // Menu principal
         es.put("menu.titulo", "Sokoban");
         es.put("menu.jugar", "Jugar");
         es.put("menu.perfil", "Perfil");
         es.put("menu.amigos", "Mis Amigos");
-        es.put("menu.iniciar_sesion", "Iniciar Sesión");
-        es.put("menu.cerrar_sesion", "Cerrar Sesión");
+        es.put("menu.iniciar_sesion", "Iniciar Sesion");
+        es.put("menu.cerrar_sesion", "Cerrar Sesion");
         es.put("menu.salir", "Salir");
         es.put("menu.bienvenido", "Bienvenido:");
-        es.put("menu.sin_sesion", "Sin sesión activa");
-        es.put("menu.configuracion", "Configuración");
-        
+        es.put("menu.sin_sesion", "Sin sesion activa");
+        es.put("menu.configuracion", "Configuracion");
+
         // Login
-        es.put("login.titulo_login", "INICIAR SESIÓN");
+        es.put("login.titulo_login", "INICIAR SESION");
         es.put("login.titulo_registro", "REGISTRARSE");
         es.put("login.usuario", "Usuario:");
-        es.put("login.contrasena", "Contraseña:");
+        es.put("login.contrasena", "Contrasena:");
         es.put("login.nombre_completo", "Nombre completo:");
-        es.put("login.registrarse", "¿No tienes cuenta? Regístrate");
-        es.put("login.ya_cuenta", "¿Ya tienes cuenta? Inicia sesión");
+        es.put("login.registrarse", "No tienes cuenta? Registrate");
+        es.put("login.ya_cuenta", "Ya tienes cuenta? Inicia sesion");
         es.put("login.volver", "Volver");
         es.put("login.acceso_requerido", "Acceso Requerido");
-        es.put("login.necesita_sesion", "Necesitas iniciar sesión\npara acceder a esta función");
-        
+        es.put("login.necesita_sesion", "Necesitas iniciar sesion\npara acceder a esta funcion");
+
         // Perfil
         es.put("perfil.titulo", "PERFIL DE USUARIO");
-        es.put("perfil.estadisticas", "Estadísticas");
+        es.put("perfil.estadisticas", "Estadisticas");
         es.put("perfil.avatares", "Avatares");
         es.put("perfil.ranking", "Ranking");
         es.put("perfil.comparar", "Comparar");
-        es.put("perfil.configuracion", "Configuración");
+        es.put("perfil.configuracion", "Configuracion");
         es.put("perfil.cerrar", "Cerrar");
         es.put("perfil.usuario", "Usuario:");
         es.put("perfil.nombre", "Nombre:");
         es.put("perfil.nivel_actual", "Nivel actual:");
-        es.put("perfil.nivel_maximo", "Nivel máximo:");
+        es.put("perfil.nivel_maximo", "Nivel maximo:");
         es.put("perfil.partidas_jugadas", "Partidas jugadas:");
         es.put("perfil.puntos_totales", "Puntos totales:");
-        es.put("perfil.estadisticas_detalladas", "ESTADÍSTICAS DETALLADAS");
+        es.put("perfil.estadisticas_detalladas", "ESTADISTICAS DETALLADAS");
         es.put("perfil.progreso_niveles", "Progreso por Niveles:");
-        es.put("perfil.estadisticas_generales", "Estadísticas Generales:");
+        es.put("perfil.estadisticas_generales", "Estadisticas Generales:");
         es.put("perfil.nivel", "Nivel");
         es.put("perfil.desbloqueado", "Desbloqueado");
         es.put("perfil.bloqueado", "Bloqueado");
         es.put("perfil.tiempo_total", "Tiempo total jugado:");
         es.put("perfil.minutos", "minutos");
-        es.put("perfil.tasa_exito", "Tasa de éxito:");
-        
-        // Configuración
-        es.put("config.titulo", "CONFIGURACIÓN");
+        es.put("perfil.tasa_exito", "Tasa de exito:");
+
+        // Configuracion
+        es.put("config.titulo", "CONFIGURACION");
         es.put("config.idioma_actual", "Idioma actual:");
         es.put("config.seleccionar", "Seleccionar idioma:");
         es.put("config.aplicar", "Aplicar");
         es.put("config.idioma_cambiado", "Idioma cambiado correctamente");
-        es.put("config.proximamente", "Configuraciones del juego\n(Próximamente más opciones)");
+        es.put("config.proximamente", "Configuraciones del juego\n(Proximamente mas opciones)");
         es.put("config.crear_backup", "Crear Copia de Seguridad");
         es.put("config.backup_creado", "¡Backup creado!");
         es.put("config.error_backup", "Error creando backup");
-        
-        // Settings/Configuración avanzada
-        es.put("settings.titulo", "CONFIGURACIÓN DEL JUEGO");
+
+        // Settings/Configuracion avanzada
+        es.put("settings.titulo", "CONFIGURACION DEL JUEGO");
         es.put("settings.audio", "AUDIO");
-        es.put("settings.volumen_musica", "Volumen Música:");
+        es.put("settings.volumen_musica", "Volumen Musica:");
         es.put("settings.volumen_efectos", "Volumen Efectos:");
-        es.put("settings.musica_activada", "Música Activada");
+        es.put("settings.musica_activada", "Musica Activada");
         es.put("settings.efectos_activados", "Efectos Activados");
-        es.put("settings.graficos", "GRÁFICOS");
+        es.put("settings.graficos", "GRAFICOS");
         es.put("settings.pantalla_completa", "Pantalla Completa");
-        es.put("settings.vsync", "Sincronización Vertical");
+        es.put("settings.vsync", "Sincronizacion Vertical");
         es.put("settings.fps_counter", "Mostrar FPS");
         es.put("settings.juego", "JUEGO");
         es.put("settings.dificultad", "Dificultad:");
@@ -100,31 +101,29 @@ public class Idiomas {
         es.put("settings.tutorial", "Tutorial");
         es.put("settings.restablecer", "Restablecer");
         es.put("settings.guardar", "Guardar");
-        es.put("settings.configuracion_guardada", "Configuración guardada exitosamente");
-        es.put("settings.error_guardar", "Error al guardar configuración");
-        es.put("settings.confirmar_restablecer", "¿Restablecer configuración por defecto?");
-        es.put("settings.restablecido", "Configuración restablecida");
-        
+        es.put("settings.configuracion_guardada", "Configuracion guardada exitosamente");
+        es.put("settings.error_guardar", "Error al guardar configuracion");
+        es.put("settings.confirmar_restablecer", "Restablecer configuracion por defecto?");
+        es.put("settings.restablecido", "Configuracion restablecida");
+
         // Dificultades
-        es.put("dificultad.facil", "Fácil");
+        es.put("dificultad.facil", "Facil");
         es.put("dificultad.medio", "Medio");
-        es.put("dificultad.dificil", "Difícil");
-        
+        es.put("dificultad.dificil", "Dificil");
+
         // General
-        es.put("general.si", "Sí");
+        es.put("general.si", "Si");
         es.put("general.no", "No");
         es.put("general.cancelar", "Cancelar");
         es.put("general.aceptar", "Aceptar");
         es.put("general.cerrar", "Cerrar");
         es.put("general.volver", "Volver");
         es.put("general.confirmar", "Confirmar");
-        
+
         textos.put("es", es);
-        
-        // TEXTOS EN INGLÉS
+
+        // TEXTOS EN INGLES
         Map<String, String> en = new HashMap<>();
-        
-        // Menu principal
         en.put("menu.titulo", "Sokoban");
         en.put("menu.jugar", "Play");
         en.put("menu.perfil", "Profile");
@@ -135,8 +134,6 @@ public class Idiomas {
         en.put("menu.bienvenido", "Welcome:");
         en.put("menu.sin_sesion", "No active session");
         en.put("menu.configuracion", "Settings");
-        
-        // Login
         en.put("login.titulo_login", "LOG IN");
         en.put("login.titulo_registro", "REGISTER");
         en.put("login.usuario", "Username:");
@@ -147,8 +144,6 @@ public class Idiomas {
         en.put("login.volver", "Back");
         en.put("login.acceso_requerido", "Access Required");
         en.put("login.necesita_sesion", "You need to log in\nto access this function");
-        
-        // Perfil
         en.put("perfil.titulo", "USER PROFILE");
         en.put("perfil.estadisticas", "Statistics");
         en.put("perfil.avatares", "Avatars");
@@ -171,8 +166,6 @@ public class Idiomas {
         en.put("perfil.tiempo_total", "Total time played:");
         en.put("perfil.minutos", "minutes");
         en.put("perfil.tasa_exito", "Success rate:");
-        
-        // Configuración
         en.put("config.titulo", "LANGUAGE SETTINGS");
         en.put("config.idioma_actual", "Current language:");
         en.put("config.seleccionar", "Select language:");
@@ -182,8 +175,6 @@ public class Idiomas {
         en.put("config.crear_backup", "Create Backup");
         en.put("config.backup_creado", "Backup created!");
         en.put("config.error_backup", "Error creating backup");
-        
-        // Settings
         en.put("settings.titulo", "GAME SETTINGS");
         en.put("settings.audio", "AUDIO");
         en.put("settings.volumen_musica", "Music Volume:");
@@ -204,13 +195,9 @@ public class Idiomas {
         en.put("settings.error_guardar", "Error saving settings");
         en.put("settings.confirmar_restablecer", "Reset to default settings?");
         en.put("settings.restablecido", "Settings reset");
-        
-        // Dificultades
         en.put("dificultad.facil", "Easy");
         en.put("dificultad.medio", "Medium");
         en.put("dificultad.dificil", "Hard");
-        
-        // General
         en.put("general.si", "Yes");
         en.put("general.no", "No");
         en.put("general.cancelar", "Cancel");
@@ -218,37 +205,31 @@ public class Idiomas {
         en.put("general.cerrar", "Close");
         en.put("general.volver", "Back");
         en.put("general.confirmar", "Confirm");
-        
+
         textos.put("en", en);
-        
-        // TEXTOS EN FRANCÉS
+
+        // TEXTOS EN FRANCES (SIN ACENTOS)
         Map<String, String> fr = new HashMap<>();
-        
-        // Menu principal
         fr.put("menu.titulo", "Sokoban");
         fr.put("menu.jugar", "Jouer");
         fr.put("menu.perfil", "Profil");
         fr.put("menu.amigos", "Mes Amis");
         fr.put("menu.iniciar_sesion", "Se Connecter");
-        fr.put("menu.cerrar_sesion", "Se Déconnecter");
+        fr.put("menu.cerrar_sesion", "Se Deconnecter");
         fr.put("menu.salir", "Sortir");
         fr.put("menu.bienvenido", "Bienvenue:");
         fr.put("menu.sin_sesion", "Aucune session active");
         fr.put("menu.configuracion", "Configuration");
-        
-        // Login
         fr.put("login.titulo_login", "SE CONNECTER");
         fr.put("login.titulo_registro", "S'INSCRIRE");
         fr.put("login.usuario", "Nom d'utilisateur:");
         fr.put("login.contrasena", "Mot de passe:");
         fr.put("login.nombre_completo", "Nom complet:");
         fr.put("login.registrarse", "Pas de compte? S'inscrire");
-        fr.put("login.ya_cuenta", "Déjà un compte? Se connecter");
+        fr.put("login.ya_cuenta", "Deja un compte? Se connecter");
         fr.put("login.volver", "Retour");
-        fr.put("login.acceso_requerido", "Accès Requis");
-        fr.put("login.necesita_sesion", "Vous devez vous connecter\npour accéder à cette fonction");
-        
-        // Perfil
+        fr.put("login.acceso_requerido", "Acces Requis");
+        fr.put("login.necesita_sesion", "Vous devez vous connecter\npour acceder a cette fonction");
         fr.put("perfil.titulo", "PROFIL UTILISATEUR");
         fr.put("perfil.estadisticas", "Statistiques");
         fr.put("perfil.avatares", "Avatars");
@@ -260,57 +241,49 @@ public class Idiomas {
         fr.put("perfil.nombre", "Nom:");
         fr.put("perfil.nivel_actual", "Niveau actuel:");
         fr.put("perfil.nivel_maximo", "Niveau max:");
-        fr.put("perfil.partidas_jugadas", "Parties jouées:");
+        fr.put("perfil.partidas_jugadas", "Parties jouees:");
         fr.put("perfil.puntos_totales", "Points totaux:");
-        fr.put("perfil.estadisticas_detalladas", "STATISTIQUES DÉTAILLÉES");
+        fr.put("perfil.estadisticas_detalladas", "STATISTIQUES DETAILLEES");
         fr.put("perfil.progreso_niveles", "Progression des Niveaux:");
-        fr.put("perfil.estadisticas_generales", "Statistiques Générales:");
+        fr.put("perfil.estadisticas_generales", "Statistiques Generales:");
         fr.put("perfil.nivel", "Niveau");
-        fr.put("perfil.desbloqueado", "Débloqué");
-        fr.put("perfil.bloqueado", "Verrouillé");
-        fr.put("perfil.tiempo_total", "Temps total joué:");
+        fr.put("perfil.desbloqueado", "Debloque");
+        fr.put("perfil.bloqueado", "Verrouille");
+        fr.put("perfil.tiempo_total", "Temps total joue:");
         fr.put("perfil.minutos", "minutes");
-        fr.put("perfil.tasa_exito", "Taux de succès:");
-        
-        // Configuración
-        fr.put("config.titulo", "PARAMÈTRES DE LANGUE");
+        fr.put("perfil.tasa_exito", "Taux de succes:");
+        fr.put("config.titulo", "PARAMETRES DE LANGUE");
         fr.put("config.idioma_actual", "Langue actuelle:");
-        fr.put("config.seleccionar", "Sélectionner langue:");
+        fr.put("config.seleccionar", "Selectionner langue:");
         fr.put("config.aplicar", "Appliquer");
-        fr.put("config.idioma_cambiado", "Langue changée avec succès");
-        fr.put("config.proximamente", "Paramètres de jeu\n(Plus d'options bientôt)");
-        fr.put("config.crear_backup", "Créer Sauvegarde");
-        fr.put("config.backup_creado", "Sauvegarde créée!");
-        fr.put("config.error_backup", "Erreur création sauvegarde");
-        
-        // Settings
-        fr.put("settings.titulo", "PARAMÈTRES DU JEU");
+        fr.put("config.idioma_cambiado", "Langue changee avec succes");
+        fr.put("config.proximamente", "Parametres de jeu\n(Plus d'options bientot)");
+        fr.put("config.crear_backup", "Creer Sauvegarde");
+        fr.put("config.backup_creado", "Sauvegarde creee!");
+        fr.put("config.error_backup", "Erreur creation sauvegarde");
+        fr.put("settings.titulo", "PARAMETRES DU JEU");
         fr.put("settings.audio", "AUDIO");
         fr.put("settings.volumen_musica", "Volume Musique:");
         fr.put("settings.volumen_efectos", "Volume Effets:");
         fr.put("settings.musica_activada", "Musique Activée");
-        fr.put("settings.efectos_activados", "Effets Sonores Activés");
+        fr.put("settings.efectos_activados", "Effets Sonores Actives");
         fr.put("settings.graficos", "GRAPHIQUES");
-        fr.put("settings.pantalla_completa", "Plein Écran");
+        fr.put("settings.pantalla_completa", "Plein Ecran");
         fr.put("settings.vsync", "Synchronisation Verticale");
         fr.put("settings.fps_counter", "Afficher FPS");
         fr.put("settings.juego", "JEU");
-        fr.put("settings.dificultad", "Difficulté:");
+        fr.put("settings.dificultad", "Difficulte:");
         fr.put("settings.auto_guardar", "Sauvegarde Auto");
         fr.put("settings.tutorial", "Tutoriel");
-        fr.put("settings.restablecer", "Réinitialiser");
+        fr.put("settings.restablecer", "Reinitialiser");
         fr.put("settings.guardar", "Sauvegarder");
-        fr.put("settings.configuracion_guardada", "Configuration sauvée avec succès");
+        fr.put("settings.configuracion_guardada", "Configuration sauvee avec succes");
         fr.put("settings.error_guardar", "Erreur sauvegarde configuration");
-        fr.put("settings.confirmar_restablecer", "Réinitialiser configuration par défaut?");
-        fr.put("settings.restablecido", "Configuration réinitialisée");
-        
-        // Dificultades
+        fr.put("settings.confirmar_restablecer", "Reinitialiser configuration par defaut?");
+        fr.put("settings.restablecido", "Configuration reinitialisee");
         fr.put("dificultad.facil", "Facile");
         fr.put("dificultad.medio", "Moyen");
         fr.put("dificultad.dificil", "Difficile");
-        
-        // General
         fr.put("general.si", "Oui");
         fr.put("general.no", "Non");
         fr.put("general.cancelar", "Annuler");
@@ -318,10 +291,373 @@ public class Idiomas {
         fr.put("general.cerrar", "Fermer");
         fr.put("general.volver", "Retour");
         fr.put("general.confirmar", "Confirmer");
-        
+
         textos.put("fr", fr);
+
+        // PAUSA
+        es.put("PAUSA", "PAUSA");
+        en.put("PAUSA", "PAUSE");
+        fr.put("PAUSA", "PAUSE");
+
+        // Botones menu pausa
+        es.put("menu.pausa.volver", "Volver");
+        en.put("menu.pausa.volver", "Back");
+        fr.put("menu.pausa.volver", "Retour");
+
+        es.put("menu.pausa.reiniciar", "Reiniciar");
+        en.put("menu.pausa.reiniciar", "Restart");
+        fr.put("menu.pausa.reiniciar", "Redemarrer");
+
+        // FIN DE NIVEL
+        es.put("NIVEL_COMPLETADO", "NIVEL COMPLETADO!");
+        en.put("NIVEL_COMPLETADO", "LEVEL COMPLETED!");
+        fr.put("NIVEL_COMPLETADO", "NIVEAU TERMINE !");
+
+        // Botones fin de nivel
+        es.put("menu.fin.siguiente", "Siguiente Nivel");
+        en.put("menu.fin.siguiente", "Next Level");
+        fr.put("menu.fin.siguiente", "Niveau Suivant");
+
+        es.put("menu.fin.reiniciar", "Reiniciar Nivel");
+        en.put("menu.fin.reiniciar", "Restart Level");
+        fr.put("menu.fin.reiniciar", "Redemarrer Niveau");
+
+        es.put("menu.fin.menu", "Menu");
+        en.put("menu.fin.menu", "Menu");
+        fr.put("menu.fin.menu", "Menu");
+
+        // Estadisticas
+        es.put("fin.tiempo", "Tiempo");
+        en.put("fin.tiempo", "Time");
+        fr.put("fin.tiempo", "Temps");
+
+        es.put("fin.movimientos", "Movimientos");
+        en.put("fin.movimientos", "Moves");
+        fr.put("fin.movimientos", "Mouvements");
+
+        es.put("fin.puntuacion", "Puntuacion");
+        en.put("fin.puntuacion", "Score");
+        fr.put("fin.puntuacion", "Score");
+
+        // Botones generales / menu
+        es.put("boton.iniciar", "Iniciar");
+        en.put("boton.iniciar", "Start");
+        fr.put("boton.iniciar", "Demarrer");
+
+        es.put("boton.salir", "Salir");
+        en.put("boton.salir", "Exit");
+        fr.put("boton.salir", "Quitter");
+
+        es.put("boton.continuar", "Continuar");
+        en.put("boton.continuar", "Continue");
+        fr.put("boton.continuar", "Continuer");
+
+        // Confirmaciones / alertas
+        es.put("alerta.salir", "Seguro que quieres salir?");
+        en.put("alerta.salir", "Are you sure you want to exit?");
+        fr.put("alerta.salir", "Voulez-vous vraiment quitter ?");
+
+        es.put("alerta.reiniciar", "Reiniciar el nivel?");
+        en.put("alerta.reiniciar", "Restart the level?");
+        fr.put("alerta.reiniciar", "Redemarrer le niveau ?");
+
+        // ESPAÑOL
+        es.put("amigos.titulo", "GESTIÓN DE AMIGOS");
+        es.put("amigos.buscar.label", "Buscar usuario:");
+        es.put("amigos.buscar.placeholder", "Nombre del usuario...");
+        es.put("amigos.mis_amigos", "MIS AMIGOS");
+        es.put("amigos.sin_sesion", "No hay sesión activa");
+        es.put("amigos.sin_amigos", "No tienes amigos agregados aún");
+        es.put("amigos.usuario_offline", "Usuario offline");
+        es.put("amigos.ver", "Ver");
+        es.put("amigos.quitar", "Quitar");
+        es.put("amigos.msj.escribir_nombre", "Escribe un nombre de usuario");
+        es.put("amigos.msj.usuario_invalido", "Nombre de usuario inválido");
+        es.put("amigos.msj.usuario_no_encontrado", "Usuario no encontrado: %s");
+        es.put("amigos.msj.ya_amigo", "Ya es tu amigo: %s");
+        es.put("amigos.msj.agregarte_ti_mismo", "No puedes agregarte a ti mismo");
+        es.put("amigos.agregar.titulo", "AGREGAR AMIGO");
+        es.put("amigos.agregar.mensaje", "¿Quieres agregar a %s como tu amigo?");
+        es.put("general.si", "Sí");
+        es.put("general.cancelar", "Cancelar");
+        es.put("amigos.msj.agregado", "Amigo agregado: %s");
+        es.put("amigos.msj.error_agregar", "Error al agregar amigo");
+        es.put("amigos.quitar.titulo", "QUITAR AMIGO");
+        es.put("amigos.quitar.mensaje", "Seguro que quieres quitar a %s de tus amigos?");
+        es.put("amigos.quitar.btn", "Quitar");
+        es.put("amigos.msj.quitado", "Amigo quitado: %s");
+        es.put("amigos.msj.error_quitar", "Error al quitar amigo");
+        es.put("amigos.info", "Info de %s (próximamente más detalles)");
+
+// INGLÉS
+        en.put("amigos.titulo", "FRIENDS MANAGEMENT");
+        en.put("amigos.buscar.label", "Search user:");
+        en.put("amigos.buscar.placeholder", "User name...");
+        en.put("amigos.mis_amigos", "MY FRIENDS");
+        en.put("amigos.sin_sesion", "No active session");
+        en.put("amigos.sin_amigos", "You have no friends added yet");
+        en.put("amigos.usuario_offline", "User offline");
+        en.put("amigos.ver", "View");
+        en.put("amigos.quitar", "Remove");
+        en.put("amigos.msj.escribir_nombre", "Enter a username");
+        en.put("amigos.msj.usuario_invalido", "Invalid username");
+        en.put("amigos.msj.usuario_no_encontrado", "User not found: %s");
+        en.put("amigos.msj.ya_amigo", "Already your friend: %s");
+        en.put("amigos.msj.agregarte_ti_mismo", "You cannot add yourself");
+        en.put("amigos.agregar.titulo", "ADD FRIEND");
+        en.put("amigos.agregar.mensaje", "Do you want to add %s as your friend?");
+        en.put("general.si", "Yes");
+        en.put("general.cancelar", "Cancel");
+        en.put("amigos.msj.agregado", "Friend added: %s");
+        en.put("amigos.msj.error_agregar", "Error adding friend");
+        en.put("amigos.quitar.titulo", "REMOVE FRIEND");
+        en.put("amigos.quitar.mensaje", "Are you sure you want to remove %s from your friends?");
+        en.put("amigos.quitar.btn", "Remove");
+        en.put("amigos.msj.quitado", "Friend removed: %s");
+        en.put("amigos.msj.error_quitar", "Error removing friend");
+        en.put("amigos.info", "Info of %s (more details coming soon)");
+
+// FRANCÉS
+        fr.put("amigos.titulo", "GESTION DES AMIS");
+        fr.put("amigos.buscar.label", "Chercher utilisateur:");
+        fr.put("amigos.buscar.placeholder", "Nom d'utilisateur...");
+        fr.put("amigos.mis_amigos", "MES AMIS");
+        fr.put("amigos.sin_sesion", "Aucune session active");
+        fr.put("amigos.sin_amigos", "Vous n'avez pas encore d'amis");
+        fr.put("amigos.usuario_offline", "Utilisateur hors ligne");
+        fr.put("amigos.ver", "Voir");
+        fr.put("amigos.quitar", "Retirer");
+        fr.put("amigos.msj.escribir_nombre", "Entrez un nom d'utilisateur");
+        fr.put("amigos.msj.usuario_invalido", "Nom d'utilisateur invalide");
+        fr.put("amigos.msj.usuario_no_encontrado", "Utilisateur introuvable : %s");
+        fr.put("amigos.msj.ya_amigo", "Déjà votre ami : %s");
+        fr.put("amigos.msj.agregarte_ti_mismo", "Vous ne pouvez pas vous ajouter vous-même");
+        fr.put("amigos.agregar.titulo", "AJOUTER UN AMI");
+        fr.put("amigos.agregar.mensaje", "Voulez-vous ajouter %s comme votre ami ?");
+        fr.put("general.si", "Oui");
+        fr.put("general.cancelar", "Annuler");
+        fr.put("amigos.msj.agregado", "Ami ajouté : %s");
+        fr.put("amigos.msj.error_agregar", "Erreur lors de l'ajout de l'ami");
+        fr.put("amigos.quitar.titulo", "SUPPRIMER UN AMI");
+        fr.put("amigos.quitar.mensaje", "Êtes-vous sûr de vouloir supprimer %s de vos amis ?");
+        fr.put("amigos.quitar.btn", "Supprimer");
+        fr.put("amigos.msj.quitado", "Ami supprimé : %s");
+        fr.put("amigos.msj.error_quitar", "Erreur lors de la suppression de l'ami");
+        fr.put("amigos.info", "Infos de %s (plus de détails bientôt)");
+
+        // Español
+        es.put("comparacion.boton_comparar", "Comparar");
+        es.put("comparacion.titulo", "Comparación de Jugadores");
+        es.put("comparacion.comparar_con", "Comparar con:");
+        es.put("comparacion.volver", "Volver");
+        es.put("comparacion.error_sesion", "Debes iniciar sesión para comparar jugadores.");
+        es.put("comparacion.sin_amigos", "No tienes amigos para comparar");
+        es.put("comparacion.msj.agregar_amigos", "Agrega amigos primero");
+        es.put("comparacion.msj.error_cargar_usuario", "Error al cargar el usuario: %s");
+        es.put("comparacion.msj.comparando_con", "Comparando con %s");
+        es.put("comparacion.seleccionar_amigo", "Selecciona un amigo para comparar");
+        es.put("comparacion.tu", "Tu: %s");
+        es.put("comparacion.rival", "Rival: %s");
+        es.put("comparacion.niveles_completados", "NIVELES COMPLETADOS");
+        es.put("comparacion.puntuacion_total", "PUNTUACION TOTAL");
+        es.put("comparacion.tiempo_promedio", "TIEMPO PROMEDIO POR NIVEL");
+        es.put("comparacion.partidas_completadas", "PARTIDAS COMPLETADAS");
+
+// Inglés
+        en.put("comparacion.boton_comparar", "Compare");
+        en.put("comparacion.titulo", "Player Comparison");
+        en.put("comparacion.comparar_con", "Compare with:");
+        en.put("comparacion.volver", "Back");
+        en.put("comparacion.error_sesion", "You must be logged in to compare players.");
+        en.put("comparacion.sin_amigos", "No friends to compare");
+        en.put("comparacion.msj.agregar_amigos", "Add friends first");
+        en.put("comparacion.msj.error_cargar_usuario", "Error loading user: %s");
+        en.put("comparacion.msj.comparando_con", "Comparing with %s");
+        en.put("comparacion.seleccionar_amigo", "Select a friend to compare");
+        en.put("comparacion.tu", "You: %s");
+        en.put("comparacion.rival", "Rival: %s");
+        en.put("comparacion.niveles_completados", "LEVELS COMPLETED");
+        en.put("comparacion.puntuacion_total", "TOTAL SCORE");
+        en.put("comparacion.tiempo_promedio", "AVERAGE TIME PER LEVEL");
+        en.put("comparacion.partidas_completadas", "COMPLETED GAMES");
+
+// Francés
+        fr.put("comparacion.boton_comparar", "Comparer");
+        fr.put("comparacion.titulo", "Comparaison des Joueurs");
+        fr.put("comparacion.comparar_con", "Comparer avec :");
+        fr.put("comparacion.volver", "Retour");
+        fr.put("comparacion.error_sesion", "Vous devez vous connecter pour comparer les joueurs.");
+        fr.put("comparacion.sin_amigos", "Pas d'amis à comparer");
+        fr.put("comparacion.msj.agregar_amigos", "Ajoutez d'abord des amis");
+        fr.put("comparacion.msj.error_cargar_usuario", "Erreur lors du chargement de l'utilisateur : %s");
+        fr.put("comparacion.msj.comparando_con", "Comparaison avec %s");
+        fr.put("comparacion.seleccionar_amigo", "Sélectionnez un ami à comparer");
+        fr.put("comparacion.tu", "Vous : %s");
+        fr.put("comparacion.rival", "Rival : %s");
+        fr.put("comparacion.niveles_completados", "NIVEAUX TERMINÉS");
+        fr.put("comparacion.puntuacion_total", "SCORE TOTAL");
+        fr.put("comparacion.tiempo_promedio", "TEMPS MOYEN PAR NIVEAU");
+        fr.put("comparacion.partidas_completadas", "PARTIES TERMINÉES");
+
+        es.put("login.titulo_login", "INICIAR SESION");
+        es.put("login.titulo_registro", "REGISTRARSE");
+        es.put("login.usuario", "Usuario:");
+        es.put("login.contrasena", "Contraseña:");
+        es.put("login.nombre_completo", "Nombre completo:");
+        es.put("login.registrarse", "¿No tienes cuenta? Regístrate");
+        es.put("login.ya_cuenta", "¿Ya tienes cuenta? Inicia sesión");
+        es.put("login.volver", "Volver");
+        es.put("login.acceso_requerido", "Acceso Requerido");
+        es.put("login.necesita_sesion", "Necesitas iniciar sesión para acceder a esta función");
+        textos.put("es", es);
+        en.put("login.titulo_login", "LOG IN");
+        en.put("login.titulo_registro", "REGISTER");
+        en.put("login.usuario", "Username:");
+        en.put("login.contrasena", "Password:");
+        en.put("login.nombre_completo", "Full name:");
+        en.put("login.registrarse", "Don't have an account? Register");
+        en.put("login.ya_cuenta", "Already have an account? Log in");
+        en.put("login.volver", "Back");
+        en.put("login.acceso_requerido", "Access Required");
+        en.put("login.necesita_sesion", "You need to log in to access this function");
+        fr.put("login.titulo_login", "SE CONNECTER");
+        fr.put("login.titulo_registro", "S'INSCRIRE");
+        fr.put("login.usuario", "Nom d'utilisateur:");
+        fr.put("login.contrasena", "Mot de passe:");
+        fr.put("login.nombre_completo", "Nom complet:");
+        fr.put("login.registrarse", "Pas de compte? S'inscrire");
+        fr.put("login.ya_cuenta", "Déjà un compte? Se connecter");
+        fr.put("login.volver", "Retour");
+        fr.put("login.acceso_requerido", "Accès Requis");
+        fr.put("login.necesita_sesion", "Vous devez vous connecter pour accéder à cette fonction");
+        es.put("amigos.buscar", "Buscar");
+        es.put("amigos.actualizar", "Actualizar");
+        es.put("amigos.volver", "Volver");
+
+// INGLÉS
+        en.put("amigos.buscar", "Search");
+        en.put("amigos.actualizar", "Refresh");
+        en.put("amigos.volver", "Back");
+
+// FRANCÉS
+        fr.put("amigos.buscar", "Chercher");
+        fr.put("amigos.actualizar", "Actualiser");
+        fr.put("amigos.volver", "Retour");
+        es.put("avatares.titulo", "SELECCIONAR AVATAR");
+        es.put("avatares.preview", "VISTA PREVIA");
+        es.put("avatares.disponibles", "AVATARES DISPONIBLES");
+        es.put("avatares.usuario", "Usuario:");
+        es.put("avatares.actual", "Avatar:");
+        es.put("menu.guardar", "GUARDAR");
+        es.put("menu.volver", "VOLVER");
+        en.put("avatares.titulo", "SELECT AVATAR");
+        en.put("avatares.preview", "PREVIEW");
+        en.put("avatares.disponibles", "AVAILABLE AVATARS");
+        en.put("avatares.usuario", "User:");
+        en.put("avatares.actual", "Avatar:");
+        en.put("menu.guardar", "SAVE");
+        en.put("menu.volver", "BACK");
+        fr.put("avatares.titulo", "SÉLECTIONNER UN AVATAR");
+        fr.put("avatares.preview", "APERÇU");
+        fr.put("avatares.disponibles", "AVATARS DISPONIBLES");
+        fr.put("avatares.usuario", "Utilisateur:");
+        fr.put("avatares.actual", "Avatar:");
+        fr.put("menu.guardar", "ENREGISTRER");
+        fr.put("menu.volver", "RETOUR");
+
+        es.put("ranking.titulo", "Ranking");
+        es.put("ranking.filtro_tipo", "Filtrar por:");
+        es.put("ranking.tipo_puntuacion", "Puntuación Total");
+        es.put("ranking.tipo_nivel", "Nivel Máximo");
+        es.put("ranking.tipo_partidas", "Partidas Completadas");
+        es.put("ranking.tipo_tiempo", "Tiempo Jugado");
+        es.put("ranking.filtro_periodo", "Periodo:");
+        es.put("ranking.periodo_historico", "Histórico");
+        es.put("ranking.periodo_mes", "Este Mes");
+        es.put("ranking.periodo_semana", "Esta Semana");
+        es.put("ranking.header_pos", "Pos");
+        es.put("ranking.header_jugador", "Jugador");
+        es.put("ranking.header_nivel", "Nivel");
+        es.put("ranking.header_puntos", "Puntos");
+        es.put("ranking.header_completadas", "Completadas");
+        es.put("ranking.header_tiempo", "Tiempo");
+        es.put("ranking.puntos_abreviatura", "pts");
+        es.put("ranking.nivel", "Nivel");
+        es.put("ranking.partidas", "partidas");
+        es.put("ranking.sin_sesion", "Inicia sesión para ver tu posición");
+        es.put("ranking.posicion_actual", "Tu posición actual: #%d de %d jugadores");
+        es.put("ranking.no_encontrado", "No se encontró tu posición en el ranking");
+        es.put("ranking.actualizado", "Ranking actualizado");
+        es.put("ranking.no_sesion", "Debes iniciar sesión para ver tu perfil");
+
+// Inglés
+        en.put("ranking.titulo", "Ranking");
+        en.put("ranking.filtro_tipo", "Filter by:");
+        en.put("ranking.tipo_puntuacion", "Total Score");
+        en.put("ranking.tipo_nivel", "Max Level");
+        en.put("ranking.tipo_partidas", "Completed Games");
+        en.put("ranking.tipo_tiempo", "Time Played");
+        en.put("ranking.filtro_periodo", "Period:");
+        en.put("ranking.periodo_historico", "Historic");
+        en.put("ranking.periodo_mes", "This Month");
+        en.put("ranking.periodo_semana", "This Week");
+        en.put("ranking.header_pos", "Pos");
+        en.put("ranking.header_jugador", "Player");
+        en.put("ranking.header_nivel", "Level");
+        en.put("ranking.header_puntos", "Points");
+        en.put("ranking.header_completadas", "Completed");
+        en.put("ranking.header_tiempo", "Time");
+        en.put("ranking.puntos_abreviatura", "pts");
+        en.put("ranking.nivel", "Level");
+        en.put("ranking.partidas", "games");
+        en.put("ranking.sin_sesion", "Log in to see your position");
+        en.put("ranking.posicion_actual", "Your current position: #%d of %d players");
+        en.put("ranking.no_encontrado", "Your position was not found");
+        en.put("ranking.actualizado", "Ranking updated");
+        en.put("ranking.no_sesion", "You must log in to view your profile");
+
+// Francés
+        fr.put("ranking.titulo", "Classement");
+        fr.put("ranking.filtro_tipo", "Filtrer par :");
+        fr.put("ranking.tipo_puntuacion", "Score Total");
+        fr.put("ranking.tipo_nivel", "Niveau Max");
+        fr.put("ranking.tipo_partidas", "Parties terminées");
+        fr.put("ranking.tipo_tiempo", "Temps Joué");
+        fr.put("ranking.filtro_periodo", "Période :");
+        fr.put("ranking.periodo_historico", "Historique");
+        fr.put("ranking.periodo_mes", "Ce Mois");
+        fr.put("ranking.periodo_semana", "Cette Semaine");
+        fr.put("ranking.header_pos", "Pos");
+        fr.put("ranking.header_jugador", "Joueur");
+        fr.put("ranking.header_nivel", "Niveau");
+        fr.put("ranking.header_puntos", "Points");
+        fr.put("ranking.header_completadas", "Terminées");
+        fr.put("ranking.header_tiempo", "Temps");
+        fr.put("ranking.puntos_abreviatura", "pts");
+        fr.put("ranking.nivel", "Niveau");
+        fr.put("ranking.partidas", "parties");
+        fr.put("ranking.sin_sesion", "Connectez-vous pour voir votre position");
+        fr.put("ranking.posicion_actual", "Votre position actuelle : #%d sur %d joueurs");
+        fr.put("ranking.no_encontrado", "Votre position n'a pas été trouvée");
+        fr.put("ranking.actualizado", "Classement mis à jour");
+        fr.put("ranking.no_sesion", "Vous devez vous connecter pour voir votre profil");
+
+        // Español
+        es.put("ranking.boton_actualizar", "Actualizar");
+        es.put("ranking.boton_perfil", "Mi Perfil");
+        es.put("ranking.boton_volver", "Volver");
+
+// Inglés
+        en.put("ranking.boton_actualizar", "Update");
+        en.put("ranking.boton_perfil", "My Profile");
+        en.put("ranking.boton_volver", "Back");
+
+// Francés
+        fr.put("ranking.boton_actualizar", "Mettre à jour");
+        fr.put("ranking.boton_perfil", "Mon Profil");
+        fr.put("ranking.boton_volver", "Retour");
     }
-    
+
     public String obtenerTexto(String clave) {
         Map<String, String> idiomaMap = textos.get(idiomaActual);
         if (idiomaMap != null && idiomaMap.containsKey(clave)) {
@@ -334,31 +670,35 @@ public class Idiomas {
         }
         return clave; // devolver la clave si no se encuentra nada
     }
-    
+
     public void cambiarIdioma(String nuevoIdioma) {
         if (textos.containsKey(nuevoIdioma)) {
             idiomaActual = nuevoIdioma;
             System.out.println("Idioma cambiado a: " + nuevoIdioma);
         }
     }
-    
+
     public String getIdiomaActual() {
         return idiomaActual;
     }
-    
+
     public String[] getIdiomasDisponibles() {
         return new String[]{"es", "en", "fr"};
     }
-    
+
     public String getNombreIdioma(String codigo) {
         switch (codigo) {
-            case "es": return "Español";
-            case "en": return "English";
-            case "fr": return "Français";
-            default: return codigo;
+            case "es":
+                return "Espanol";
+            case "en":
+                return "English";
+            case "fr":
+                return "Francais";
+            default:
+                return codigo;
         }
     }
-    
+
     // cargar idioma desde configuracion del usuario
     public void cargarIdiomaUsuario() {
         SistemaUsuarios sistema = SistemaUsuarios.getInstance();
@@ -369,7 +709,7 @@ public class Idiomas {
             }
         }
     }
-    
+
     // guardar idioma en configuracion del usuario
     public void guardarIdiomaUsuario(String idioma) {
         SistemaUsuarios sistema = SistemaUsuarios.getInstance();

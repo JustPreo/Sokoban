@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -13,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.Usuario;
@@ -31,13 +34,13 @@ public class PantallaAvatares implements Screen {
 
     // avatares disponibles
     private String[] avatares = {
-        "personaje.png", "caja.png", "objetivo.png","srek.png","Thanos.png","ozuna.png","personajeAvatar.png"
+        "personaje.png", "caja.png", "objetivo.png", "srek.png", "Thanos.png", "ozuna.png", "personajeAvatar.png"
     };
     //Pongaos solo 9 avatares , pero que sean "unicos"
     //Talvez hacer un avatar del munequito ese
     private String[] nombresAvatares = {
         "Personaje Clasico", "Caja Misteriosa", "Portal Objetivo",
-         "Mike Sullivan","Tu Jefe","Esrek","Coso Verde"
+        "Mike Sullivan", "Tu Jefe", "Esrek", "Coso Verde"
     };
 
     private String avatarSeleccionado;
@@ -63,18 +66,6 @@ public class PantallaAvatares implements Screen {
 
     @Override
     public void show() {
-        // cargar texturas de botones
-        texturaGuardar = new Texture(Gdx.files.internal("guardar.png"));
-        texturaGuardar2 = new Texture(Gdx.files.internal("guardar2.png"));
-        estiloGuardar = new Button.ButtonStyle();
-        estiloGuardar.up = new TextureRegionDrawable(new TextureRegion(texturaGuardar));
-        estiloGuardar.down = new TextureRegionDrawable(new TextureRegion(texturaGuardar2));
-
-        texturaVolver = new Texture(Gdx.files.internal("volver.png"));
-        texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
-        estiloVolver = new Button.ButtonStyle();
-        estiloVolver.up = new TextureRegionDrawable(new TextureRegion(texturaVolver));
-        estiloVolver.down = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
 
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
@@ -85,11 +76,32 @@ public class PantallaAvatares implements Screen {
     }
 
     private void crearInterfaz() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P-vaV7.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 12; // Tamaño para medium-font
+        BitmapFont mediumFont = generator.generateFont(parameter);
+        skin.add("medium-font", mediumFont, BitmapFont.class);
+        generator.dispose();
+        
+        
+        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
+
+        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+
+        TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
+        estiloBoton.up = fondoNormalUp;
+        estiloBoton.down = fondoNormalDown;
+        estiloBoton.font = skin.getFont("medium-font");
+        
+        
+        Idiomas idiomas = Idiomas.getInstance();
         Table tablaPrincipal = new Table();
         tablaPrincipal.setFillParent(true);
         tablaPrincipal.center();
 
-        Label titulo = new Label("SELECCIONAR AVATAR", skin);
+        Label titulo = new Label(idiomas.obtenerTexto("avatares.titulo"), skin);
         titulo.setColor(Color.CYAN);
         tablaPrincipal.add(titulo).padBottom(20).row();
 
@@ -99,7 +111,7 @@ public class PantallaAvatares implements Screen {
         panelPreview.setBackground(skin.newDrawable("default-round", new Color(0.2f, 0.2f, 0.2f, 0.8f)));
         panelPreview.pad(20);
 
-        Label labelPreview = new Label("VISTA PREVIA", skin);
+        Label labelPreview = new Label(idiomas.obtenerTexto("avatares.preview"), skin);
         labelPreview.setColor(Color.YELLOW);
         panelPreview.add(labelPreview).padBottom(15).row();
 
@@ -109,11 +121,13 @@ public class PantallaAvatares implements Screen {
         panelPreview.add(imagenPrevia).size(80, 80).padBottom(15).row();
 
         Usuario usuario = sistemaUsuarios.getUsuarioActual();
-        Label labelUsuario = new Label("Usuario: " + (usuario != null ? usuario.getNombreUsuario() : "N/A"), skin);
+        Label labelUsuario = new Label(idiomas.obtenerTexto("avatares.usuario") + " " + (usuario != null ? usuario.getNombreUsuario() : "N/A"), skin);
+
         labelUsuario.setColor(Color.WHITE);
         panelPreview.add(labelUsuario).padBottom(5).row();
 
-        Label labelAvatarActual = new Label("Avatar: " + obtenerNombreAvatar(avatarSeleccionado), skin);
+        Label labelAvatarActual = new Label(idiomas.obtenerTexto("avatares.actual") + " " + obtenerNombreAvatar(avatarSeleccionado), skin);
+
         labelAvatarActual.setColor(Color.LIGHT_GRAY);
         panelPreview.add(labelAvatarActual).row();
 
@@ -123,7 +137,8 @@ public class PantallaAvatares implements Screen {
         panelAvatares.setBackground(skin.newDrawable("default-round", new Color(0.2f, 0.2f, 0.2f, 0.8f)));
         panelAvatares.pad(20);
 
-        Label labelAvatares = new Label("AVATARES DISPONIBLES", skin);
+        Label labelAvatares = new Label(idiomas.obtenerTexto("avatares.disponibles"), skin);
+
         labelAvatares.setColor(Color.YELLOW);
         panelAvatares.add(labelAvatares).padBottom(15).colspan(3).row();
 
@@ -165,7 +180,7 @@ public class PantallaAvatares implements Screen {
         // botones de accion con texturas
         Table tablaBotones = new Table();
 
-        Button btnGuardar = new Button(estiloGuardar);
+        TextButton btnGuardar = new TextButton(idiomas.obtenerTexto("menu.guardar"), estiloBoton);
         btnGuardar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -175,7 +190,7 @@ public class PantallaAvatares implements Screen {
             }
         });
 
-        Button btnCancelar = new Button(estiloVolver);
+        TextButton btnCancelar = new TextButton(idiomas.obtenerTexto("menu.volver"), estiloBoton);
         btnCancelar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -185,8 +200,8 @@ public class PantallaAvatares implements Screen {
             }
         });
 
-        tablaBotones.add(btnGuardar).size(120, 50).padRight(20);
-        tablaBotones.add(btnCancelar).size(120, 50);
+        tablaBotones.add(btnGuardar).size(150, 60).padRight(20);
+        tablaBotones.add(btnCancelar).size(150, 60);
         tablaPrincipal.add(tablaBotones).row();
 
         stage.addActor(tablaPrincipal);
@@ -243,7 +258,7 @@ public class PantallaAvatares implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.getBatch().begin();

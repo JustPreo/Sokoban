@@ -16,6 +16,7 @@ import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Base.Jugador;
 import com.sokoban.com.Base.Pared;
 import com.sokoban.com.Base.Piso;
+import com.sokoban.com.Base.PisoHub;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.SoundManager;
@@ -37,7 +38,7 @@ public class Hub implements Screen {
     protected int TILE = 800 / COLUMNAS;
     protected ArrayList<padNiveles> pads = new ArrayList<>();
     ArrayList<Pared> paredes = new ArrayList<>();
-    ArrayList<Piso> pisos = new ArrayList<>();//Proximamente 
+    private ArrayList<PisoHub> pisosHub = new ArrayList<>();
 
     protected int jugadorX = 2, jugadorY = 4;
     private int nivelSeleccionado = -1; // Para mostrar info del nivel actual
@@ -176,13 +177,16 @@ public class Hub implements Screen {
 
         // Actualizar jugador
         jogador.update();
-        
-        ScreenUtils.clear(Color.DARK_GRAY);
+
+        ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
 
         // Render
         spriteBatch.begin();
+        for (PisoHub piso : pisosHub) {
+            piso.render(spriteBatch);
+        }
 
         for (padNiveles pad : pads) {
             pad.render(spriteBatch);
@@ -307,8 +311,8 @@ public class Hub implements Screen {
     private String getEstadoNivel(int nivel) {
         SistemaUsuarios sistema = SistemaUsuarios.getInstance();
         int nivelMaximo = sistema.haySesionActiva() ? sistema.getUsuarioActual().getNivelMaximoAlcanzado() : 1;//Si hay sesion activa revisar el nivel max
-        if (nivel < nivelMaximo){
-        return "Completado";
+        if (nivel < nivelMaximo) {
+            return "Completado";
         }
         return "No completado"; // Placeholder
     }
@@ -400,7 +404,10 @@ public class Hub implements Screen {
                 if (mapa[f][c] == 1) { // solo dibujar si sigue siendo pared
                     paredes.add(new Pared(c * TILE, (FILAS - 1 - f) * TILE, TILE));
                 }
-                
+                if (mapa[f][c] != 1) {
+                    crearPisoHub(c, FILAS - 1 - f); // Ajustar para coordenadas correctas
+                }
+
                 int valor = mapa[f][c];
                 if (valor != 0 && valor != 1) {
                     int nivelPad = valor - 1;
@@ -409,5 +416,10 @@ public class Hub implements Screen {
                 }
             }
         }
+    }
+
+    private void crearPisoHub(int x, int y) {
+        PisoHub piso = new PisoHub(x * TILE, y * TILE, TILE);
+        pisosHub.add(piso);
     }
 }

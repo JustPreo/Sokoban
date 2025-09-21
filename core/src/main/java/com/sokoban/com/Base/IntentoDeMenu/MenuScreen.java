@@ -86,7 +86,7 @@ public class MenuScreen implements Screen {
         skin.add("medium-font", mediumFont, BitmapFont.class);
 
         // Generar la fuente más pequeña para los submenús y los botones
-        parameter.size = 8; 
+        parameter.size = 8;
         BitmapFont smallFont = generator.generateFont(parameter);
         skin.add("small-font", smallFont, BitmapFont.class);
 
@@ -131,6 +131,7 @@ public class MenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (puedeInteractuar) {
                     if (sistemaUsuarios.haySesionActiva()) {
+                        idiomas.cargarIdiomaUsuario();
                         ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
                         SoundManager.playMusic("nivel", true, 0.7f);
                     } else {
@@ -208,12 +209,12 @@ public class MenuScreen implements Screen {
 
         table.add(titulo).padBottom(20).row();
         table.add(labelUsuario).padBottom(30).row();
-        table.add(btnJugar).size(180, 50).padBottom(10).row(); // Adjusted size
-        table.add(btnPerfil).size(180, 50).padBottom(10).row(); // Adjusted size
-        table.add(btnAmigos).size(180, 50).padBottom(10).row(); // Adjusted size
-        table.add(btnIdioma).size(180, 50).padBottom(10).row(); // Adjusted size
-        table.add(btnLogin).size(180, 50).padBottom(10).row(); // Adjusted size
-        table.add(btnSalir).size(180, 50).row(); // Adjusted size
+        table.add(btnJugar).size(250, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnPerfil).size(250, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnAmigos).size(250, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnIdioma).size(250, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnLogin).size(250, 50).padBottom(10).row(); // Adjusted size
+        table.add(btnSalir).size(250, 50).row(); // Adjusted size
 
         stage.addActor(table);
     }
@@ -636,7 +637,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.getBatch().begin();

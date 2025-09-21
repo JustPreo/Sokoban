@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -40,9 +42,10 @@ public class PantallaSettings implements Screen {
 
     // Componentes UI
     private Slider sliderMusica, sliderEfectos;
-    private CheckBox checkMusica, checkEfectos, checkPantallaCompleta, checkVsync, checkFPS, checkAutoGuardar, checkTutorial;
-    private SelectBox<String> selectorDificultad;
+    private CheckBox checkMusica, checkEfectos, checkPantallaCompleta, checkVsync, checkFPS, checkAutoGuardar;
 
+    //private SelectBox<String> selectorDificultad;
+// private CheckBox checkTutorial;
     public PantallaSettings() {
         idiomas = Idiomas.getInstance();
         config = ConfiguracionJuego.getInstance();
@@ -50,28 +53,28 @@ public class PantallaSettings implements Screen {
 
     @Override
     public void show() {
-        // Setup texturas
-        texturaExtra = new Texture(Gdx.files.internal("extra.png"));
+        // Setup texturas de botones
+        texturaExtra = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoExtra = new TextureRegionDrawable(new TextureRegion(texturaExtra));
-        texturaExtra2 = new Texture(Gdx.files.internal("extra2.png"));
+        texturaExtra2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         Drawable fondoExtra2 = new TextureRegionDrawable(new TextureRegion(texturaExtra2));
 
         estiloExtra = new Button.ButtonStyle();
         estiloExtra.up = fondoExtra;
         estiloExtra.down = fondoExtra2;
 
-        texturaVolver = new Texture(Gdx.files.internal("volver.png"));
+        texturaVolver = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
-        texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
+        texturaVolver2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
 
         estiloVolver = new Button.ButtonStyle();
         estiloVolver.up = fondoVolver;
         estiloVolver.down = fondoVolver2;
 
-        texturaJugar = new Texture(Gdx.files.internal("jugar.png"));
+        texturaJugar = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoJugar = new TextureRegionDrawable(new TextureRegion(texturaJugar));
-        texturaJugar2 = new Texture(Gdx.files.internal("jugar2.png"));
+        texturaJugar2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         Drawable fondoJugar2 = new TextureRegionDrawable(new TextureRegion(texturaJugar2));
 
         estiloJugar = new Button.ButtonStyle();
@@ -101,24 +104,32 @@ public class PantallaSettings implements Screen {
         ScrollPane scrollPane = new ScrollPane(contenidoTabla, skin);
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setFadeScrollBars(false);
-        
+
         tablaPrincipal.add(scrollPane).size(700, 450).padBottom(20).row();
 
         // === SECCIÓN AUDIO ===
         crearSeccionAudio(contenidoTabla);
-        
+
         // === SECCIÓN GRÁFICOS ===
         crearSeccionGraficos(contenidoTabla);
-        
+
         // === SECCIÓN JUEGO ===
         crearSeccionJuego(contenidoTabla);
 
         // Botones finales
         Table tablaBotones = new Table();
-        
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P-vaV7.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 13;
+        BitmapFont pixelFont = generator.generateFont(parameter);
+        generator.dispose(); // liberar recursos
+
+
+        Label.LabelStyle estiloPixel = new Label.LabelStyle();
+        estiloPixel.font = pixelFont;
         Button btnGuardar = new Button(estiloJugar);
-        Label labelGuardar = new Label(idiomas.obtenerTexto("settings.guardar"), skin);
-        labelGuardar.setFontScale(0.8f);
+        Label labelGuardar = new Label(idiomas.obtenerTexto("settings.guardar"), estiloPixel);
+        labelGuardar.setFontScale(1f); // Fuente más grande para botones
         btnGuardar.add(labelGuardar);
         btnGuardar.addListener(new ClickListener() {
             @Override
@@ -130,8 +141,8 @@ public class PantallaSettings implements Screen {
         });
 
         Button btnRestablecer = new Button(estiloExtra);
-        Label labelRestablecer = new Label(idiomas.obtenerTexto("settings.restablecer"), skin);
-        labelRestablecer.setFontScale(0.7f);
+        Label labelRestablecer = new Label(idiomas.obtenerTexto("settings.restablecer"), estiloPixel);
+        labelRestablecer.setFontScale(1f);
         btnRestablecer.add(labelRestablecer);
         btnRestablecer.addListener(new ClickListener() {
             @Override
@@ -143,8 +154,8 @@ public class PantallaSettings implements Screen {
         });
 
         Button btnVolver = new Button(estiloVolver);
-        Label labelVolver = new Label(idiomas.obtenerTexto("general.volver"), skin);
-        labelVolver.setFontScale(0.8f);
+        Label labelVolver = new Label(idiomas.obtenerTexto("general.volver"), estiloPixel);
+        labelVolver.setFontScale(1f);
         btnVolver.add(labelVolver);
         btnVolver.addListener(new ClickListener() {
             @Override
@@ -175,10 +186,10 @@ public class PantallaSettings implements Screen {
         labelVolumenMusica.setFontScale(0.8f);
         sliderMusica = new Slider(0f, 1f, 0.1f, false, skin);
         sliderMusica.setValue(config.getVolumenMusica());
-        
+
         Label valorMusica = new Label(Math.round(config.getVolumenMusica() * 100) + "%", skin);
         valorMusica.setFontScale(0.7f);
-        
+
         filaMusicaVolumen.add(labelVolumenMusica).width(150).left();
         filaMusicaVolumen.add(sliderMusica).width(200).padLeft(10);
         filaMusicaVolumen.add(valorMusica).width(50).padLeft(10);
@@ -196,10 +207,10 @@ public class PantallaSettings implements Screen {
         labelVolumenEfectos.setFontScale(0.8f);
         sliderEfectos = new Slider(0f, 1f, 0.1f, false, skin);
         sliderEfectos.setValue(config.getVolumenEfectos());
-        
+
         Label valorEfectos = new Label(Math.round(config.getVolumenEfectos() * 100) + "%", skin);
         valorEfectos.setFontScale(0.7f);
-        
+
         filaEfectosVolumen.add(labelVolumenEfectos).width(150).left();
         filaEfectosVolumen.add(sliderEfectos).width(200).padLeft(10);
         filaEfectosVolumen.add(valorEfectos).width(50).padLeft(10);
@@ -215,7 +226,7 @@ public class PantallaSettings implements Screen {
         checkMusica.setChecked(config.isMusicaActivada());
         Label labelCheckMusica = new Label(idiomas.obtenerTexto("settings.musica_activada"), skin);
         labelCheckMusica.setFontScale(0.8f);
-        
+
         Table filaCheckMusica = new Table();
         filaCheckMusica.add(checkMusica).padRight(10);
         filaCheckMusica.add(labelCheckMusica).left();
@@ -225,7 +236,7 @@ public class PantallaSettings implements Screen {
         checkEfectos.setChecked(config.isEfectosActivados());
         Label labelCheckEfectos = new Label(idiomas.obtenerTexto("settings.efectos_activados"), skin);
         labelCheckEfectos.setFontScale(0.8f);
-        
+
         Table filaCheckEfectos = new Table();
         filaCheckEfectos.add(checkEfectos).padRight(10);
         filaCheckEfectos.add(labelCheckEfectos).left();
@@ -243,7 +254,7 @@ public class PantallaSettings implements Screen {
         checkPantallaCompleta.setChecked(config.isPantallaCompleta());
         Label labelPantallaCompleta = new Label(idiomas.obtenerTexto("settings.pantalla_completa"), skin);
         labelPantallaCompleta.setFontScale(0.8f);
-        
+
         Table filaPantallaCompleta = new Table();
         filaPantallaCompleta.add(checkPantallaCompleta).padRight(10);
         filaPantallaCompleta.add(labelPantallaCompleta).left();
@@ -254,22 +265,13 @@ public class PantallaSettings implements Screen {
         checkVsync.setChecked(config.isVsync());
         Label labelVsync = new Label(idiomas.obtenerTexto("settings.vsync"), skin);
         labelVsync.setFontScale(0.8f);
-        
+
         Table filaVsync = new Table();
         filaVsync.add(checkVsync).padRight(10);
         filaVsync.add(labelVsync).left();
-        contenidoTabla.add(filaVsync).left().padBottom(5).row();
+        contenidoTabla.add(filaVsync).left().padBottom(15).row();
 
-        // Mostrar FPS
-        checkFPS = new CheckBox("", skin);
-        checkFPS.setChecked(config.isMostrarFPS());
-        Label labelFPS = new Label(idiomas.obtenerTexto("settings.fps_counter"), skin);
-        labelFPS.setFontScale(0.8f);
-        
-        Table filaFPS = new Table();
-        filaFPS.add(checkFPS).padRight(10);
-        filaFPS.add(labelFPS).left();
-        contenidoTabla.add(filaFPS).left().padBottom(15).row();
+        // Se elim el check de mostrar FPS
     }
 
     private void crearSeccionJuego(Table contenidoTabla) {
@@ -282,47 +284,52 @@ public class PantallaSettings implements Screen {
         Table filaDificultad = new Table();
         Label labelDificultad = new Label(idiomas.obtenerTexto("settings.dificultad"), skin);
         labelDificultad.setFontScale(0.8f);
-        
-        selectorDificultad = new SelectBox<>(skin);
+
+        /* selectorDificultad = new SelectBox<>(skin);
         String[] dificultades = {
             idiomas.obtenerTexto("dificultad.facil"),
-            idiomas.obtenerTexto("dificultad.medio"), 
+            idiomas.obtenerTexto("dificultad.medio"),
             idiomas.obtenerTexto("dificultad.dificil")
         };
         selectorDificultad.setItems(dificultades);
-        
+
         // Seleccionar dificultad actual
         switch (config.getDificultad()) {
-            case "facil": selectorDificultad.setSelectedIndex(0); break;
-            case "medio": selectorDificultad.setSelectedIndex(1); break;
-            case "dificil": selectorDificultad.setSelectedIndex(2); break;
+            case "facil":
+                selectorDificultad.setSelectedIndex(0);
+                break;
+            case "medio":
+                selectorDificultad.setSelectedIndex(1);
+                break;
+            case "dificil":
+                selectorDificultad.setSelectedIndex(2);
+                break;
         }
-        
+
         filaDificultad.add(labelDificultad).width(120).left();
         filaDificultad.add(selectorDificultad).width(150).padLeft(10);
-        contenidoTabla.add(filaDificultad).left().padBottom(10).row();
-
+        contenidoTabla.add(filaDificultad).left().padBottom(10).row();*/
         // Auto-guardar
         checkAutoGuardar = new CheckBox("", skin);
         checkAutoGuardar.setChecked(config.isAutoGuardar());
         Label labelAutoGuardar = new Label(idiomas.obtenerTexto("settings.auto_guardar"), skin);
         labelAutoGuardar.setFontScale(0.8f);
-        
+
         Table filaAutoGuardar = new Table();
         filaAutoGuardar.add(checkAutoGuardar).padRight(10);
         filaAutoGuardar.add(labelAutoGuardar).left();
         contenidoTabla.add(filaAutoGuardar).left().padBottom(5).row();
 
-        // Tutorial
+        /* // Tutorial
         checkTutorial = new CheckBox("", skin);
         checkTutorial.setChecked(config.isMostrarTutorial());
         Label labelTutorial = new Label(idiomas.obtenerTexto("settings.tutorial"), skin);
         labelTutorial.setFontScale(0.8f);
-        
+
         Table filaTutorial = new Table();
         filaTutorial.add(checkTutorial).padRight(10);
         filaTutorial.add(labelTutorial).left();
-        contenidoTabla.add(filaTutorial).left().padBottom(10).row();
+        contenidoTabla.add(filaTutorial).left().padBottom(10).row();*/
     }
 
     private void guardarConfiguracion() {
@@ -338,16 +345,24 @@ public class PantallaSettings implements Screen {
         config.setMostrarFPS(checkFPS.isChecked());
 
         // Aplicar configuraciones de juego
-        String dificultadSeleccionada;
+        /* String dificultadSeleccionada;
         switch (selectorDificultad.getSelectedIndex()) {
-            case 0: dificultadSeleccionada = "facil"; break;
-            case 1: dificultadSeleccionada = "medio"; break;
-            case 2: dificultadSeleccionada = "dificil"; break;
-            default: dificultadSeleccionada = "medio"; break;
+            case 0:
+                dificultadSeleccionada = "facil";
+                break;
+            case 1:
+                dificultadSeleccionada = "medio";
+                break;
+            case 2:
+                dificultadSeleccionada = "dificil";
+                break;
+            default:
+                dificultadSeleccionada = "medio";
+                break;
         }
-        config.setDificultad(dificultadSeleccionada);
+        config.setDificultad(dificultadSeleccionada);*/
         config.setAutoGuardar(checkAutoGuardar.isChecked());
-        config.setMostrarTutorial(checkTutorial.isChecked());
+        //config.setMostrarTutorial(checkTutorial.isChecked());
 
         // Aplicar efectos inmediatos
         aplicarConfiguracionInmediata();
@@ -367,7 +382,7 @@ public class PantallaSettings implements Screen {
             } else {
                 SoundManager.setMusicVolume(0f);
             }
-            
+
             if (config.isEfectosActivados()) {
                 SoundManager.setSoundVolume(config.getVolumenEfectos());
             } else {
@@ -384,7 +399,7 @@ public class PantallaSettings implements Screen {
             } else {
                 Gdx.graphics.setWindowedMode(800, 600);
             }
-            
+
             // VSync se aplicaría en la configuración principal del juego
         } catch (Exception e) {
             System.err.println("Error aplicando configuración de gráficos: " + e.getMessage());
@@ -449,7 +464,7 @@ public class PantallaSettings implements Screen {
 
     private void restablecerConfiguracion() {
         config.restablecerPorDefecto();
-        
+
         // Actualizar UI con valores por defecto
         sliderMusica.setValue(config.getVolumenMusica());
         sliderEfectos.setValue(config.getVolumenEfectos());
@@ -458,9 +473,9 @@ public class PantallaSettings implements Screen {
         checkPantallaCompleta.setChecked(config.isPantallaCompleta());
         checkVsync.setChecked(config.isVsync());
         checkFPS.setChecked(config.isMostrarFPS());
-        selectorDificultad.setSelectedIndex(1); // medio
+        //selectorDificultad.setSelectedIndex(1); // medio
         checkAutoGuardar.setChecked(config.isAutoGuardar());
-        checkTutorial.setChecked(config.isMostrarTutorial());
+        //checkTutorial.setChecked(config.isMostrarTutorial());
     }
 
     private void mostrarMensaje(String texto, Color color) {
@@ -481,7 +496,7 @@ public class PantallaSettings implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.getBatch().begin();
@@ -499,22 +514,45 @@ public class PantallaSettings implements Screen {
     }
 
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void hide() {}
+    public void hide() {
+    }
 
     @Override
     public void dispose() {
-        if (stage != null) stage.dispose();
-        if (skin != null) skin.dispose();
-        if (bg != null) bg.dispose();
-        if (texturaExtra != null) texturaExtra.dispose();
-        if (texturaExtra2 != null) texturaExtra2.dispose();
-        if (texturaVolver != null) texturaVolver.dispose();
-        if (texturaVolver2 != null) texturaVolver2.dispose();
-        if (texturaJugar != null) texturaJugar.dispose();
-        if (texturaJugar2 != null) texturaJugar2.dispose();
+        if (stage != null) {
+            stage.dispose();
+        }
+        if (skin != null) {
+            skin.dispose();
+        }
+        if (bg != null) {
+            bg.dispose();
+        }
+        if (texturaExtra != null) {
+            texturaExtra.dispose();
+        }
+        if (texturaExtra2 != null) {
+            texturaExtra2.dispose();
+        }
+        if (texturaVolver != null) {
+            texturaVolver.dispose();
+        }
+        if (texturaVolver2 != null) {
+            texturaVolver2.dispose();
+        }
+        if (texturaJugar != null) {
+            texturaJugar.dispose();
+        }
+        if (texturaJugar2 != null) {
+            texturaJugar2.dispose();
+        }
     }
 }

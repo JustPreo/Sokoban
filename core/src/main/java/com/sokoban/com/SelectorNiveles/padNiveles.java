@@ -14,6 +14,9 @@ import com.sokoban.com.Juegito;
 import com.sokoban.com.Niveles.Lvl2;
 import com.sokoban.com.Niveles.Lvl3;
 import com.sokoban.com.Niveles.Lvl4;
+import com.sokoban.com.Niveles.Lvl5;
+import com.sokoban.com.Niveles.Lvl6;
+import com.sokoban.com.Niveles.Lvl7;
 import com.sokoban.com.Tutorialez.Tutorial;
 
 /**
@@ -89,15 +92,15 @@ public class padNiveles {
 
             case 5 ->{
                 System.out.println("Nivel 5");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl4());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl5());
             }
             case 6 ->{
                 System.out.println("Nivel 6");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl4());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl6());
             }
             case 7 ->{
                 System.out.println("Nivel 7");
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl4());
+                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Lvl7());
             }
 
         }

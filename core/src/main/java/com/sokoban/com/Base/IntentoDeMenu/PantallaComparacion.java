@@ -18,6 +18,7 @@ import com.sokoban.com.GestorArchivos;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.Usuario;
+import com.sokoban.com.Idiomas;
 
 public class PantallaComparacion implements Screen {
 
@@ -33,6 +34,7 @@ public class PantallaComparacion implements Screen {
     private Texture texturaExtra, texturaExtra2, texturaVolver, texturaVolver2;
     private Texture texturaComparar, texturaComparar2;
     private Button.ButtonStyle estiloExtra, estiloVolver, estiloComparar;
+    ImageTextButton.ImageTextButtonStyle estiloBtnComparar;
 
     // datos de comparacion
     private Usuario usuarioActual;
@@ -56,15 +58,15 @@ public class PantallaComparacion implements Screen {
     @Override
     public void show() {
         // setup texturas
-        texturaComparar = new Texture(Gdx.files.internal("comparar.png"));
-        texturaComparar2 = new Texture(Gdx.files.internal("comparar2.png"));
+        texturaComparar = new Texture(Gdx.files.internal("fondoNormal.png"));
+        texturaComparar2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         estiloComparar = new Button.ButtonStyle();
         estiloComparar.up = new TextureRegionDrawable(new TextureRegion(texturaComparar));
         estiloComparar.down = new TextureRegionDrawable(new TextureRegion(texturaComparar2));
 
-        texturaVolver = new Texture(Gdx.files.internal("volver.png"));
+        texturaVolver = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoVolver = new TextureRegionDrawable(new TextureRegion(texturaVolver));
-        texturaVolver2 = new Texture(Gdx.files.internal("volver2.png"));
+        texturaVolver2 = new Texture(Gdx.files.internal("fondoNormal.png"));
         Drawable fondoVolver2 = new TextureRegionDrawable(new TextureRegion(texturaVolver2));
 
         estiloVolver = new Button.ButtonStyle();
@@ -74,6 +76,11 @@ public class PantallaComparacion implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
+        estiloBtnComparar = new ImageTextButton.ImageTextButtonStyle();
+estiloBtnComparar.up = new TextureRegionDrawable(new TextureRegion(texturaComparar));
+estiloBtnComparar.down = new TextureRegionDrawable(new TextureRegion(texturaComparar2));
+estiloBtnComparar.font = skin.getFont("default-font"); 
+        
         bg = new Texture("fondoM.png");
 
         if (usuarioActual == null) {
@@ -88,12 +95,12 @@ public class PantallaComparacion implements Screen {
         tabla.setFillParent(true);
         tabla.center();
 
-        Label error = new Label("Necesitas iniciar sesion para comparar estadisticas", skin);
+        Label error = new Label(Idiomas.getInstance().obtenerTexto("comparacion.error_sesion"), skin);
         error.setColor(Color.RED);
         tabla.add(error).padBottom(20).row();
 
         Button btnVolver = new Button(estiloVolver);
-        btnVolver.add(new Label("Volver", skin));
+        btnVolver.add(new Label(Idiomas.getInstance().obtenerTexto("comparacion.volver"), skin));
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -112,14 +119,14 @@ public class PantallaComparacion implements Screen {
         tablaPrincipal.pad(20);
 
         // titulo
-        Label titulo = new Label("COMPARACION DE ESTADISTICAS", skin);
+        Label titulo = new Label(Idiomas.getInstance().obtenerTexto("comparacion.titulo"), skin);
         titulo.setColor(Color.CYAN);
         tablaPrincipal.add(titulo).padBottom(20).row();
 
         // selector de usuario para comparar
         Table tablaSelectorUsuario = new Table();
 
-        Label labelSelector = new Label("Comparar con:", skin);
+        Label labelSelector = new Label(Idiomas.getInstance().obtenerTexto("comparacion.comparar_con"), skin);
         labelSelector.setColor(Color.WHITE);
 
         selectorAmigo = new SelectBox<>(skin);
@@ -134,7 +141,10 @@ public class PantallaComparacion implements Screen {
             }
         });
 
-        Button btnComparar = new Button(estiloComparar);
+        ImageTextButton btnComparar = new ImageTextButton(
+    Idiomas.getInstance().obtenerTexto("comparacion.boton_comparar"), 
+    estiloBtnComparar
+);
         btnComparar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -162,7 +172,7 @@ public class PantallaComparacion implements Screen {
         Table tablaBotones = new Table();
 
         Button btnVolver = new Button(estiloVolver);
-        btnVolver.add(new Label("Volver", skin));
+        btnVolver.add(new Label(Idiomas.getInstance().obtenerTexto("comparacion.volver"), skin));
         btnVolver.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -180,7 +190,7 @@ public class PantallaComparacion implements Screen {
 
     private void cargarListaAmigos() {
         if (usuarioActual.getListaAmigos().isEmpty()) {
-            selectorAmigo.setItems("No tienes amigos agregados");
+            selectorAmigo.setItems(Idiomas.getInstance().obtenerTexto("comparacion.sin_amigos"));
             return;
         }
 
@@ -191,8 +201,8 @@ public class PantallaComparacion implements Screen {
     private void seleccionarUsuarioComparar() {
         String seleccionado = selectorAmigo.getSelected();
 
-        if (seleccionado.equals("No tienes amigos agregados")) {
-            mostrarMensaje("Primero agrega algunos amigos", Color.YELLOW);
+        if (seleccionado.equals(Idiomas.getInstance().obtenerTexto("comparacion.sin_amigos"))) {
+            mostrarMensaje(Idiomas.getInstance().obtenerTexto("comparacion.msj.agregar_amigos"), Color.YELLOW);
             return;
         }
 
@@ -200,18 +210,18 @@ public class PantallaComparacion implements Screen {
         usuarioComparar = gestorArchivos.cargarUsuario(nombreUsuarioComparar);
 
         if (usuarioComparar == null) {
-            mostrarMensaje("No se pudo cargar datos del usuario: " + nombreUsuarioComparar, Color.RED);
+            mostrarMensaje(String.format(Idiomas.getInstance().obtenerTexto("comparacion.msj.error_cargar_usuario"), nombreUsuarioComparar), Color.RED);
             return;
         }
 
         actualizarComparacion();
-        mostrarMensaje("Comparando con " + nombreUsuarioComparar, Color.GREEN);
+        mostrarMensaje(String.format(Idiomas.getInstance().obtenerTexto("comparacion.msj.comparando_con"), nombreUsuarioComparar), Color.GREEN);
     }
 
     private void crearTablaComparacionVacia() {
         tablaComparacion.clear();
 
-        Label mensaje = new Label("Selecciona un amigo para comparar estadisticas", skin);
+        Label mensaje = new Label(Idiomas.getInstance().obtenerTexto("comparacion.seleccionar_amigo"), skin);
         mensaje.setColor(Color.GRAY);
         tablaComparacion.add(mensaje).pad(50);
     }
@@ -222,13 +232,13 @@ public class PantallaComparacion implements Screen {
         // header con nombres
         Table headerTable = new Table();
 
-        Label tuNombre = new Label("TU: " + usuarioActual.getNombreUsuario(), skin);
+        Label tuNombre = new Label(String.format(Idiomas.getInstance().obtenerTexto("comparacion.tu"), usuarioActual.getNombreUsuario()), skin);
         tuNombre.setColor(Color.CYAN);
 
         Label vs = new Label("VS", skin);
         vs.setColor(Color.WHITE);
 
-        Label rivalNombre = new Label("RIVAL: " + usuarioComparar.getNombreUsuario(), skin);
+        Label rivalNombre = new Label(String.format(Idiomas.getInstance().obtenerTexto("comparacion.rival"), usuarioComparar.getNombreUsuario()), skin);
         rivalNombre.setColor(Color.ORANGE);
 
         headerTable.add(tuNombre).width(250).padRight(50);
@@ -238,7 +248,7 @@ public class PantallaComparacion implements Screen {
         tablaComparacion.add(headerTable).padBottom(30).row();
 
         // seccion niveles completados
-        crearSeccionComparacion("NIVELES COMPLETADOS",
+        crearSeccionComparacion(Idiomas.getInstance().obtenerTexto("comparacion.niveles_completados"),
                 usuarioActual.getNivelMaximoAlcanzado(), 7,
                 usuarioComparar.getNivelMaximoAlcanzado(), 7);
 
@@ -247,7 +257,7 @@ public class PantallaComparacion implements Screen {
         if (maxPuntos == 0) {
             maxPuntos = 1000; // evitar division por zero
         }
-        crearSeccionComparacion("PUNTUACION TOTAL",
+        crearSeccionComparacion(Idiomas.getInstance().obtenerTexto("comparacion.puntuacion_total"),
                 usuarioActual.getPuntuacionTotal(), maxPuntos,
                 usuarioComparar.getPuntuacionTotal(), maxPuntos);
 
@@ -261,7 +271,7 @@ public class PantallaComparacion implements Screen {
         if (maxTiempo == 0) {
             maxTiempo = 60000; // 1 minuto default
         }
-        crearSeccionComparacion("TIEMPO PROMEDIO POR NIVEL",
+        crearSeccionComparacion(Idiomas.getInstance().obtenerTexto("comparacion.tiempo_promedio"),
                 (int) (tiempoPromedioTu / 1000), (int) (maxTiempo / 1000),
                 (int) (tiempoPromedioRival / 1000), (int) (maxTiempo / 1000));
 
@@ -271,7 +281,7 @@ public class PantallaComparacion implements Screen {
             maxPartidas = 10;
         }
 
-        crearSeccionComparacion("PARTIDAS COMPLETADAS",
+        crearSeccionComparacion(Idiomas.getInstance().obtenerTexto("comparacion.partidas_completadas"),
                 usuarioActual.getPartidasCompletadas(), maxPartidas,
                 usuarioComparar.getPartidasCompletadas(), maxPartidas);
     }
@@ -289,7 +299,7 @@ public class PantallaComparacion implements Screen {
         Table contenedorTuBarra = new Table();
         Table barraTu = crearBarraProgreso(valorTu, maxValor, Color.CYAN);
         String textoTu = formatearValor(titulo, valorTu);
-        Label labelTu = new Label("Tu: " + textoTu, skin);
+        Label labelTu = new Label(String.format(Idiomas.getInstance().obtenerTexto("comparacion.tu"), textoTu), skin);
         labelTu.setColor(Color.WHITE);
 
         contenedorTuBarra.add(barraTu).width(300).height(20).row();
@@ -299,7 +309,7 @@ public class PantallaComparacion implements Screen {
         Table contenedorRivalBarra = new Table();
         Table barraRival = crearBarraProgreso(valorRival, maxRival, Color.ORANGE);
         String textoRival = formatearValor(titulo, valorRival);
-        Label labelRival = new Label("Rival: " + textoRival, skin);
+        Label labelRival = new Label(String.format(Idiomas.getInstance().obtenerTexto("comparacion.rival"), textoRival), skin);
         labelRival.setColor(Color.WHITE);
 
         contenedorRivalBarra.add(barraRival).width(300).height(20).row();
@@ -374,7 +384,7 @@ public class PantallaComparacion implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1); 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.getBatch().begin();
