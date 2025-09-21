@@ -96,7 +96,7 @@ public abstract class JuegoBase implements Screen {
     private Texture[] fondoFrames;
     private int frameActual = 0;
     private float timerFondo = 0f;
-    private float tiempoPorFrame = 0.15f; // 0.15 segundos por frame
+    private float tiempoPorFrame = 0.5f; // 0.15 segundos por frame
 
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};

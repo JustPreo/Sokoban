@@ -502,7 +502,7 @@ public class Idiomas {
         es.put("login.titulo_login", "INICIAR SESION");
         es.put("login.titulo_registro", "REGISTRARSE");
         es.put("login.usuario", "Usuario:");
-        es.put("login.contrasena", "Contraseña:");
+        es.put("login.contrasena", "Contrasena:");
         es.put("login.nombre_completo", "Nombre completo:");
         es.put("login.registrarse", "¿No tienes cuenta? Regístrate");
         es.put("login.ya_cuenta", "¿Ya tienes cuenta? Inicia sesión");
@@ -656,6 +656,57 @@ public class Idiomas {
         fr.put("ranking.boton_actualizar", "Mettre à jour");
         fr.put("ranking.boton_perfil", "Mon Profil");
         fr.put("ranking.boton_volver", "Retour");
+
+        // Español
+        es.put("hub.titulo", "SELECCIONAR NIVEL");
+        es.put("hub.instruccion1", "Usa WASD o flechas para moverte");
+        es.put("hub.instruccion2", "Camina sobre un nivel para seleccionarlo");
+        es.put("hub.instruccion3", "ENTER/ESPACIO para entrar al nivel");
+        es.put("hub.instruccion4", "ESC para volver al menú principal");
+        es.put("hub.nivel", "Nivel");
+        es.put("hub.dificultad", "Dificultad");
+        es.put("hub.estado", "Estado");
+        es.put("hub.accion", "ENTER/ESPACIO: Jugar");
+
+// Inglés
+        en.put("hub.titulo", "SELECT LEVEL");
+        en.put("hub.instruccion1", "Use WASD or arrows to move");
+        en.put("hub.instruccion2", "Step on a level to select it");
+        en.put("hub.instruccion3", "ENTER/SPACE to enter level");
+        en.put("hub.instruccion4", "ESC to return to main menu");
+        en.put("hub.nivel", "Level");
+        en.put("hub.dificultad", "Difficulty");
+        en.put("hub.estado", "State");
+        en.put("hub.accion", "ENTER/SPACE: Play");
+
+// Francés
+        fr.put("hub.titulo", "SÉLECTIONNER NIVEAU");
+        fr.put("hub.instruccion1", "Utilisez WASD ou flèches pour vous déplacer");
+        fr.put("hub.instruccion2", "Marchez sur un niveau pour le sélectionner");
+        fr.put("hub.instruccion3", "ENTRÉE/ESPACE pour entrer dans le niveau");
+        fr.put("hub.instruccion4", "ÉCHAP pour revenir au menu principal");
+        fr.put("hub.nivel", "Niveau");
+        fr.put("hub.dificultad", "Difficulté");
+        fr.put("hub.estado", "État");
+        fr.put("hub.accion", "ENTRÉE/ESPACE: Jouer");
+
+        // Español
+        es.put("tutorial.movimiento", "Usa W A S D para moverte");
+        es.put("tutorial.empujar", "Empuja las cajas hacia los objetivos");
+        es.put("tutorial.evitar", "Evita quedar atrapado");
+        es.put("tutorial.resolver", "Resuelve todos los niveles para ganar");
+
+// Inglés
+        en.put("tutorial.movimiento", "Use W A S D to move");
+        en.put("tutorial.empujar", "Push the boxes to the targets");
+        en.put("tutorial.evitar", "Avoid getting stuck");
+        en.put("tutorial.resolver", "Complete all levels to win");
+
+// Francés
+        fr.put("tutorial.movimiento", "Utilisez Z Q S D pour vous déplacer");
+        fr.put("tutorial.empujar", "Poussez les caisses vers les cibles");
+        fr.put("tutorial.evitar", "Évitez de rester coincé");
+        fr.put("tutorial.resolver", "Terminez tous les niveaux pour gagner");
     }
 
     public String obtenerTexto(String clave) {

@@ -17,6 +17,7 @@ import com.sokoban.com.Base.Jugador;
 import com.sokoban.com.Base.Pared;
 import com.sokoban.com.Base.Piso;
 import com.sokoban.com.Base.PisoHub;
+import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.SoundManager;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 public class Hub implements Screen {
 
+    private Idiomas idiomas;
     private SpriteBatch spriteBatch;
     private FitViewport viewport;
     private BitmapFont fontTitulo;
@@ -60,7 +62,7 @@ public class Hub implements Screen {
     //2 = lvl 1 | 3 = lvl 2 | 4 = lvl 3 | 5 = lvl 4 | 6 = lvl 5 | 7 = lvl 6 | 8 = lvl 7
 
     @Override
-    public void show() {
+    public void show() {idiomas = Idiomas.getInstance();
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
         layout = new GlyphLayout();
@@ -225,7 +227,7 @@ public class Hub implements Screen {
         float worldHeight = viewport.getWorldHeight();
 
         // TÍTULO - Centrado en la parte superior
-        String titulo = "SELECCIONAR NIVEL";
+        String titulo = idiomas.obtenerTexto("hub.titulo");
         layout.setText(fontTitulo, titulo);
         float tituloX = (worldWidth - layout.width) / 2;
         float tituloY = worldHeight - TILE * 0.1f;
@@ -233,10 +235,10 @@ public class Hub implements Screen {
 
         // INSTRUCCIONES
         String[] instrucciones = {
-            "Usa WASD o flechas para moverte",
-            "Camina sobre un nivel para seleccionarlo",
-            "ENTER/ESPACIO para entrar al nivel",
-            "ESC para volver al menu principal"
+            idiomas.obtenerTexto("hub.instruccion1"), // "Usa WASD o flechas para moverte"
+            idiomas.obtenerTexto("hub.instruccion2"), // "Camina sobre un nivel para seleccionarlo"
+            idiomas.obtenerTexto("hub.instruccion3"), // "ENTER/ESPACIO para entrar al nivel"
+            idiomas.obtenerTexto("hub.instruccion4") // "ESC para volver al menu principal"
         };
 
         float baseY = worldHeight - TILE * 0.1f;
@@ -269,10 +271,10 @@ public class Hub implements Screen {
         float centerX = (COLUMNAS * TILE) / 2f;
         float centerY = (FILAS * TILE) / 2f;
 
-        String infoNivel = "Level " + nivelSeleccionado;
-        String dificultad = "Diff: " + getDificultad(nivelSeleccionado);
-        String estado = "Estado: " + getEstadoNivel(nivelSeleccionado);
-        String accion = "ENTER/ESPACIO: Jugar";
+        String infoNivel = idiomas.obtenerTexto("hub.nivel") + " " + nivelSeleccionado; // "Level "
+        String dificultad = idiomas.obtenerTexto("hub.dificultad") + ": " + getDificultad(nivelSeleccionado); // "Diff: "
+        String estado = idiomas.obtenerTexto("hub.estado") + ": " + getEstadoNivel(nivelSeleccionado); // "Estado: "
+        String accion = idiomas.obtenerTexto("hub.accion"); // "ENTER/ESPACIO: Jugar"
 
         float separacion = TILE * 0.3f;
 
@@ -404,7 +406,7 @@ public class Hub implements Screen {
                 if (mapa[f][c] == 1) { // solo dibujar si sigue siendo pared
                     paredes.add(new Pared(c * TILE, (FILAS - 1 - f) * TILE, TILE));
                 }
-                if (mapa[f][c] != 1) {
+                if (mapa[f][c] != 1 && mapa[f][c]!= -1) {
                     crearPisoHub(c, FILAS - 1 - f); // Ajustar para coordenadas correctas
                 }
 

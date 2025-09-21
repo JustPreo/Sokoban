@@ -167,7 +167,7 @@ public class PantallaSettings implements Screen {
         });
 
         tablaBotones.add(btnGuardar).size(120, 45).padRight(15);
-        tablaBotones.add(btnRestablecer).size(120, 45).padRight(15);
+        tablaBotones.add(btnRestablecer).size(150, 45).padRight(15);
         tablaBotones.add(btnVolver).size(120, 45);
 
         tablaPrincipal.add(tablaBotones).row();

@@ -27,6 +27,7 @@ import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
+import com.sokoban.com.SlideshowTutorial;
 import com.sokoban.com.SoundManager;
 import com.sokoban.com.Usuario;
 
@@ -129,14 +130,27 @@ public class MenuScreen implements Screen {
         btnJugar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (puedeInteractuar) {
-                    if (sistemaUsuarios.haySesionActiva()) {
-                        idiomas.cargarIdiomaUsuario();
-                        ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
-                        SoundManager.playMusic("nivel", true, 0.7f);
-                    } else {
-                        mostrarMensajeLogin();
-                    }
+                if (!puedeInteractuar) {
+                    return;
+                }
+
+                if (!sistemaUsuarios.haySesionActiva()) {
+                    mostrarMensajeLogin();
+                    return;
+                }
+
+                // Usuario actual
+                Usuario u = sistemaUsuarios.getUsuarioActual();
+
+                // Si es la primera vez (sin partidas), mostrar tutorial
+                if (u.getPartidasTotales() == 0) {
+                    ((Juegito) Gdx.app.getApplicationListener())
+                            .setScreen(new SlideshowTutorial((Juegito) Gdx.app.getApplicationListener(), idiomas));
+                    SoundManager.playMusic("nivel", true, 0.7f);
+                } else {
+                    // ir directamente al Hub
+                    ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+                    SoundManager.playMusic("nivel", true, 0.7f);
                 }
             }
         });
