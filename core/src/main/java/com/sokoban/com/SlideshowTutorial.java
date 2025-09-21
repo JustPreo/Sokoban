@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -29,6 +30,9 @@ public class SlideshowTutorial implements Screen {
     private float displayTime = 3f;
     private float timer = 0f;
     private Idiomas idiomas;
+    private boolean isFadingIn = false;
+    private boolean isFadingOut = false;
+    private float fadeDuration = 1.0f;
 
     public SlideshowTutorial(Juegito game, Idiomas idiomas1) {
         this.game = game;
@@ -50,12 +54,22 @@ public class SlideshowTutorial implements Screen {
         textLabel = new Label("", new LabelStyle(font, Color.WHITE));
         textLabel.setPosition(50, 50);
 
-        // Imagen inicial
+        // Imagen inicial con opacidad 0
         imageActor = new Image(images[currentIndex]);
         imageActor.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        imageActor.getColor().a = 0; // Opacidad inicial
+
+        // Centrar el Label al inicio
+        textLabel.setAlignment(com.badlogic.gdx.utils.Align.center);
+        textLabel.setWrap(true);
+        textLabel.setWidth(Gdx.graphics.getWidth() - 100); // Ancho para centrar
 
         stage.addActor(imageActor);
         stage.addActor(textLabel);
+
+        // Inicia el primer fade in
+        imageActor.addAction(Actions.fadeIn(fadeDuration));
+        isFadingIn = true;
     }
 
     private String obtenerTextoUltimoSlide() {
@@ -82,27 +96,44 @@ public class SlideshowTutorial implements Screen {
         stage.act(delta);
         stage.draw();
 
-        timer += delta;
-        if (timer >= displayTime) {
-            timer = 0f;
-            currentIndex++;
-
-            if (currentIndex < images.length - 1) {
-                // Mostrar solo la imagen actual
-                imageActor.setDrawable(new Image(images[currentIndex]).getDrawable());
-                textLabel.setVisible(false);
-            } else if (currentIndex == images.length - 1) {
-                // Última slide: mostrar todo el texto
-                imageActor.setDrawable(new Image(images[currentIndex]).getDrawable());
-                textLabel.setText(obtenerTextoUltimoSlide());
-                textLabel.setVisible(true);
-            } else {
-                // Terminó slideshow, ir al tutorial
-                game.setScreen(new Tutorial());
-                dispose();
-            }
-        }
+        // No hagas nada si hay una transición en curso
+    if (isFadingIn || isFadingOut) {
+        return;
     }
+
+    timer += delta;
+    if (timer >= displayTime) {
+        timer = 0f;
+        
+        // Comienza el fade out de la imagen actual
+        imageActor.addAction(Actions.sequence(
+            Actions.fadeOut(fadeDuration),
+            Actions.run(() -> {
+                currentIndex++;
+                
+                if (currentIndex < images.length) {
+                    // Prepara la siguiente imagen y comienza el fade in
+                    imageActor.setDrawable(new Image(images[currentIndex]).getDrawable());
+                    imageActor.addAction(Actions.fadeIn(fadeDuration));
+                    
+                    // Maneja la visibilidad del texto
+                    if (currentIndex == images.length - 1) {
+                        textLabel.setText(obtenerTextoUltimoSlide());
+                        textLabel.setVisible(true);
+                        // Centrar el texto dinamicaemten
+                        textLabel.setPosition((Gdx.graphics.getWidth() - textLabel.getWidth()) / 2, (Gdx.graphics.getHeight() - textLabel.getHeight()) / 2);
+                    } else {
+                        textLabel.setVisible(false);
+                    }
+                } else {
+                    // fin del slideshow
+                    game.setScreen(new Tutorial());
+                    dispose();
+                }
+            })
+        ));
+    }
+}
 
     @Override
     public void resize(int width, int height) {
