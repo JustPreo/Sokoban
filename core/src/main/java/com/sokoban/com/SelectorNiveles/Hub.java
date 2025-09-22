@@ -63,7 +63,8 @@ public class Hub implements Screen {
     //2 = lvl 1 | 3 = lvl 2 | 4 = lvl 3 | 5 = lvl 4 | 6 = lvl 5 | 7 = lvl 6 | 8 = lvl 7
 
     @Override
-    public void show() {idiomas = Idiomas.getInstance();
+    public void show() {
+        idiomas = Idiomas.getInstance();
         spriteBatch = new SpriteBatch();
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
         layout = new GlyphLayout();
@@ -195,8 +196,6 @@ public class Hub implements Screen {
             pad.render(spriteBatch);
         }
 
-        
-
         for (Pared pared : paredes) {
             pared.render(spriteBatch);
         }
@@ -204,7 +203,6 @@ public class Hub implements Screen {
             piso.render(spriteBatch);
         }
         jogador.render(spriteBatch);
-        
 
         renderTexto();
 
@@ -305,25 +303,25 @@ public class Hub implements Screen {
 
     private String getDificultad(int nivel) {
         if (nivel <= 2) {
-            return "Ez";
+            return idiomas.obtenerTexto("hub.dificultad.facil");   // Ej: "Fácil"
         }
         if (nivel <= 4) {
-            return "Medium";
+            return idiomas.obtenerTexto("hub.dificultad.media");   // Ej: "Media"
         }
         if (nivel <= 6) {
-            return "Dificil";
+            return idiomas.obtenerTexto("hub.dificultad.dificil"); // Ej: "Difícil"
         }
-        return "Experto";
+        return idiomas.obtenerTexto("hub.dificultad.experto");     // Ej: "Experto"
     }
 
-    private String getEstadoNivel(int nivel) {
-        SistemaUsuarios sistema = SistemaUsuarios.getInstance();
-        int nivelMaximo = sistema.haySesionActiva() ? sistema.getUsuarioActual().getNivelMaximoAlcanzado() : 1;//Si hay sesion activa revisar el nivel max
-        if (nivel < nivelMaximo) {
-            return "Completado";
-        }
-        return "No completado"; // Placeholder
+   private String getEstadoNivel(int nivel) {
+    SistemaUsuarios sistema = SistemaUsuarios.getInstance();
+    int nivelMaximo = sistema.haySesionActiva() ? sistema.getUsuarioActual().getNivelMaximoAlcanzado() : 1;
+    if (nivel < nivelMaximo) {
+        return idiomas.obtenerTexto("hub.estado.completado");      
     }
+    return idiomas.obtenerTexto("hub.estado.no_completado");       
+}
 
     @Override
     public void resize(int width, int height) {
@@ -413,7 +411,7 @@ public class Hub implements Screen {
                 if (mapa[f][c] == 1) { // solo dibujar si sigue siendo pared
                     paredes.add(new Pared(c * TILE, f * TILE, TILE));
                 }
-                if (mapa[f][c] != 1 && mapa[f][c]!= -1) {
+                if (mapa[f][c] != 1 && mapa[f][c] != -1) {
                     crearPisoHub(c, f); // Ajustar para coordenadas correctas
                 }
 

@@ -354,10 +354,7 @@ public void render(float delta) {
 
     spriteBatch.end();
 
-    if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
-        gano = true;
-        debugMostrarFinNivel();
-    }
+    
 
     if (gano || pausa) {
         stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
@@ -534,7 +531,10 @@ public void render(float delta) {
         @Override
         public void clicked(InputEvent event, float x, float y) {
             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+            if (overlayPausa != null)
+            {
             overlayPausa.remove();
+            }
             SoundManager.resumeMusic();
         }
     });

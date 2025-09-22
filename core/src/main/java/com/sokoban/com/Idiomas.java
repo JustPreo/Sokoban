@@ -209,7 +209,6 @@ public class Idiomas {
         en.put("general.confirmar", "Confirm");
         en.put("juego.empujones", "Pushes");
         en.put("juego.tiempo", "Time");
-        
 
         textos.put("en", en);
 
@@ -660,7 +659,7 @@ public class Idiomas {
         es.put("amigos.msj.solicitud_aceptada", "Ahora son amigos!");
         es.put("amigos.msj.solicitud_rechazada", "Solicitud rechazada");
 
-       // INGLÉS
+        // INGLÉS
         en.put("amigos.solicitudes_pendientes", "PENDING REQUESTS");
         en.put("amigos.sin_solicitudes", "No pending requests");
         en.put("amigos.todos_usuarios", "ALL USERS");
@@ -764,17 +763,38 @@ public class Idiomas {
         fr.put("controles.titulo", "Configuration des Contrôles");
         fr.put("controles.cambiar", "Changer");
         fr.put("controles.volver", "Retour");
-        
+
         // Español
-es.put("settings.cambiar_controles", "Controles");
+        es.put("settings.cambiar_controles", "Controles");
 
 // Inglés
-en.put("settings.cambiar_controles", "Controls");
+        en.put("settings.cambiar_controles", "Controls");
 
 // Francés
-fr.put("settings.cambiar_controles", "Les contrôles");
+        fr.put("settings.cambiar_controles", "Les contrôles");
+
+        es.put("hub.dificultad.facil", "Facil");
+        es.put("hub.dificultad.media", "Media");
+        es.put("hub.dificultad.dificil", "Dificil");
+        es.put("hub.dificultad.experto", "Experto");
+
+        es.put("hub.estado.completado", "Completado");
+        es.put("hub.estado.no_completado", "No completado");
+        en.put("hub.dificultad.facil", "Easy");
+        en.put("hub.dificultad.media", "Medium");
+        en.put("hub.dificultad.dificil", "Hard");
+        en.put("hub.dificultad.experto", "Expert");
+
+        en.put("hub.estado.completado", "Completed");
+        en.put("hub.estado.no_completado", "Not completed");
+        fr.put("hub.dificultad.facil", "Facile");
+        fr.put("hub.dificultad.media", "Moyen");
+        fr.put("hub.dificultad.dificil", "Difficile");
+        fr.put("hub.dificultad.experto", "Expert");
+
+        fr.put("hub.estado.completado", "Termine");
+        fr.put("hub.estado.no_completado", "Non termine");
     }
-    
 
     public String obtenerTexto(String clave) {
         Map<String, String> idiomaMap = textos.get(idiomaActual);
