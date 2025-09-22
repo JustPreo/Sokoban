@@ -52,7 +52,6 @@ public abstract class JuegoBase implements Screen {
     private Table overlayPausa;
     private float winCheckTimer = 0f;
 
-    // Agregue estas variables de instancia después de las existentes:
     protected SistemaUsuarios sistemaUsuarios;
     protected RegistroPartida partidaActual;
 
@@ -90,14 +89,12 @@ public abstract class JuegoBase implements Screen {
         {1, 0, 3, 0, 0, 0, 0, 0, 0, 1},
         {1, 0, 0, 0, 0, 0, 0, 0, 2, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},};
-    //No se si hacer tipo que 1 = pared normal | 2 = esquina izquierda 3 = esquina derecha y asi
-    //Mas que nada para mantener el tile
-    //O se podria hacer algo tipo 
-    //Animacion para fondo
+
+    // Animacion para fondo
     private Texture[] fondoFrames;
     private int frameActual = 0;
     private float timerFondo = 0f;
-    private float tiempoPorFrame = 0.5f; // 0.15 segundos por frame
+    private float tiempoPorFrame = 0.5f;
 
     protected int[][] cajasPos = new int[][]{{2, 2}, {6, 3}, {2, 5}};
     protected int[][] objetivosPos = new int[][]{{1, 1}, {7, 3}, {8, 6}};
@@ -105,7 +102,7 @@ public abstract class JuegoBase implements Screen {
     protected int jugadorX = 2, jugadorY = 4;
     protected float timer = 0f;
 
-    public abstract void conseguirCantCajas();//Esto toca borrarlo
+    public abstract void conseguirCantCajas();
 
     protected abstract void configurarNivel();
 
@@ -115,19 +112,14 @@ public abstract class JuegoBase implements Screen {
 
     @Override
     public void show() {
-
         sistemaUsuarios = SistemaUsuarios.getInstance();
         if (sistemaUsuarios.haySesionActiva()) {
             partidaActual = new RegistroPartida(obtenerNumeroNivel());
         }
+        
         idiomas = Idiomas.getInstance();
-        // DEBUG: Ver qué idioma tiene la instancia
-        System.out.println("DEBUG: Idioma actual antes de cargar: " + idiomas.getIdiomaActual());
-
-        // Si quieres probar cómo se comporta cargando el usuario
         idiomas.cargarIdiomaUsuario();
-        System.out.println("DEBUG: Idioma actual después de cargar (si se llama cargarIdiomaUsuario): " + idiomas.getIdiomaActual());
-        System.out.println("DEBUG: Texto PAUSA: " + Idiomas.getInstance().obtenerTexto("PAUSA"));
+        
         configurarNivel();
         conseguirCantCajas();
 
@@ -135,7 +127,6 @@ public abstract class JuegoBase implements Screen {
         viewport = new FitViewport(COLUMNAS * TILE, FILAS * TILE);
         shape = new ShapeRenderer();
 
-        // CREAR FUENTE PRESS START 2P DE ALTA CALIDAD
         createPixelFont();
 
         jogador = new Jugador(jugadorX * TILE, jugadorY * TILE,
@@ -168,7 +159,7 @@ public abstract class JuegoBase implements Screen {
             par.borderWidth = 1;
             par.borderColor = Color.BLACK;
 
-            // Font pequeña (small)
+            // Font pequena (small)
             par.size = Math.max(12, TILE / 6);
             fontSmall = generator.generateFont(par);
 
@@ -176,7 +167,7 @@ public abstract class JuegoBase implements Screen {
             par.size = Math.max(12, TILE / 5);
             fontStats = generator.generateFont(par);
 
-            // Font título
+            // Font titulo
             par.size = Math.max(12, TILE / 4);
             fontTitulo = generator.generateFont(par);
 
@@ -229,14 +220,12 @@ public abstract class JuegoBase implements Screen {
             cajitaTemp.dispose();
 
             if (mapa[nuevoCajaY][nuevoCajaX] != 1 && !colision) {
-                // Mover jugador y caja
                 jugadorX = nuevoX;
                 jugadorY = nuevoY;
                 cajita.setPos(nuevoCajaX * TILE, nuevoCajaY * TILE);
                 jogador.setPos(jugadorX * TILE, jugadorY * TILE);
                 vecesEmpujado++;
 
-                // Incrementar movimientos en la partida
                 if (partidaActual != null) {
                     partidaActual.incrementarMovimientos();
                 }
@@ -248,7 +237,6 @@ public abstract class JuegoBase implements Screen {
                 }
             }
         } else {
-            // Libre (sin caja)
             jugadorX = nuevoX;
             jugadorY = nuevoY;
             for (Piso pis : pisos) {
@@ -259,31 +247,26 @@ public abstract class JuegoBase implements Screen {
             jogador.setPos(jugadorX * TILE, jugadorY * TILE);
             pasos++;
 
-            // Incrementar movimientos en la partida
             if (partidaActual != null) {
                 partidaActual.incrementarMovimientos();
             }
         }
     }
 
-    // Reemplaza tu método render() con este
     @Override
     public void render(float delta) {
         SoundManager.update();
 
-        // Lógica de actualización del juego
         if (!gano && !pausa) {
             timer += Gdx.graphics.getDeltaTime();
             winCheckTimer += Gdx.graphics.getDeltaTime();
 
-            // Revisa la condición de victoria cada 0.5 segundos
             if (winCheckTimer >= 0.5f) {
                 revisarWin();
-                winCheckTimer = 0f; // Reinicia el temporizador
+                winCheckTimer = 0f;
             }
         }
 
-        // Control de pausa
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
             if (!pausa) {
                 SoundManager.pauseMusic();
@@ -294,7 +277,6 @@ public abstract class JuegoBase implements Screen {
             }
         }
 
-        // Procesar input solo si no hay animaciones
         boolean puedeMoverse = !jogador.estaAnimando();
         for (Cajita caja : cajas) {
             if (caja.estaAnimando()) {
@@ -314,14 +296,12 @@ public abstract class JuegoBase implements Screen {
                 moverJugador(1, 0);
             }
         } else {
-            // Consumir inputs para evitar acumulación
             jogador.consumeUp();
             jogador.consumeDown();
             jogador.consumeLeft();
             jogador.consumeRight();
         }
 
-        // Actualizar objetos
         jogador.update();
         for (Cajita caja : cajas) {
             caja.update();
@@ -330,7 +310,6 @@ public abstract class JuegoBase implements Screen {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
 
-        // Actualizar animacion de fondo
         timerFondo += Gdx.graphics.getDeltaTime();
         if (timerFondo >= tiempoPorFrame) {
             frameActual = (frameActual + 1) % fondoFrames.length;
@@ -341,6 +320,7 @@ public abstract class JuegoBase implements Screen {
 
         spriteBatch.begin();
         spriteBatch.draw(fondoFrames[frameActual], 0, 0, COLUMNAS * TILE, FILAS * TILE);
+        
         for (Piso piso : pisos) {
             piso.render(spriteBatch);
             piso.update();
@@ -361,7 +341,6 @@ public abstract class JuegoBase implements Screen {
             pared.update();
         }
 
-        // Mostrar timer con la nueva fuente
         segundosT = (int) timer;
         int minutos = (int) (timer / 60);
         int segundos = (int) (timer % 60);
@@ -425,7 +404,6 @@ public abstract class JuegoBase implements Screen {
         if (partidaActual != null && !gano) {
             partidaActual.finalizarPartida(false, "pausado");
             sistemaUsuarios.registrarPartida(partidaActual);
-
         }
         menuPausa();
     }
@@ -456,7 +434,6 @@ public abstract class JuegoBase implements Screen {
                     paredes.add(new Pared(x * TILE, y * TILE, TILE));
                 }
                 if (mapa[y][x] == 0 || mapa[y][x] == 3 || mapa[y][x] == 2 && (y != (FILAS - 1) && x != (COLUMNAS - 1)) || mapa[y][x] == 4) {
-
                     pisos.add(crearPiso(x, y));
                 }
             }
@@ -474,29 +451,23 @@ public abstract class JuegoBase implements Screen {
                     pis = new Piso(x * TILE, y * TILE, TILE);
                 }
             }
-
         }
         return pis;
-
     }
 
     public void revisarWin() {
         objetivosRealizados = 0;
 
-        // Itera sobre cada objetivo
         for (Cajita caja : cajas) {
-            // Itera sobre cada caja para ver si se superpone con el objetivo
             for (Objetivo obj : objetivos) {
                 if (caja.getHitbox().overlaps(obj.getHitbox())) {
                     objetivosRealizados++;
-                    System.out.println("++");
-                    break; // Una vez que se encuentra una caja, pasa al siguiente objetivo
+                    break;
                 }
             }
         }
 
         if (objetivosRealizados == objetivos.size() && !gano) {
-            System.out.println("¡Nivel completado!");
             gano = true;
 
             if (partidaActual != null && sistemaUsuarios.haySesionActiva()) {
@@ -518,11 +489,15 @@ public abstract class JuegoBase implements Screen {
     }
 
     public void guardarSegundos(int segundos) {
-        // logica para guardar segundos con codigo de nad
+        // logica para guardar segundos
     }
 
     private void menuPausa() {
-        // Overlay semi-transparente
+        // OBTENER TEXTOS ACTUALES - SE ACTUALIZA CADA VEZ QUE SE ABRE EL MENU
+        String textoPausa = Idiomas.getInstance().obtenerTexto("PAUSA");
+        String textoVolver = Idiomas.getInstance().obtenerTexto("menu.pausa.volver");
+        String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.pausa.reiniciar");
+        
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -533,26 +508,22 @@ public abstract class JuegoBase implements Screen {
         panel.pad(20);
         overlayPausa.add(panel);
 
-        // Título
-        Label titulo = new Label(idiomas.obtenerTexto("PAUSA"), new Label.LabelStyle(fontTitulo, Color.WHITE));
+        Label titulo = new Label(textoPausa, new Label.LabelStyle(fontTitulo, Color.WHITE));
         panel.add(titulo).padBottom(20).row();
 
-        // Texturas para botones
         Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
         Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
         Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
 
-        // Estilo TextButton
         TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
         estiloBoton.up = fondoNormalUp;
         estiloBoton.down = fondoNormalDown;
-        estiloBoton.font = fontSmall; // tu BitmapFont
+        estiloBoton.font = fontSmall;
         estiloBoton.fontColor = Color.WHITE;
 
-        // Botones con texto
-        TextButton btnVolver = new TextButton(idiomas.obtenerTexto("menu.pausa.volver"), estiloBoton);
-        TextButton btnReiniciar = new TextButton(idiomas.obtenerTexto("menu.pausa.reiniciar"), estiloBoton);
+        TextButton btnVolver = new TextButton(textoVolver, estiloBoton);
+        TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
 
         btnVolver.addListener(new ClickListener() {
             @Override
@@ -578,8 +549,18 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void finNivel() {
-        SoundManager.pauseMusic();//Parar musiquita
+        SoundManager.pauseMusic();
         SoundManager.playVictorySound();
+        
+        // OBTENER TEXTOS ACTUALES - SE ACTUALIZA CADA VEZ QUE SE COMPLETA EL NIVEL
+        String textoTitulo = Idiomas.getInstance().obtenerTexto("NIVEL_COMPLETADO");
+        String textoTiempo = Idiomas.getInstance().obtenerTexto("fin.tiempo");
+        String textoMovimientos = Idiomas.getInstance().obtenerTexto("fin.movimientos");
+        String textoPuntuacion = Idiomas.getInstance().obtenerTexto("fin.puntuacion");
+        String textoSiguiente = Idiomas.getInstance().obtenerTexto("menu.fin.siguiente");
+        String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.fin.reiniciar");
+        String textoMenu = Idiomas.getInstance().obtenerTexto("menu.fin.menu");
+        
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -590,39 +571,34 @@ public abstract class JuegoBase implements Screen {
         panel.pad(20);
         overlay.add(panel);
 
-        // Título
-        Label titulo = new Label(idiomas.obtenerTexto("NIVEL_COMPLETADO"), new Label.LabelStyle(fontTitulo, Color.GREEN));
+        Label titulo = new Label(textoTitulo, new Label.LabelStyle(fontTitulo, Color.GREEN));
         titulo.setColor(Color.GREEN);
         panel.add(titulo).padBottom(20).row();
 
-        // Estadísticas de la partida
         if (partidaActual != null) {
-            Label tiempoLabel = new Label(idiomas.obtenerTexto("fin.tiempo") + ":" + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
-            Label movimientosLabel = new Label(idiomas.obtenerTexto("fin.movimientos") + ":" + partidaActual.getMovimientos(), skin);
-            Label puntuacionLabel = new Label(idiomas.obtenerTexto("fin.puntuacion") + ":" + partidaActual.getPuntuacion(), skin);
+            Label tiempoLabel = new Label(textoTiempo + ": " + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
+            Label movimientosLabel = new Label(textoMovimientos + ": " + partidaActual.getMovimientos(), skin);
+            Label puntuacionLabel = new Label(textoPuntuacion + ": " + partidaActual.getPuntuacion(), skin);
 
             panel.add(tiempoLabel).padBottom(5).row();
             panel.add(movimientosLabel).padBottom(5).row();
             panel.add(puntuacionLabel).padBottom(15).row();
         }
 
-        // Texturas para botones
         Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
         Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
         Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
         Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
 
-        // Estilo TextButton
         TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
         estiloBoton.up = fondoNormalUp;
         estiloBoton.down = fondoNormalDown;
         estiloBoton.font = fontSmall;
         estiloBoton.fontColor = Color.WHITE;
 
-        // Botones
-        TextButton btnSiguiente = new TextButton(idiomas.obtenerTexto("menu.fin.siguiente"), estiloBoton);
-        TextButton btnReiniciar = new TextButton(idiomas.obtenerTexto("menu.fin.reiniciar"), estiloBoton);
-        TextButton btnMenu = new TextButton(idiomas.obtenerTexto("menu.fin.menu"), estiloBoton);
+        TextButton btnSiguiente = new TextButton(textoSiguiente, estiloBoton);
+        TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
+        TextButton btnMenu = new TextButton(textoMenu, estiloBoton);
 
         btnSiguiente.addListener(new ClickListener() {
             @Override
@@ -646,7 +622,7 @@ public abstract class JuegoBase implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
-                SoundManager.playMusic("lobby", true, 0.5f);//0.5f es el volumen
+                SoundManager.playMusic("lobby", true, 0.5f);
             }
         });
 
@@ -680,6 +656,7 @@ public abstract class JuegoBase implements Screen {
         jugadorX = jugadorXInicial;
         jugadorY = jugadorYInicial;
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
+        
         if (sistemaUsuarios.haySesionActiva()) {
             if (partidaActual != null) {
                 partidaActual.finalizarPartida(false, "reiniciado");
@@ -718,19 +695,15 @@ public abstract class JuegoBase implements Screen {
                     juego.setScreen(new Lvl6());
                     break;
                 default:
-                    // Si no hay más niveles, regresar al Hub
                     juego.setScreen(new Hub());
                     break;
             }
         } else {
-            // No hay más niveles o no están desbloqueados
             ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
         }
     }
-    // DEBUG: mostrar overlay de fin de nivel sin terminar
 
     public void debugMostrarFinNivel() {
         finNivel();
     }
-
 }
