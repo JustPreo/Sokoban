@@ -509,8 +509,6 @@ public abstract class JuegoBase implements Screen {
         }
     }
 
-    
-
     @Override
     public void hide() {
     }
@@ -734,7 +732,5 @@ public abstract class JuegoBase implements Screen {
     public void debugMostrarFinNivel() {
         finNivel();
     }
-    
-    
-    
+
 }
