@@ -15,7 +15,10 @@ public class Juegito extends Game { //Este es el main para que abra el juegito
 
     @Override
     public void create() {
-        setScreen(new Escena(this));
+        //setScreen(new SlideshowTutorial(this, Idiomas.getInstance()));
+        
+                setScreen(new ThanosRoom());
+        //setScreen(new Escena(this));
         SoundManager.playMusic("lobby", true, 0.5f);//0.5f es el volumen
     }
 
