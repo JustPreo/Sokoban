@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.sokoban.com.Base.IntentoDeMenu.MenuScreen;
 import com.sokoban.com.Base.Jugador;
 import com.sokoban.com.Base.Pared;
 import com.sokoban.com.Base.PisoHub;
@@ -39,7 +40,7 @@ public class ThanosRoom implements Screen {
     private boolean enRangoThanos = false;
     private boolean dialogoActivo = false;
     private boolean enRangoPuerta = false;
-    private String textoThanos = "Gracias a ti pude encontrar todas las gemas!";
+    private String textoThanos = "Estas despedido";
     private int DIALOG_HEIGHT = 50;
 
     // Posición de la puerta en el mapa
@@ -100,11 +101,7 @@ public class ThanosRoom implements Screen {
 
     @Override
     public void render(float delta) {
-        // ESC = volver al hub
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            SoundManager.playMusic("lobby", true, 0.5f);
-            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
-        }
+        
 
         // --- Movimiento jugador (solo si no hay diálogo activo) ---
         if (!dialogoActivo) {
@@ -164,7 +161,7 @@ public class ThanosRoom implements Screen {
 
         if (enRangoPuerta && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             SoundManager.playMusic("lobby", true, 0.5f);
-            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
         }
 
         // Actualizar animaciones

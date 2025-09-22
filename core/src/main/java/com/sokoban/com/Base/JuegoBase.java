@@ -36,6 +36,7 @@ import com.sokoban.com.RegistroPartida;
 import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.SoundManager;
+import com.sokoban.com.ThanosRoom;
 import java.util.ArrayList;
 
 public abstract class JuegoBase implements Screen {
@@ -116,10 +117,10 @@ public abstract class JuegoBase implements Screen {
         if (sistemaUsuarios.haySesionActiva()) {
             partidaActual = new RegistroPartida(obtenerNumeroNivel());
         }
-        
+
         idiomas = Idiomas.getInstance();
         idiomas.cargarIdiomaUsuario();
-        
+
         configurarNivel();
         conseguirCantCajas();
 
@@ -320,7 +321,7 @@ public abstract class JuegoBase implements Screen {
 
         spriteBatch.begin();
         spriteBatch.draw(fondoFrames[frameActual], 0, 0, COLUMNAS * TILE, FILAS * TILE);
-        
+
         for (Piso piso : pisos) {
             piso.render(spriteBatch);
             piso.update();
@@ -497,7 +498,7 @@ public abstract class JuegoBase implements Screen {
         String textoPausa = Idiomas.getInstance().obtenerTexto("PAUSA");
         String textoVolver = Idiomas.getInstance().obtenerTexto("menu.pausa.volver");
         String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.pausa.reiniciar");
-        
+
         overlayPausa = new Table();
         overlayPausa.setFillParent(true);
         overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -551,7 +552,7 @@ public abstract class JuegoBase implements Screen {
     private void finNivel() {
         SoundManager.pauseMusic();
         SoundManager.playVictorySound();
-        
+
         // OBTENER TEXTOS ACTUALES - SE ACTUALIZA CADA VEZ QUE SE COMPLETA EL NIVEL
         String textoTitulo = Idiomas.getInstance().obtenerTexto("NIVEL_COMPLETADO");
         String textoTiempo = Idiomas.getInstance().obtenerTexto("fin.tiempo");
@@ -560,7 +561,7 @@ public abstract class JuegoBase implements Screen {
         String textoSiguiente = Idiomas.getInstance().obtenerTexto("menu.fin.siguiente");
         String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.fin.reiniciar");
         String textoMenu = Idiomas.getInstance().obtenerTexto("menu.fin.menu");
-        
+
         Table overlay = new Table();
         overlay.setFillParent(true);
         overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
@@ -656,7 +657,7 @@ public abstract class JuegoBase implements Screen {
         jugadorX = jugadorXInicial;
         jugadorY = jugadorYInicial;
         jogador.setPos(jugadorX * TILE, jugadorY * TILE);
-        
+
         if (sistemaUsuarios.haySesionActiva()) {
             if (partidaActual != null) {
                 partidaActual.finalizarPartida(false, "reiniciado");
@@ -695,11 +696,11 @@ public abstract class JuegoBase implements Screen {
                     juego.setScreen(new Lvl6());
                     break;
                 default:
-                    juego.setScreen(new Hub());
+                    juego.setScreen(new ThanosRoom());
                     break;
             }
         } else {
-            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new ThanosRoom());
         }
     }
 
