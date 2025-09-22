@@ -1,5 +1,7 @@
 package com.sokoban.com.Base;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -12,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -37,7 +38,6 @@ import com.sokoban.com.SelectorNiveles.Hub;
 import com.sokoban.com.SistemaUsuarios;
 import com.sokoban.com.SoundManager;
 import com.sokoban.com.ThanosRoom;
-import java.util.ArrayList;
 
 public abstract class JuegoBase implements Screen {
 
@@ -253,114 +253,118 @@ public abstract class JuegoBase implements Screen {
             }
         }
     }
-
     @Override
-    public void render(float delta) {
-        SoundManager.update();
+public void render(float delta) {
+    SoundManager.update();
 
-        if (!gano && !pausa) {
-            timer += Gdx.graphics.getDeltaTime();
-            winCheckTimer += Gdx.graphics.getDeltaTime();
+    if (!gano && !pausa) {
+        timer += Gdx.graphics.getDeltaTime();
+        winCheckTimer += Gdx.graphics.getDeltaTime();
 
-            if (winCheckTimer >= 0.5f) {
-                revisarWin();
-                winCheckTimer = 0f;
-            }
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
-            if (!pausa) {
-                SoundManager.pauseMusic();
-                pause();
-            } else {
-                SoundManager.resumeMusic();
-                resume();
-            }
-        }
-
-        boolean puedeMoverse = !jogador.estaAnimando();
-        for (Cajita caja : cajas) {
-            if (caja.estaAnimando()) {
-                puedeMoverse = false;
-                break;
-            }
-        }
-
-        if (puedeMoverse) {
-            if (jogador.consumeUp()) {
-                moverJugador(0, 1);
-            } else if (jogador.consumeDown()) {
-                moverJugador(0, -1);
-            } else if (jogador.consumeLeft()) {
-                moverJugador(-1, 0);
-            } else if (jogador.consumeRight()) {
-                moverJugador(1, 0);
-            }
-        } else {
-            jogador.consumeUp();
-            jogador.consumeDown();
-            jogador.consumeLeft();
-            jogador.consumeRight();
-        }
-
-        jogador.update();
-        for (Cajita caja : cajas) {
-            caja.update();
-        }
-
-        ScreenUtils.clear(Color.BLACK);
-        viewport.apply();
-
-        timerFondo += Gdx.graphics.getDeltaTime();
-        if (timerFondo >= tiempoPorFrame) {
-            frameActual = (frameActual + 1) % fondoFrames.length;
-            timerFondo = 0f;
-        }
-
-        spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
-
-        spriteBatch.begin();
-        spriteBatch.draw(fondoFrames[frameActual], 0, 0, COLUMNAS * TILE, FILAS * TILE);
-
-        for (Piso piso : pisos) {
-            piso.render(spriteBatch);
-            piso.update();
-        }
-
-        for (Objetivo obj : objetivos) {
-            obj.render(spriteBatch);
-        }
-
-        jogador.render(spriteBatch);
-
-        for (Cajita caj : cajas) {
-            caj.render(spriteBatch);
-        }
-
-        for (Pared pared : paredes) {
-            pared.render(spriteBatch);
-            pared.update();
-        }
-
-        segundosT = (int) timer;
-        int minutos = (int) (timer / 60);
-        int segundos = (int) (timer % 60);
-        float margen = TILE * 0.2f;
-        fontTitulo.draw(spriteBatch, String.format("%02d:%02d   Empujones: %d", minutos, segundos, vecesEmpujado), margen, FILAS * TILE - margen);
-
-        spriteBatch.end();
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
-            gano = true;
-            debugMostrarFinNivel();
-        }
-
-        if (gano || pausa) {
-            stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-            stage.act(Gdx.graphics.getDeltaTime());
-            stage.draw();
+        if (winCheckTimer >= 0.5f) {
+            revisarWin();
+            winCheckTimer = 0f;
         }
     }
+
+    if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && !gano) {
+        if (!pausa) {
+            SoundManager.pauseMusic();
+            pause();
+        } else {
+            SoundManager.resumeMusic();
+            resume();
+        }
+    }
+
+    boolean puedeMoverse = !jogador.estaAnimando();
+    for (Cajita caja : cajas) {
+        if (caja.estaAnimando()) {
+            puedeMoverse = false;
+            break;
+        }
+    }
+
+    if (puedeMoverse) {
+        if (jogador.consumeUp()) {
+            moverJugador(0, 1);
+        } else if (jogador.consumeDown()) {
+            moverJugador(0, -1);
+        } else if (jogador.consumeLeft()) {
+            moverJugador(-1, 0);
+        } else if (jogador.consumeRight()) {
+            moverJugador(1, 0);
+        }
+    } else {
+        jogador.consumeUp();
+        jogador.consumeDown();
+        jogador.consumeLeft();
+        jogador.consumeRight();
+    }
+
+    jogador.update();
+    for (Cajita caja : cajas) {
+        caja.update();
+    }
+
+    ScreenUtils.clear(Color.BLACK);
+    viewport.apply();
+
+    timerFondo += Gdx.graphics.getDeltaTime();
+    if (timerFondo >= tiempoPorFrame) {
+        frameActual = (frameActual + 1) % fondoFrames.length;
+        timerFondo = 0f;
+    }
+
+    spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+
+    spriteBatch.begin();
+    spriteBatch.draw(fondoFrames[frameActual], 0, 0, COLUMNAS * TILE, FILAS * TILE);
+    
+    for (Piso piso : pisos) {
+        piso.render(spriteBatch);
+        piso.update();
+    }
+
+    for (Objetivo obj : objetivos) {
+        obj.render(spriteBatch);
+    }
+
+    jogador.render(spriteBatch);
+
+    for (Cajita caj : cajas) {
+        caj.render(spriteBatch);
+    }
+
+    for (Pared pared : paredes) {
+        pared.render(spriteBatch);
+        pared.update();
+    }
+
+    // traduccion
+    segundosT = (int) timer;
+    int minutos = (int) (timer / 60);
+    int segundos = (int) (timer % 60);
+    float margen = TILE * 0.2f;
+    
+    // Obtener textos en el idioma actual
+    String textoEmpujones = Idiomas.getInstance().obtenerTexto("juego.empujones");
+    String textoCompleto = String.format("%02d:%02d   %s: %d", minutos, segundos, textoEmpujones, vecesEmpujado);
+    fontTitulo.draw(spriteBatch, textoCompleto, margen, FILAS * TILE - margen);
+
+    spriteBatch.end();
+
+    if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
+        gano = true;
+        debugMostrarFinNivel();
+    }
+
+    if (gano || pausa) {
+        stage.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+    }
+}
 
     @Override
     public void resize(int width, int height) {
@@ -494,148 +498,146 @@ public abstract class JuegoBase implements Screen {
     }
 
     private void menuPausa() {
-        // OBTENER TEXTOS ACTUALES - SE ACTUALIZA CADA VEZ QUE SE ABRE EL MENU
-        String textoPausa = Idiomas.getInstance().obtenerTexto("PAUSA");
-        String textoVolver = Idiomas.getInstance().obtenerTexto("menu.pausa.volver");
-        String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.pausa.reiniciar");
+    // Obtener los textos actuales del idioma
+    String textoPausa = Idiomas.getInstance().obtenerTexto("PAUSA");
+    String textoVolver = Idiomas.getInstance().obtenerTexto("menu.pausa.volver");
+    String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.pausa.reiniciar");
+    
+    overlayPausa = new Table();
+    overlayPausa.setFillParent(true);
+    overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlayPausa.center();
 
-        overlayPausa = new Table();
-        overlayPausa.setFillParent(true);
-        overlayPausa.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlayPausa.center();
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlayPausa.add(panel);
 
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlayPausa.add(panel);
+    Label titulo = new Label(textoPausa, new Label.LabelStyle(fontTitulo, Color.WHITE));
+    panel.add(titulo).padBottom(20).row();
 
-        Label titulo = new Label(textoPausa, new Label.LabelStyle(fontTitulo, Color.WHITE));
-        panel.add(titulo).padBottom(20).row();
+    Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+    Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+    Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
+    Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
 
-        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
-        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
-        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
-        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+    TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
+    estiloBoton.up = fondoNormalUp;
+    estiloBoton.down = fondoNormalDown;
+    estiloBoton.font = fontSmall;
+    estiloBoton.fontColor = Color.WHITE;
 
-        TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
-        estiloBoton.up = fondoNormalUp;
-        estiloBoton.down = fondoNormalDown;
-        estiloBoton.font = fontSmall;
-        estiloBoton.fontColor = Color.WHITE;
+    TextButton btnVolver = new TextButton(textoVolver, estiloBoton);
+    TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
 
-        TextButton btnVolver = new TextButton(textoVolver, estiloBoton);
-        TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
-
-        btnVolver.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
-                overlayPausa.remove();
-                SoundManager.resumeMusic();
-            }
-        });
-
-        btnReiniciar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlayPausa.remove();
-                reiniciarNivel();
-            }
-        });
-
-        panel.add(btnVolver).size(150, 50).padBottom(10).row();
-        panel.add(btnReiniciar).size(150, 50).row();
-
-        stage.addActor(overlayPausa);
-    }
-
-    private void finNivel() {
-        SoundManager.pauseMusic();
-        SoundManager.playVictorySound();
-
-        // OBTENER TEXTOS ACTUALES - SE ACTUALIZA CADA VEZ QUE SE COMPLETA EL NIVEL
-        String textoTitulo = Idiomas.getInstance().obtenerTexto("NIVEL_COMPLETADO");
-        String textoTiempo = Idiomas.getInstance().obtenerTexto("fin.tiempo");
-        String textoMovimientos = Idiomas.getInstance().obtenerTexto("fin.movimientos");
-        String textoPuntuacion = Idiomas.getInstance().obtenerTexto("fin.puntuacion");
-        String textoSiguiente = Idiomas.getInstance().obtenerTexto("menu.fin.siguiente");
-        String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.fin.reiniciar");
-        String textoMenu = Idiomas.getInstance().obtenerTexto("menu.fin.menu");
-
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
-
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel);
-
-        Label titulo = new Label(textoTitulo, new Label.LabelStyle(fontTitulo, Color.GREEN));
-        titulo.setColor(Color.GREEN);
-        panel.add(titulo).padBottom(20).row();
-
-        if (partidaActual != null) {
-            Label tiempoLabel = new Label(textoTiempo + ": " + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
-            Label movimientosLabel = new Label(textoMovimientos + ": " + partidaActual.getMovimientos(), skin);
-            Label puntuacionLabel = new Label(textoPuntuacion + ": " + partidaActual.getPuntuacion(), skin);
-
-            panel.add(tiempoLabel).padBottom(5).row();
-            panel.add(movimientosLabel).padBottom(5).row();
-            panel.add(puntuacionLabel).padBottom(15).row();
+    btnVolver.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new Hub());
+            overlayPausa.remove();
+            SoundManager.resumeMusic();
         }
+    });
 
-        Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
-        Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
-        Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
-        Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+    btnReiniciar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlayPausa.remove();
+            reiniciarNivel();
+        }
+    });
 
-        TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
-        estiloBoton.up = fondoNormalUp;
-        estiloBoton.down = fondoNormalDown;
-        estiloBoton.font = fontSmall;
-        estiloBoton.fontColor = Color.WHITE;
+    panel.add(btnVolver).size(150, 50).padBottom(10).row();
+    panel.add(btnReiniciar).size(150, 50).row();
 
-        TextButton btnSiguiente = new TextButton(textoSiguiente, estiloBoton);
-        TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
-        TextButton btnMenu = new TextButton(textoMenu, estiloBoton);
+    stage.addActor(overlayPausa);
+}
+private void finNivel() {
+    SoundManager.pauseMusic();
+    SoundManager.playVictorySound();
+    
+    // OBTENER TEXTOS ACTUALES DEL IDIOMA
+    String textoTitulo = Idiomas.getInstance().obtenerTexto("NIVEL_COMPLETADO");
+    String textoTiempo = Idiomas.getInstance().obtenerTexto("fin.tiempo");
+    String textoMovimientos = Idiomas.getInstance().obtenerTexto("fin.movimientos");
+    String textoPuntuacion = Idiomas.getInstance().obtenerTexto("fin.puntuacion");
+    String textoSiguiente = Idiomas.getInstance().obtenerTexto("menu.fin.siguiente");
+    String textoReiniciar = Idiomas.getInstance().obtenerTexto("menu.fin.reiniciar");
+    String textoMenu = Idiomas.getInstance().obtenerTexto("menu.fin.menu");
+    
+    Table overlay = new Table();
+    overlay.setFillParent(true);
+    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlay.center();
 
-        btnSiguiente.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                SoundManager.resumeMusic();
-                irSiguienteNivel();
-            }
-        });
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlay.add(panel);
 
-        btnReiniciar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                SoundManager.resumeMusic();
-                reiniciarNivel();
-            }
-        });
+    Label titulo = new Label(textoTitulo, new Label.LabelStyle(fontTitulo, Color.GREEN));
+    titulo.setColor(Color.GREEN);
+    panel.add(titulo).padBottom(20).row();
 
-        btnMenu.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
-                SoundManager.playMusic("lobby", true, 0.5f);
-            }
-        });
+    if (partidaActual != null) {
+        Label tiempoLabel = new Label(textoTiempo + ": " + String.format("%02d:%02d", (int) (timer / 60), (int) (timer % 60)), skin);
+        Label movimientosLabel = new Label(textoMovimientos + ": " + partidaActual.getMovimientos(), skin);
+        Label puntuacionLabel = new Label(textoPuntuacion + ": " + partidaActual.getPuntuacion(), skin);
 
-        Table botonesTable = new Table();
-        botonesTable.add(btnSiguiente).size(180, 50).padRight(10);
-        botonesTable.add(btnReiniciar).size(200, 50).padRight(10);
-        botonesTable.add(btnMenu).size(150, 50);
-
-        panel.add(botonesTable).row();
-        stage.addActor(overlay);
+        panel.add(tiempoLabel).padBottom(5).row();
+        panel.add(movimientosLabel).padBottom(5).row();
+        panel.add(puntuacionLabel).padBottom(15).row();
     }
 
+    Texture texturaFondoNormal = new Texture(Gdx.files.internal("fondoNormal.png"));
+    Texture texturaFondoNormal2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
+    Drawable fondoNormalUp = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal));
+    Drawable fondoNormalDown = new TextureRegionDrawable(new TextureRegion(texturaFondoNormal2));
+
+    TextButton.TextButtonStyle estiloBoton = new TextButton.TextButtonStyle();
+    estiloBoton.up = fondoNormalUp;
+    estiloBoton.down = fondoNormalDown;
+    estiloBoton.font = fontSmall;
+    estiloBoton.fontColor = Color.WHITE;
+
+    TextButton btnSiguiente = new TextButton(textoSiguiente, estiloBoton);
+    TextButton btnReiniciar = new TextButton(textoReiniciar, estiloBoton);
+    TextButton btnMenu = new TextButton(textoMenu, estiloBoton);
+
+    btnSiguiente.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            SoundManager.resumeMusic();
+            irSiguienteNivel();
+        }
+    });
+
+    btnReiniciar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            SoundManager.resumeMusic();
+            reiniciarNivel();
+        }
+    });
+
+    btnMenu.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new MenuScreen());
+            SoundManager.playMusic("lobby", true, 0.5f);
+        }
+    });
+
+    Table botonesTable = new Table();
+    botonesTable.add(btnSiguiente).size(180, 50).padRight(10);
+    botonesTable.add(btnReiniciar).size(200, 50).padRight(10);
+    botonesTable.add(btnMenu).size(150, 50);
+
+    panel.add(botonesTable).row();
+    stage.addActor(overlay);
+}
     private void reiniciarNivel() {
         cajas.clear();
         paredes.clear();

@@ -12,7 +12,7 @@ public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // Datos básicos del usuario
+    // Datos basicos del usuario
     private String nombreUsuario;
     private String contrasenaHash;
     private String nombreCompleto;
@@ -27,18 +27,19 @@ public class Usuario implements Serializable {
     private int partidasTotales;
     private int partidasCompletadas;
 
-    // Estadísticas 
+    // Estadisticas 
     private Map<Integer, EstadisticasNivel> estadisticasPorNivel;
     private List<RegistroPartida> historialPartidas;
 
-    // Personalización
+    // Personalizacion
     private ConfiguracionUsuario preferencias;
     private String rutaAvatar;
 
     // Amigos y ranking
     private int puntuacionTotal;
     private List<String> listaAmigos;
-    private List<String> listaRivales;
+    private List<String> solicitudesPendientes;
+    private List<String> solicitudesEnviadas;
 
     public Usuario(String nombreUsuario, String contrasena, String nombreCompleto) {
         this.nombreUsuario = nombreUsuario;
@@ -46,7 +47,7 @@ public class Usuario implements Serializable {
         this.nombreCompleto = nombreCompleto;
         this.fechaRegistro = LocalDateTime.now();
         this.ultimaSesion = LocalDateTime.now();
-        this.esPrimeraSesion = true; // nueva cuenta = primera sesion
+        this.esPrimeraSesion = true;
 
         this.nivelActual = 1;
         this.nivelMaximoAlcanzado = 1;
@@ -58,11 +59,11 @@ public class Usuario implements Serializable {
         this.estadisticasPorNivel = new HashMap<>();
         this.historialPartidas = new ArrayList<>();
         this.listaAmigos = new ArrayList<>();
-        this.listaRivales = new ArrayList<>();
+        this.solicitudesPendientes = new ArrayList<>();
+        this.solicitudesEnviadas = new ArrayList<>();
 
         this.preferencias = new ConfiguracionUsuario();
         this.rutaAvatar = "avatars/default.png";
-
         System.out.println("Usuario creado: " + nombreUsuario);
     }
 
@@ -72,7 +73,7 @@ public class Usuario implements Serializable {
 
     public void iniciarSesion() {
         this.ultimaSesion = LocalDateTime.now();
-        System.out.println("Sesión iniciada para: " + nombreUsuario);
+        System.out.println("Sesion iniciada para: " + nombreUsuario);
     }
 
     public void registrarPartida(RegistroPartida partida) {
@@ -127,16 +128,7 @@ public class Usuario implements Serializable {
     public boolean agregarAmigo(String nombreAmigo) {
         if (!listaAmigos.contains(nombreAmigo) && !nombreAmigo.equals(this.nombreUsuario)) {
             listaAmigos.add(nombreAmigo);
-            System.out.println("Amigo:" + nombreAmigo + " agregado como amigo");
-            return true;
-        }
-        return false;
-    }
-
-    public boolean agregarRival(String nombreRival) {
-        if (!listaRivales.contains(nombreRival) && !nombreRival.equals(this.nombreUsuario)) {
-            listaRivales.add(nombreRival);
-            System.out.println("Rival: " + nombreRival + " agregado como rival");
+            System.out.println("Amigo: " + nombreAmigo + " agregado como amigo");
             return true;
         }
         return false;
@@ -147,25 +139,24 @@ public class Usuario implements Serializable {
 
         return String.format("""
             PERFIL DE USUARIO
-            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            ========================================
             Nombre: %s (%s)
             Registro: %s
-            Última sesión: %s
+            Ultima sesion: %s
             
             PROGRESO
             Nivel actual: %d
-            Nivel máximo: %d
+            Nivel maximo: %d
             Partidas jugadas: %d
             Partidas completadas: %d
             Tiempo total: %s
             
-            PUNTUACIÓN
+            PUNTUACION
             Puntos totales: %d
             Promedio por nivel: %d min
             
             SOCIAL
             Amigos: %d
-            Rivales: %d
             """,
                 nombreCompleto, nombreUsuario,
                 fechaRegistro.format(formatter),
@@ -174,7 +165,7 @@ public class Usuario implements Serializable {
                 partidasTotales, partidasCompletadas,
                 formatearTiempo(tiempoTotalJugado),
                 puntuacionTotal, getTiempoPromedioNivel() / 60000,
-                listaAmigos.size(), listaRivales.size()
+                listaAmigos.size()
         );
     }
 
@@ -197,6 +188,7 @@ public class Usuario implements Serializable {
         }
     }
 
+    // GETTERS Y SETTERS
     public String getNombreUsuario() {
         return nombreUsuario;
     }
@@ -281,8 +273,12 @@ public class Usuario implements Serializable {
         return new ArrayList<>(listaAmigos);
     }
 
-    public List<String> getListaRivales() {
-        return new ArrayList<>(listaRivales);
+    public List<String> getSolicitudesPendientes() {
+        return new ArrayList<>(solicitudesPendientes);
+    }
+
+    public List<String> getSolicitudesEnviadas() {
+        return new ArrayList<>(solicitudesEnviadas);
     }
 
     public List<RegistroPartida> getHistorialPartidas() {
@@ -304,7 +300,6 @@ public class Usuario implements Serializable {
     public void aplicarConfiguracionJuego() {
         ConfiguracionJuego.getInstance().setControles(preferencias.getControles());
     }
-
 
     public void actualizarConfiguracionDesdeJuego() {
         preferencias.setControles(ConfiguracionJuego.getInstance().getControles());

@@ -61,10 +61,18 @@ public class PantallaLogin implements Screen {
     private void crearUI() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PressStart2P-vaV7.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 12;
+        
+        // Fuente mas grande para mejor legibilidad
+        parameter.size = 14;
         BitmapFont mediumFont = generator.generateFont(parameter);
+        
+        // Fuente mas pequena para labels
+        parameter.size = 10;
+        BitmapFont smallFont = generator.generateFont(parameter);
+        
         generator.dispose();
         skin.add("medium-font", mediumFont, BitmapFont.class);
+        skin.add("small-font", smallFont, BitmapFont.class);
 
         texturaJugar = new Texture(Gdx.files.internal("fondoNormal.png"));
         texturaJugar2 = new Texture(Gdx.files.internal("fondoNormal2.png"));
@@ -91,34 +99,40 @@ public class PantallaLogin implements Screen {
         estiloBotonTexto.fontColor = Color.WHITE;
 
         Label.LabelStyle estiloLabel = new Label.LabelStyle();
-        estiloLabel.font = skin.getFont("medium-font");
+        estiloLabel.font = skin.getFont("small-font");
+        
+        Label.LabelStyle estiloTitulo = new Label.LabelStyle();
+        estiloTitulo.font = skin.getFont("medium-font");
 
         Table tablaPrincipal = new Table();
         tablaPrincipal.setFillParent(true);
         tablaPrincipal.center();
 
+        // Panel mas espacioso
         Table panelLogin = new Table(skin);
         panelLogin.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.7f)));
-        panelLogin.pad(30);
+        panelLogin.pad(40); // MAS PADDING
 
-        Label titulo = new Label(Idiomas.getInstance().obtenerTexto("login.titulo_login"), estiloLabel);
+        Label titulo = new Label(Idiomas.getInstance().obtenerTexto("login.titulo_login"), estiloTitulo);
         titulo.setColor(Color.CYAN);
         titulo.setName("titulo");
-        panelLogin.add(titulo).padBottom(20).row();
+        panelLogin.add(titulo).padBottom(30).row(); // MAS ESPACIO
 
         Label labelUsuario = new Label(Idiomas.getInstance().obtenerTexto("login.usuario"), estiloLabel);
+        labelUsuario.setName("labelUsuario");
         campoUsuario = new TextField("", skin);
         campoUsuario.setMessageText(Idiomas.getInstance().obtenerTexto("login.usuario"));
-        panelLogin.add(labelUsuario).left().padBottom(5).row();
-        panelLogin.add(campoUsuario).width(250).padBottom(15).row();
+        panelLogin.add(labelUsuario).left().padBottom(8).row(); // MAS ESPACIO
+        panelLogin.add(campoUsuario).width(300).height(40).padBottom(20).row(); // CAMPO MAS GRANDE
 
         Label labelContrasena = new Label(Idiomas.getInstance().obtenerTexto("login.contrasena"), estiloLabel);
+        labelContrasena.setName("labelContrasena");
         campoContrasena = new TextField("", skin);
         campoContrasena.setPasswordMode(true);
         campoContrasena.setPasswordCharacter('*');
         campoContrasena.setMessageText(Idiomas.getInstance().obtenerTexto("login.contrasena"));
-        panelLogin.add(labelContrasena).left().padBottom(5).row();
-        panelLogin.add(campoContrasena).width(250).padBottom(15).row();
+        panelLogin.add(labelContrasena).left().padBottom(8).row();
+        panelLogin.add(campoContrasena).width(300).height(40).padBottom(20).row(); // CAMPO MAS GRANDE
 
         Label labelNombreCompleto = new Label(Idiomas.getInstance().obtenerTexto("login.nombre_completo"), estiloLabel);
         labelNombreCompleto.setName("labelNombreCompleto");
@@ -126,13 +140,15 @@ public class PantallaLogin implements Screen {
         campoNombreCompleto.setMessageText(Idiomas.getInstance().obtenerTexto("login.nombre_completo"));
         campoNombreCompleto.setVisible(false);
         labelNombreCompleto.setVisible(false);
-        panelLogin.add(labelNombreCompleto).left().padBottom(5).row();
-        panelLogin.add(campoNombreCompleto).width(250).padBottom(15).row();
+        panelLogin.add(labelNombreCompleto).left().padBottom(8).row();
+        panelLogin.add(campoNombreCompleto).width(300).height(40).padBottom(25).row(); // CAMPO MAS GRANDE
 
         Button btnAccion = new Button(estiloBotonTexto);
+        btnAccion.setName("btnAccion");
         Button btnCambiarModo = new Button(estiloBotonTexto);
         btnCambiarModo.setName("btnCambiarModo");
         Button btnVolver = new Button(estiloBotonTexto);
+        btnVolver.setName("btnVolver");
 
         campoContrasena.addListener(new InputListener() {
             @Override
@@ -189,15 +205,15 @@ public class PantallaLogin implements Screen {
         btnCambiarModo.add(new Label(Idiomas.getInstance().obtenerTexto("login.registrarse"), estiloLabel));
         btnVolver.add(new Label(Idiomas.getInstance().obtenerTexto("login.volver"), estiloLabel));
 
-        panelLogin.add(btnAccion).size(200, 50).padBottom(10).row();
-        panelLogin.add(btnCambiarModo).size(400, 50).padBottom(10).row();
-        panelLogin.add(btnVolver).size(200, 50).padBottom(20).row();
+        panelLogin.add(btnAccion).size(220, 55).padBottom(15).row(); // BOTONES MAS GRANDES
+        panelLogin.add(btnCambiarModo).size(450, 55).padBottom(15).row();
+        panelLogin.add(btnVolver).size(220, 55).padBottom(25).row();
 
-        // MENSAJE CON WRAP PARA QUE NO SE SALGA
+        // Mensaje con wrap y mas espacio
         labelMensaje = new Label("", skin);
-        labelMensaje.setWrap(true); // IMPORTANTE
+        labelMensaje.setWrap(true);
         labelMensaje.setColor(Color.WHITE);
-        panelLogin.add(labelMensaje).width(380).padBottom(10).row(); // ANCHO DEFINIDO
+        panelLogin.add(labelMensaje).width(420).padBottom(10).row(); // MAS ANCHO
 
         tablaPrincipal.add(panelLogin);
         stage.addActor(tablaPrincipal);
@@ -205,7 +221,7 @@ public class PantallaLogin implements Screen {
 
     private void cambiarModo() {
         Label.LabelStyle estiloLabel = new Label.LabelStyle();
-        estiloLabel.font = skin.getFont("medium-font");
+        estiloLabel.font = skin.getFont("small-font");
         modoRegistro = !modoRegistro;
 
         Label titulo = stage.getRoot().findActor("titulo");
@@ -240,7 +256,6 @@ public class PantallaLogin implements Screen {
         labelMensaje.setText("");
     }
 
-    // NUEVO METODO: VALIDAR CONTRASENA
     private boolean validarContrasena(String contrasena) {
         if (contrasena.length() < 8) {
             return false;
@@ -310,7 +325,6 @@ public class PantallaLogin implements Screen {
             return;
         }
 
-        // NUEVA VALIDACION DE CONTRASENA
         if (!validarContrasena(contrasena)) {
             mostrarMensaje("Contrasena debe tener: min 8 caracteres, 1 mayuscula y 1 simbolo especial", Color.RED);
             return;

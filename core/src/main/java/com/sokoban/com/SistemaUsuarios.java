@@ -231,19 +231,86 @@ public class SistemaUsuarios {
         }
     }
     
-    /** Quita un amigo de la lista */
-    public boolean quitarAmigo(String nombreAmigo) {
-        lock.lock();
-        try {
-            if (usuarioActual == null) return false;
-            
-            boolean quitado = usuarioActual.getListaAmigos().remove(nombreAmigo);
-            if (quitado) guardarProgreso();
-            return quitado;
-        } finally {
-            lock.unlock();
+    public boolean enviarSolicitudAmistad(String nombreDestino) {
+    lock.lock();
+    try {
+        if (usuarioActual == null || !gestorArchivos.existeUsuario(nombreDestino)) {
+            return false;
         }
+        
+        if (nombreDestino.equals(usuarioActual.getNombreUsuario())) {
+            return false;
+        }
+        
+        if (usuarioActual.getListaAmigos().contains(nombreDestino)) {
+            return false;
+        }
+        
+        if (usuarioActual.getSolicitudesEnviadas().contains(nombreDestino)) {
+            return false;
+        }
+        
+        Usuario destino = cargarDatosUsuario(nombreDestino);
+        if (destino == null) return false;
+        
+        usuarioActual.getSolicitudesEnviadas().add(nombreDestino);
+        destino.getSolicitudesPendientes().add(usuarioActual.getNombreUsuario());
+        
+        guardarProgreso();
+        gestorArchivos.guardarUsuario(destino);
+        return true;
+    } finally {
+        lock.unlock();
     }
+}
+
+public boolean aceptarSolicitud(String nombreRemitente) {
+    lock.lock();
+    try {
+        if (usuarioActual == null) return false;
+        
+        if (!usuarioActual.getSolicitudesPendientes().contains(nombreRemitente)) {
+            return false;
+        }
+        
+        usuarioActual.getSolicitudesPendientes().remove(nombreRemitente);
+        usuarioActual.agregarAmigo(nombreRemitente);
+        
+        Usuario remitente = cargarDatosUsuario(nombreRemitente);
+        if (remitente != null) {
+            remitente.getSolicitudesEnviadas().remove(usuarioActual.getNombreUsuario());
+            remitente.agregarAmigo(usuarioActual.getNombreUsuario());
+            gestorArchivos.guardarUsuario(remitente);
+        }
+        
+        return guardarProgreso();
+    } finally {
+        lock.unlock();
+    }
+}
+
+public boolean rechazarSolicitud(String nombreRemitente) {
+    lock.lock();
+    try {
+        if (usuarioActual == null) return false;
+        
+        if (!usuarioActual.getSolicitudesPendientes().contains(nombreRemitente)) {
+            return false;
+        }
+        
+        usuarioActual.getSolicitudesPendientes().remove(nombreRemitente);
+        
+        Usuario remitente = cargarDatosUsuario(nombreRemitente);
+        if (remitente != null) {
+            remitente.getSolicitudesEnviadas().remove(usuarioActual.getNombreUsuario());
+            gestorArchivos.guardarUsuario(remitente);
+        }
+        
+        return guardarProgreso();
+    } finally {
+        lock.unlock();
+    }
+}
     
     /** Cargar datos de un usuario especifico (para comparaciones, etc) */
     public Usuario cargarDatosUsuario(String nombreUsuario) {
@@ -296,4 +363,5 @@ public class SistemaUsuarios {
     public int getCantidadUsuarios() {
         return gestorArchivos.listarUsuarios().size();
     }
+    
 }

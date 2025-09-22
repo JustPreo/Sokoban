@@ -105,6 +105,8 @@ public class Idiomas {
         es.put("settings.error_guardar", "Error al guardar configuracion");
         es.put("settings.confirmar_restablecer", "Restablecer configuracion por defecto?");
         es.put("settings.restablecido", "Configuracion restablecida");
+        es.put("juego.empujones", "Empujones");
+        es.put("juego.tiempo", "Tiempo");
 
         // Dificultades
         es.put("dificultad.facil", "Facil");
@@ -205,6 +207,9 @@ public class Idiomas {
         en.put("general.cerrar", "Close");
         en.put("general.volver", "Back");
         en.put("general.confirmar", "Confirm");
+        en.put("juego.empujones", "Pushes");
+        en.put("juego.tiempo", "Time");
+        
 
         textos.put("en", en);
 
@@ -291,6 +296,8 @@ public class Idiomas {
         fr.put("general.cerrar", "Fermer");
         fr.put("general.volver", "Retour");
         fr.put("general.confirmar", "Confirmer");
+        fr.put("juego.empujones", "Poussees");
+        fr.put("juego.tiempo", "Temps");
 
         textos.put("fr", fr);
 
@@ -641,6 +648,41 @@ public class Idiomas {
         fr.put("ranking.no_encontrado", "Votre position n'a pas été trouvée");
         fr.put("ranking.actualizado", "Classement mis à jour");
         fr.put("ranking.no_sesion", "Vous devez vous connecter pour voir votre profil");
+        // ESPAÑOL
+        es.put("amigos.solicitudes_pendientes", "SOLICITUDES PENDIENTES");
+        es.put("amigos.sin_solicitudes", "No tienes solicitudes pendientes");
+        es.put("amigos.todos_usuarios", "TODOS LOS USUARIOS");
+        es.put("amigos.enviar_solicitud", "Enviar Solicitud");
+        es.put("amigos.solicitud_enviada", "Solicitud Enviada");
+        es.put("amigos.aceptar", "Aceptar");
+        es.put("amigos.rechazar", "Rechazar");
+        es.put("amigos.msj.solicitud_enviada", "Solicitud enviada a %s");
+        es.put("amigos.msj.solicitud_aceptada", "Ahora son amigos!");
+        es.put("amigos.msj.solicitud_rechazada", "Solicitud rechazada");
+
+       // INGLÉS
+        en.put("amigos.solicitudes_pendientes", "PENDING REQUESTS");
+        en.put("amigos.sin_solicitudes", "No pending requests");
+        en.put("amigos.todos_usuarios", "ALL USERS");
+        en.put("amigos.enviar_solicitud", "Send Request");
+        en.put("amigos.solicitud_enviada", "Request Sent");
+        en.put("amigos.aceptar", "Accept");
+        en.put("amigos.rechazar", "Reject");
+        en.put("amigos.msj.solicitud_enviada", "Request sent to %s");
+        en.put("amigos.msj.solicitud_aceptada", "You are now friends!");
+        en.put("amigos.msj.solicitud_rechazada", "Request rejected");
+
+        // FRANCÉS
+        fr.put("amigos.solicitudes_pendientes", "DEMANDES EN ATTENTE");
+        fr.put("amigos.sin_solicitudes", "Aucune demande en attente");
+        fr.put("amigos.todos_usuarios", "TOUS LES UTILISATEURS");
+        fr.put("amigos.enviar_solicitud", "Envoyer Demande");
+        fr.put("amigos.solicitud_enviada", "Demande Envoyee");
+        fr.put("amigos.aceptar", "Accepter");
+        fr.put("amigos.rechazar", "Rejeter");
+        fr.put("amigos.msj.solicitud_enviada", "Demande envoyee a %s");
+        fr.put("amigos.msj.solicitud_aceptada", "Vous etes maintenant amis!");
+        fr.put("amigos.msj.solicitud_rechazada", "Demande rejetee");
 
         // Español
         es.put("ranking.boton_actualizar", "Actualizar");
@@ -732,6 +774,7 @@ en.put("settings.cambiar_controles", "Controls");
 // Francés
 fr.put("settings.cambiar_controles", "Les contrôles");
     }
+    
 
     public String obtenerTexto(String clave) {
         Map<String, String> idiomaMap = textos.get(idiomaActual);
