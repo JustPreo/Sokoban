@@ -335,58 +335,61 @@ public class MenuScreen implements Screen {
             }
         }).start();
     }
-
     private void mostrarMensajeLogin() {
-        puedeInteractuar = false;
+    puedeInteractuar = false;
 
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
+    Table overlay = new Table();
+    overlay.setFillParent(true);
+    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlay.center();
 
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel).width(350).height(200); // Tamaño del panel reducido
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlay.add(panel).width(400).height(220); // Panel mas ancho
 
-        Label titulo = new Label(idiomas.obtenerTexto("login.acceso_requerido"), skin, "small-font", Color.YELLOW);
-        panel.add(titulo).padBottom(10).row();
+    Label titulo = new Label(idiomas.obtenerTexto("login.acceso_requerido"), skin, "small-font", Color.YELLOW);
+    panel.add(titulo).padBottom(15).row();
 
-        Label mensaje = new Label(idiomas.obtenerTexto("login.necesita_sesion"), skin, "small-font", Color.WHITE);
-        panel.add(mensaje).padBottom(15).row();
+    // SOLUCION: Usar wrap para que el texto haga salto de linea
+    Label mensaje = new Label(idiomas.obtenerTexto("login.necesita_sesion"), skin, "small-font", Color.WHITE);
+    mensaje.setWrap(true); // Activar wrap
+    panel.add(mensaje).width(350).padBottom(20).row(); // Definir ancho maximo
 
-        Table botonesTable = new Table();
+    Table botonesTable = new Table();
 
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = skin.getFont("small-font");
-        textButtonStyle.fontColor = Color.WHITE;
-        textButtonStyle.up = skin.getDrawable("default-round");
-        textButtonStyle.down = skin.getDrawable("default-round-down");
+    TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+    textButtonStyle.font = skin.getFont("small-font");
+    textButtonStyle.fontColor = Color.WHITE;
+    textButtonStyle.up = skin.getDrawable("default-round");
+    textButtonStyle.down = skin.getDrawable("default-round-down");
 
-        TextButton btnLogin = new TextButton(idiomas.obtenerTexto("menu.iniciar_sesion"), textButtonStyle);
-        btnLogin.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
-            }
-        });
+    TextButton btnLogin = new TextButton(idiomas.obtenerTexto("menu.iniciar_sesion"), textButtonStyle);
+    btnLogin.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            ((Juegito) Gdx.app.getApplicationListener()).setScreen(new PantallaLogin());
+        }
+    });
 
-        TextButton btnCancelar = new TextButton(idiomas.obtenerTexto("general.cancelar"), textButtonStyle);
-        btnCancelar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                puedeInteractuar = true;
-            }
-        });
+    TextButton btnCancelar = new TextButton(idiomas.obtenerTexto("general.cancelar"), textButtonStyle);
+    btnCancelar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            puedeInteractuar = true;
+        }
+    });
 
-        botonesTable.add(btnLogin).size(150, 40).padRight(10);
-        botonesTable.add(btnCancelar).size(150, 40);
-        panel.add(botonesTable).row();
+    botonesTable.add(btnLogin).size(150, 40).padRight(10);
+    botonesTable.add(btnCancelar).size(150, 40);
+    panel.add(botonesTable).row();
 
-        stage.addActor(overlay);
-    }
+    stage.addActor(overlay);
+}
+
+    
 
     private void mostrarPerfil() {
         puedeInteractuar = false;
