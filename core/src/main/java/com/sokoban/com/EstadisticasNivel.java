@@ -11,8 +11,8 @@ public class EstadisticasNivel implements Serializable {
     private int numeroNivel;
     private int vecesJugado;
     private int vecesCompletado;
-    private long mejorTiempo;           // en milisegundos
-    private int menosmovimientos;       // menor cantidad de movimientos
+    private long mejorTiempo;
+    private int menosmovimientos;
     private int mejorPuntuacion;
     private long tiempoPromedioCompletar;
     private double promedioMovimientos;
@@ -31,12 +31,12 @@ public class EstadisticasNivel implements Serializable {
         this.tiempoPromedioCompletar = 0;
         this.promedioMovimientos = 0.0;
         this.partidasDeEstLevel = new ArrayList<>();
-        this.desbloqueado = (numeroNivel == 1); // Solo el nivel 1 está desbloqueado inicialmente
+        this.desbloqueado = (numeroNivel == 1);
     }
     
     public void agregarPartida(RegistroPartida partida) {
         if (partida.getNivel() != this.numeroNivel) {
-            return; // No es del nivel correcto
+            return;
         }
         
         this.vecesJugado++;
@@ -46,12 +46,10 @@ public class EstadisticasNivel implements Serializable {
         if (partida.isCompletada()) {
             this.vecesCompletado++;
             
-            // Primera vez completado
             if (primeraCompletado == null) {
                 primeraCompletado = LocalDateTime.now();
             }
             
-            // Actualizar récords
             if (partida.getDuracion() < mejorTiempo) {
                 mejorTiempo = partida.getDuracion();
             }
@@ -64,7 +62,6 @@ public class EstadisticasNivel implements Serializable {
                 mejorPuntuacion = partida.getPuntuacion();
             }
             
-            // Recalcular promedios
             recalcularPromedios();
         }
     }
@@ -101,7 +98,7 @@ public class EstadisticasNivel implements Serializable {
         if (porcentaje >= 80) return "Excelente";
         if (porcentaje >= 60) return "Bueno";
         if (porcentaje >= 40) return "Regular";
-        if (porcentaje >= 20) return "Necesita práctica";
+        if (porcentaje >= 20) return "Necesita practica";
         return "Principiante";
     }
     
@@ -111,28 +108,28 @@ public class EstadisticasNivel implements Serializable {
         String promedioTiempo = formatearTiempo(tiempoPromedioCompletar);
         
         return String.format("""
-            ESTADÍSTICAS NIVEL %d
-            ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+            ESTADISTICAS NIVEL %d
+            ========================================
             Estado: %s
             
             JUGADAS
-            • Veces jugado: %d
-            • Veces completado: %d
-            • Éxito: %.1f%%
-            • Rendimiento: %s
+            - Veces jugado: %d
+            - Veces completado: %d
+            - Exito: %.1f%%
+            - Rendimiento: %s
             
-            RÉCORDS
-            • Mejor tiempo: %s
-            • Menos movimientos: %s
-            • Mejor puntuación: %d
+            RECORDS
+            - Mejor tiempo: %s
+            - Menos movimientos: %s
+            - Mejor puntuacion: %d
             
             PROMEDIOS
-            • Tiempo promedio: %s
-            • Movimientos promedio: %.1f
+            - Tiempo promedio: %s
+            - Movimientos promedio: %.1f
             
             FECHAS
-            • Primer completado: %s
-            • Última jugada: %s
+            - Primer completado: %s
+            - Ultima jugada: %s
             """,
             numeroNivel,
             desbloqueado ? "Desbloqueado" : "Bloqueado",
@@ -160,7 +157,6 @@ public class EstadisticasNivel implements Serializable {
         }
     }
     
-    // Getters y Setters
     public int getNumeroNivel() { return numeroNivel; }
     public int getVecesJugado() { return vecesJugado; }
     public int getVecesCompletado() { return vecesCompletado; }

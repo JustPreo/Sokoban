@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.sokoban.com.EstadisticasNivel;
 import com.sokoban.com.Idiomas;
 import com.sokoban.com.Juegito;
 import com.sokoban.com.SelectorNiveles.Hub;
@@ -497,73 +498,87 @@ public class MenuScreen implements Screen {
         panel.add(botonesTable).row();
         stage.addActor(overlay);
     }
-
     private void mostrarEstadisticas() {
-        puedeInteractuar = false;
-        Usuario usuario = sistemaUsuarios.getUsuarioActual();
+    puedeInteractuar = false;
+    Usuario usuario = sistemaUsuarios.getUsuarioActual();
 
-        Table overlay = new Table();
-        overlay.setFillParent(true);
-        overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
-        overlay.center();
+    Table overlay = new Table();
+    overlay.setFillParent(true);
+    overlay.setBackground(skin.newDrawable("default-round", new Color(0, 0, 0, 0.5f)));
+    overlay.center();
 
-        Table panel = new Table(skin);
-        panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
-        panel.pad(20);
-        overlay.add(panel).width(500).height(400); // Tamaño del panel reducido
+    Table panel = new Table(skin);
+    panel.setBackground(skin.newDrawable("default-round", Color.DARK_GRAY));
+    panel.pad(20);
+    overlay.add(panel).width(500).height(400);
 
-        Label titulo = new Label(idiomas.obtenerTexto("perfil.estadisticas_detalladas"), skin, "default-font", Color.CYAN);
-        panel.add(titulo).padBottom(15).row();
+    Label titulo = new Label(idiomas.obtenerTexto("perfil.estadisticas_detalladas"), skin, "default-font", Color.CYAN);
+    panel.add(titulo).padBottom(15).row();
 
-        // Estadísticas por nivel
-        Label subtitulo = new Label(idiomas.obtenerTexto("perfil.progreso_niveles"), skin, "small-font", Color.YELLOW);
-        panel.add(subtitulo).left().padBottom(10).row();
+    // Estadisticas por nivel
+    Label subtitulo = new Label(idiomas.obtenerTexto("perfil.progreso_niveles"), skin, "small-font", Color.YELLOW);
+    panel.add(subtitulo).left().padBottom(10).row();
 
-        for (int i = 1; i <= 7; i++) {
-            String estado = i <= usuario.getNivelMaximoAlcanzado()
-                    ? idiomas.obtenerTexto("perfil.desbloqueado")
-                    : idiomas.obtenerTexto("perfil.bloqueado");
-
-            Label nivelInfo = new Label(idiomas.obtenerTexto("perfil.nivel") + " " + i + ": " + estado, skin, "small-font", Color.WHITE);
-            if (i <= usuario.getNivelMaximoAlcanzado()) {
-                nivelInfo.setColor(Color.GREEN);
-            } else {
-                nivelInfo.setColor(Color.RED);
+    for (int i = 1; i <= 7; i++) {
+        String textoNivel = idiomas.obtenerTexto("perfil.nivel") + " " + i + ": ";
+        
+        if (i <= usuario.getNivelMaximoAlcanzado()) {
+            textoNivel += idiomas.obtenerTexto("perfil.desbloqueado");
+            
+            // Agregar mejor tiempo si existe
+            EstadisticasNivel stats = usuario.getEstadisticasNivel(i);
+            if (stats.getMejorTiempo() != Long.MAX_VALUE) {
+                long segundos = stats.getMejorTiempo() / 1000;
+                long minutos = segundos / 60;
+                segundos = segundos % 60;
+                textoNivel += String.format(" - Mejor: %dm %ds", minutos, segundos);
             }
-            panel.add(nivelInfo).left().padBottom(3).row();
+        } else {
+            textoNivel += idiomas.obtenerTexto("perfil.bloqueado");
         }
-
-        // Estadísticas generales
-        Label subtitulo2 = new Label(idiomas.obtenerTexto("perfil.estadisticas_generales"), skin, "small-font", Color.YELLOW);
-        panel.add(subtitulo2).left().padBottom(10).row();
-
-        long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
-        Label tiempoLabel = new Label(idiomas.obtenerTexto("perfil.tiempo_total") + " " + tiempoMinutos + " " + idiomas.obtenerTexto("perfil.minutos"), skin, "small-font", Color.WHITE);
-        Label porcentajeLabel = new Label(idiomas.obtenerTexto("perfil.tasa_exito") + " "
-                + (usuario.getPartidasTotales() > 0
-                ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
-                : "0%"), skin, "small-font", Color.WHITE);
-
-        panel.add(tiempoLabel).left().padBottom(5).row();
-        panel.add(porcentajeLabel).left().padBottom(15).row();
-
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = skin.getFont("small-font");
-        textButtonStyle.fontColor = Color.WHITE;
-        textButtonStyle.up = skin.getDrawable("default-round");
-        textButtonStyle.down = skin.getDrawable("default-round-down");
-
-        TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("general.cerrar"), textButtonStyle);
-        btnCerrar.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                overlay.remove();
-                puedeInteractuar = true;
-            }
-        });
-        panel.add(btnCerrar).size(150, 40).row();
-        stage.addActor(overlay);
+        
+        Label nivelInfo = new Label(textoNivel, skin, "small-font", Color.WHITE);
+        if (i <= usuario.getNivelMaximoAlcanzado()) {
+            nivelInfo.setColor(Color.GREEN);
+        } else {
+            nivelInfo.setColor(Color.RED);
+        }
+        panel.add(nivelInfo).left().padBottom(3).row();
     }
+
+    // Estadisticas generales
+    Label subtitulo2 = new Label(idiomas.obtenerTexto("perfil.estadisticas_generales"), skin, "small-font", Color.YELLOW);
+    panel.add(subtitulo2).left().padBottom(10).row();
+
+    long tiempoMinutos = usuario.getTiempoTotalJugado() / 60000;
+    Label tiempoLabel = new Label(idiomas.obtenerTexto("perfil.tiempo_total") + " " + tiempoMinutos + " " + idiomas.obtenerTexto("perfil.minutos"), skin, "small-font", Color.WHITE);
+    Label porcentajeLabel = new Label(idiomas.obtenerTexto("perfil.tasa_exito") + " "
+            + (usuario.getPartidasTotales() > 0
+            ? String.format("%.1f%%", (double) usuario.getPartidasCompletadas() / usuario.getPartidasTotales() * 100)
+            : "0%"), skin, "small-font", Color.WHITE);
+
+    panel.add(tiempoLabel).left().padBottom(5).row();
+    panel.add(porcentajeLabel).left().padBottom(15).row();
+
+    TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+    textButtonStyle.font = skin.getFont("small-font");
+    textButtonStyle.fontColor = Color.WHITE;
+    textButtonStyle.up = skin.getDrawable("default-round");
+    textButtonStyle.down = skin.getDrawable("default-round-down");
+
+    TextButton btnCerrar = new TextButton(idiomas.obtenerTexto("general.cerrar"), textButtonStyle);
+    btnCerrar.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            overlay.remove();
+            puedeInteractuar = true;
+        }
+    });
+    panel.add(btnCerrar).size(150, 40).row();
+    stage.addActor(overlay);
+}
+
+   
 
     private void mostrarConfiguracion() {
         puedeInteractuar = false;
